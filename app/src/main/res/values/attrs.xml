@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <declare-styleable name="TextViewPlus">
+        <attr name="customFont" format="string" />
+    </declare-styleable>
+
+    <declare-styleable name="MyTextView">
+        <attr name="fontName" format="string" />
+    </declare-styleable>
+
+    <declare-styleable name="font">
+        <attr name="fonttype">
+            <enum name="trebuchet_ms" value="0" />
+        </attr>
+    </declare-styleable>
+
+</resources>

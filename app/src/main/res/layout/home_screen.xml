@@ -1,0 +1,257 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<layout xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <data>
+
+        <variable
+            name="activity"
+            type="com.nic.MITank.activity.HomePage" />
+    </data>
+
+    <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:id="@+id/activity_main"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="#FFFFFF"
+        android:orientation="vertical">
+
+            <androidx.appcompat.widget.Toolbar
+                android:id="@+id/toolbar"
+                android:layout_width="match_parent"
+                android:layout_height="?attr/actionBarSize"
+                android:background="@drawable/background"
+                app:layout_scrollFlags="scroll|enterAlways|snap"
+                app:popupTheme="@style/ThemeOverlay.AppCompat.Light">
+
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+
+                    <TextView
+                        android:id="@+id/title_tv"
+                        style="@style/font_circular_bold"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_centerInParent="true"
+                        android:text="Home Page"
+                        android:textColor="@android:color/white"
+                        android:textSize="@dimen/_15sdp" />
+
+
+                    <ImageView
+                        android:id="@+id/log_out"
+                        android:layout_width="30dp"
+                        android:layout_height="30dp"
+                        android:layout_centerInParent="true"
+                        android:layout_alignParentRight="true"
+                        android:layout_marginTop="15dp"
+                        android:layout_marginRight="15dp"
+                        android:adjustViewBounds="true"
+
+                        android:scaleType="centerInside"
+                        android:src="@mipmap/log_out" />
+
+                </RelativeLayout>
+
+
+            </androidx.appcompat.widget.Toolbar>
+
+
+
+
+        <androidx.core.widget.NestedScrollView
+            android:id="@+id/scroll_view"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_below="@+id/toolbar"
+            app:layout_behavior="@string/appbar_scrolling_view_behavior">
+
+            <RelativeLayout
+                android:id="@+id/parent"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/select_village_tv"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="@dimen/margin_left_20dp"
+                    android:layout_marginTop="@dimen/padding"
+                    android:layout_marginRight="@dimen/margin_left_20dp"
+                    android:text="Select Village"
+                    android:textColor="@android:color/black"
+                    android:textSize="@dimen/_15sdp"
+                    style="@string/font_circular_bold" />
+
+                <RelativeLayout
+                    android:id="@+id/village_layout"
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/header"
+                    android:layout_below="@+id/select_village_tv"
+                    android:layout_marginLeft="@dimen/margin_left_20dp"
+                    android:layout_marginTop="@dimen/padding"
+                    android:layout_marginRight="@dimen/margin_left_20dp"
+                    android:background="@drawable/rectangle_box"
+                    android:orientation="vertical">
+
+                    <TextView
+
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentStart="true"
+                        android:layout_centerInParent="true"
+                        android:layout_marginLeft="15dp"
+
+                        android:textColor="@android:color/white"
+                        android:textSize="@dimen/_15sdp"
+                        android:visibility="visible"
+                        style="@string/font_normal" />
+
+                    <Spinner
+                        android:id="@+id/village_spinner"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentEnd="true"
+                        android:layout_centerInParent="true"
+                        android:layout_marginLeft="10dp"
+                        android:layout_marginRight="10dp"
+                        android:gravity="center" />
+
+                </RelativeLayout>
+
+
+                <TextView
+                    android:id="@+id/select_hab_tv"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/village_layout"
+                    android:layout_marginLeft="@dimen/margin_left_20dp"
+                    android:layout_marginTop="@dimen/padding"
+                    android:layout_marginRight="@dimen/margin_left_20dp"
+                    android:text="Select Habitation"
+                    android:textColor="@android:color/black"
+                    android:textSize="@dimen/_15sdp"
+                    style="@string/font_circular_bold" />
+
+                <RelativeLayout
+                    android:id="@+id/hab_layout"
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/header"
+                    android:layout_below="@+id/select_hab_tv"
+                    android:layout_marginLeft="@dimen/margin_left_20dp"
+                    android:layout_marginTop="@dimen/padding"
+                    android:layout_marginRight="@dimen/margin_left_20dp"
+                    android:background="@drawable/rectangle_box"
+                    android:orientation="vertical">
+
+                    <TextView
+
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentStart="true"
+                        android:layout_centerInParent="true"
+                        android:layout_marginLeft="15dp"
+
+                        android:textColor="@android:color/white"
+                        android:textSize="@dimen/_15sdp"
+                        android:visibility="visible"
+                        style="@string/font_normal" />
+
+                    <Spinner
+                        android:id="@+id/habitation_spinner"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentEnd="true"
+                        android:layout_centerInParent="true"
+                        android:layout_marginLeft="10dp"
+                        android:layout_marginRight="10dp"
+                        android:gravity="center" />
+
+                </RelativeLayout>
+
+
+
+            <RelativeLayout
+                android:id="@+id/tank_pond_layout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/hab_layout"
+                android:orientation="vertical">
+
+
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/tank_pond_list"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="5dp"
+                    android:fadeScrollbars="false"
+                    android:scrollbarSize="4dp"
+                    android:scrollbars="vertical"/>
+
+                <TextView
+                    android:id="@+id/not_found_tv"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/tank_pond_list"
+                    android:text="No Projects Found!"
+                    android:textAlignment="center"
+                    android:textColor="@android:color/black"
+                    android:textSize="@dimen/_16sdp"
+                    android:textStyle="bold"
+                    android:visibility="gone" />
+            </RelativeLayout>
+
+                <RelativeLayout
+                    android:id="@+id/syn_data"
+                    android:layout_width="140dp"
+                    android:layout_height="45dp"
+                    android:layout_below="@+id/tank_pond_layout"
+                    android:layout_centerHorizontal="true"
+                    android:layout_marginTop="@dimen/padding"
+                    android:background="@drawable/rectangle_box"
+                    android:visibility="gone">
+
+
+                    <TextView
+                        android:id="@+id/view_offline_images"
+                        style="@string/font_circular_medium"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentStart="true"
+                        android:layout_centerInParent="true"
+                        android:layout_gravity="center"
+                        android:textAlignment="center"
+                        android:text="Syn Data"
+                        android:textStyle="bold"
+                        android:textAllCaps="false"
+                        android:textColor="@android:color/black"
+                        android:textSize="17sp" />
+
+
+                </RelativeLayout>
+
+
+
+
+
+            </RelativeLayout>
+
+        </androidx.core.widget.NestedScrollView>
+
+        <TextView
+            android:id="@+id/save"
+            android:layout_width="match_parent"
+            android:layout_height="?attr/actionBarSize"
+            android:layout_alignParentBottom="true"
+            android:padding="15dp"
+            android:text="Sofware Designed &amp; Developed by NIC"
+            android:textAlignment="center"
+            android:textColor="@android:color/white"
+            android:textSize="@dimen/_14sdp"
+            android:background="@drawable/background"
+            style="@string/font_circular_medium" />
+
+    </RelativeLayout>
+</layout>

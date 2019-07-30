@@ -1,0 +1,20 @@
+<resources xmlns:tools="http://schemas.android.com/tools">
+    <string name="app_name">MI Tank</string>
+    <string name="hint_password">Password</string>
+    <string name="hint_username">UserName</string>
+    <string name="btn_login">Login</string>
+    <string name="font_circular_medium">circular-medium.ttf</string>
+    <string name="font_circular_bold">circular-bold.ttf</string>
+    <string name="font_circular_book">circular-book.ttf</string>
+    <string name="font_circular_black">circular-black.ttf</string>
+    <string name="font_normal">din_pro_light.otf</string>
+    <string name="no_internet">Your internet seems to be offline!</string>
+    <string name="view_image">View Inspected Image</string>
+    <string name="take_action">Take Action</string>
+    <string name="view_action">View Action</string>
+    <string name="action_taken_tv" tools:ignore="ExtraTranslation">Action Taken Against Inspection Report for High Value Project</string>
+    <string name="init_vector">2SN22SkJGDyOAXUU</string>
+
+
+
+</resources>

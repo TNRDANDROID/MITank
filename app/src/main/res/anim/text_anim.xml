@@ -1,0 +1,12 @@
+<set xmlns:android="http://schemas.android.com/apk/res/android"
+    android:fillAfter="true"
+    android:interpolator="@android:anim/bounce_interpolator">
+
+    <scale
+        android:duration="4000"
+        android:fromXScale="2.0"
+        android:fromYScale="1.0"
+        android:toXScale="2.0"
+        android:toYScale="2.0" />
+
+</set>

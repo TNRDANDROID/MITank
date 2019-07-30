@@ -1,0 +1,106 @@
+<resources>
+
+    <style name="AppTheme.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />
+
+    <style name="AppTheme.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
+    <!-- Base PMAYSurveyapplication theme. -->
+    <style name="AppTheme" parent="Theme.AppCompat.Light.DarkActionBar">
+        <!-- Customize your theme here. -->
+        <item name="colorPrimary">@color/colorPrimary</item>
+        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
+        <item name="colorAccent">@color/colorAccent</item>
+        <item name="windowActionBar">false</item>
+        <item name="windowNoTitle">true</item>
+    </style>
+
+    <style name="InActive" parent="AppTheme">
+        <item name="android:textColor">@android:color/black</item>
+    </style>
+
+    <style name="font_circular_medium">
+        <item name="android:fontFamily">@string/font_circular_medium</item>
+        <item name="android:textStyle">bold</item>
+    </style>
+
+    <style name="font_circular_book">
+        <item name="android:fontFamily">@string/font_circular_book</item>
+        <item name="android:textStyle">normal</item>
+    </style>
+
+    <style name="font_circular_black">
+        <item name="android:fontFamily">@string/font_circular_black</item>
+        <item name="android:textStyle">normal</item>
+    </style>
+
+    <style name="font_circular_bold">
+        <item name="android:fontFamily">@string/font_circular_bold</item>
+        <item name="android:textStyle">bold</item>
+    </style>
+
+    <style name="font_roboto_light">
+        <item name="android:fontFamily">@string/font_normal</item>
+        <item name="android:textStyle">normal</item>
+    </style>
+
+    <style name="font_normal">
+        <item name="android:fontFamily">@string/font_normal</item>
+        <item name="android:textStyle">normal</item>
+    </style>
+
+    <style name="ProgressHUD" parent="@android:style/Theme.Dialog">
+        <item name="android:windowFrame">@null</item>
+        <item name="android:windowIsFloating">true</item>
+        <item name="android:windowContentOverlay">@null</item>
+        <item name="android:windowAnimationStyle">@android:style/Animation.Dialog</item>
+        <item name="android:windowSoftInputMode">stateUnspecified|adjustPan</item>
+        <item name="android:windowBackground">@android:color/transparent</item>
+        <item name="android:windowNoTitle">true</item>
+    </style>
+
+    <style name="Spinner" parent="Widget.AppCompat.Spinner">
+        <item name="backgroundTint">@android:color/white</item>
+    </style>
+
+    <style name="Toolbar.TitleText" parent="TextAppearance.Widget.AppCompat.Toolbar.Title">
+        <item name="android:textSize">16sp</item>
+    </style>
+
+
+    <style name="DialogAnimation">
+        <item name="android:windowEnterAnimation">@anim/dialog_slide_up</item>
+        <item name="android:windowExitAnimation">@anim/dialog_slide_down</item>
+    </style>
+
+    <style name="DialogSlideAnim" parent="@android:style/Theme.Light.NoTitleBar">
+        <item name="android:windowFullscreen">true</item>
+        <item name="android:windowIsFloating">true</item>
+        <item name="android:windowAnimationStyle">@style/DialogAnimation</item>
+    </style>
+
+    <!-- Theme.AppCompat.Light is not a PMAYSurveydialog theme -->
+
+    <style name="RegistrationPage">
+        <item name="android:textColorHint">@color/black</item>
+        <item name="android:editTextColor">@color/black</item>
+        <item name="android:colorControlNormal">@color/black</item>
+        <item name="android:background">@color/white</item>
+    </style>
+
+    <style name="ButtonLogin" parent="@style/Theme.AppCompat.Light">
+        <item name="android:textColor">@color/white</item>
+        <item name="colorButtonNormal">@color/colorAccent</item>
+        <item name="colorControlHighlight">@color/yellow</item>
+    </style>
+
+    <style name="ButtonSignUp" parent="@style/Theme.AppCompat.Light">
+        <item name="android:textColor">@color/white</item>
+        <item name="colorButtonNormal">@color/colorPrimary</item>
+        <item name="colorControlHighlight">@color/yellow</item>
+    </style>
+    <style name="ButtonRegister" parent="@style/Theme.AppCompat.Light">
+        <item name="android:textColor">@android:color/black</item>
+        <item name="colorButtonNormal">@color/yellow</item>
+        <item name="colorControlHighlight">@color/colorPrimary</item>
+    </style>
+
+</resources>
