@@ -12,9 +12,10 @@ public class DBHelper extends SQLiteOpenHelper {
 
     public static final String VILLAGE_TABLE_NAME = " villageTable";
     public static final String HABITATION_TABLE_NAME = " habitaionTable";
-    public static final String PMAY_LIST_TABLE_NAME = "PMAYList";
-    public static final String SAVE_PMAY_DETAILS = "SavePMAYDetails";
-    public static final String SAVE_PMAY_IMAGES = "SavePMAYImages";
+    public static final String MI_TANK_STRUCTURE = "mi_tank_structure";
+    public static final String MI_TANK_DATA = "mi_tank_data";
+    public static final String STRUCTURES = "structures";
+
 
     private Context context;
 
@@ -41,33 +42,31 @@ public class DBHelper extends SQLiteOpenHelper {
                 "habitation_code TEXT," +
                 "habitation_name TEXT)");
 
-        db.execSQL("CREATE TABLE " + PMAY_LIST_TABLE_NAME + " ("
-                + "pvcode  TEXT," +
-                "habcode  TEXT," +
-                "beneficiary_name  TEXT," +
-                "secc_id  TEXT," +
-                "habitation_name TEXT," +
-                "pvname TEXT)");
+        db.execSQL("CREATE TABLE " + MI_TANK_STRUCTURE + " ("
+                + "mi_tank_structure_id  INTEGER," +
+                "mi_tank_structure_name TEXT)");
 
-        db.execSQL("CREATE TABLE " + SAVE_PMAY_DETAILS + " ("
-                + "id INTEGER PRIMARY KEY AUTOINCREMENT,"+
-                "dcode TEXT," +
-                "bcode TEXT," +
-                "pvcode TEXT," +
-                "habcode TEXT," +
-                "pvname TEXT," +
-                "habitation_name TEXT," +
-                "secc_id TEXT," +
-                "beneficiary_name TEXT," +
-                "beneficiary_father_name TEXT)");
+        db.execSQL("CREATE TABLE " + MI_TANK_DATA + " ("
+                + "dcode INTEGER," +
+                "bcode INTEGER," +
+                "pvcode INTEGER," +
+                "habcode INTEGER," +
+                "mi_tank_survey_id INTEGER," +
+                "minor_irrigation_type INTEGER," +
+                "name_of_the_mi_tank TEXT," +
+                "local_name TEXT," +
+                "area TEXT)");
 
 
-        db.execSQL("CREATE TABLE " + SAVE_PMAY_IMAGES + " ("
-                + "pmay_id INTEGER,"+
-                "image BLOB," +
-                "latitude TEXT," +
-                "longitude TEXT," +
-                "type_of_photo TEXT)");
+        db.execSQL("CREATE TABLE " + STRUCTURES + " ("
+                + "mi_tank_structure_detail_id INTEGER,"+
+                "mi_tank_survey_id INTEGER," +
+                "mi_tank_structure_id INTEGER," +
+                "mi_tank_structure_serial_id INTEGER," +
+                "mi_tank_condition_id INTEGER," +
+                "mi_tank_condition_name TEXT," +
+                "mi_tank_sill_level TEXT," +
+                "mi_tank_structure_name TEXT)");
 
 
     }
@@ -77,10 +76,10 @@ public class DBHelper extends SQLiteOpenHelper {
         if (oldVersion >= newVersion) {
             //drop table if already exists
             db.execSQL("DROP TABLE IF EXISTS " + VILLAGE_TABLE_NAME);
-            db.execSQL("DROP TABLE IF EXISTS " + PMAY_LIST_TABLE_NAME);
             db.execSQL("DROP TABLE IF EXISTS " + HABITATION_TABLE_NAME);
-            db.execSQL("DROP TABLE IF EXISTS " + SAVE_PMAY_DETAILS);
-            db.execSQL("DROP TABLE IF EXISTS " + SAVE_PMAY_IMAGES);
+            db.execSQL("DROP TABLE IF EXISTS " + MI_TANK_STRUCTURE);
+            db.execSQL("DROP TABLE IF EXISTS " + MI_TANK_DATA);
+            db.execSQL("DROP TABLE IF EXISTS " + STRUCTURES);
             onCreate(db);
         }
     }

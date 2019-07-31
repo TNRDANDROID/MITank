@@ -3,7 +3,9 @@ package com.nic.MITank.activity;
 import android.app.Activity;
 import android.content.res.Resources;
 import android.graphics.Rect;
+import android.os.AsyncTask;
 import android.os.Bundle;
+import android.util.Log;
 import android.util.TypedValue;
 import android.view.View;
 
@@ -17,6 +19,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.google.android.material.appbar.AppBarLayout;
 import com.nic.MITank.R;
 import com.nic.MITank.adapter.TanksPondsTitleAdapter;
+import com.nic.MITank.dataBase.dbData;
 import com.nic.MITank.databinding.TanksPondsTitleScreenBinding;
 import com.nic.MITank.model.MITank;
 
@@ -28,8 +31,9 @@ public class TanksPondsTitleScreen extends AppCompatActivity {
     public TanksPondsTitleScreenBinding tanksPondsTitleScreenBinding;
     boolean ExpandedActionBar = true;
     private TanksPondsTitleAdapter tanksPondsTitleAdapter;
-    private List<MITank> TanksPondsTitle;
-    @Override
+    private ArrayList<MITank> TanksPondsTitle;
+    public dbData dbData = new dbData(this);
+
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         tanksPondsTitleScreenBinding = DataBindingUtil.setContentView(this, R.layout.tanks_ponds_title_screen);
@@ -64,6 +68,26 @@ public class TanksPondsTitleScreen extends AppCompatActivity {
         tanksPondsTitleScreenBinding.recyclerView.addItemDecoration(new GridSpacingItemDecoration(2, dpToPx(10), true));
         tanksPondsTitleScreenBinding.recyclerView.setItemAnimator(new DefaultItemAnimator());
         tanksPondsTitleScreenBinding.recyclerView.setAdapter(tanksPondsTitleAdapter);
+        new fetchMITanktask().execute();
+    }
+
+    public class fetchMITanktask extends AsyncTask<Void, Void,
+            ArrayList<MITank>> {
+        @Override
+        protected ArrayList<MITank> doInBackground(Void... params) {
+            dbData.open();
+            TanksPondsTitle = new ArrayList<>();
+            TanksPondsTitle = dbData.getAllTankStructure();
+            Log.d("TANKS_COUNT", String.valueOf(TanksPondsTitle.size()));
+            return TanksPondsTitle;
+        }
+
+        @Override
+        protected void onPostExecute(ArrayList<MITank> tanksList) {
+            super.onPostExecute(tanksList);
+            tanksPondsTitleAdapter = new TanksPondsTitleAdapter(TanksPondsTitleScreen.this,TanksPondsTitle);
+            tanksPondsTitleScreenBinding.recyclerView.setAdapter(tanksPondsTitleAdapter);
+        }
     }
 
     public class GridSpacingItemDecoration extends RecyclerView.ItemDecoration {

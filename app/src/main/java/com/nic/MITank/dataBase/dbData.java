@@ -138,54 +138,33 @@ public class dbData {
         return cards;
     }
 
-    public MITank insertPMAY(MITank miTank) {
+    public MITank insertTankStructure(MITank miTank) {
 
         ContentValues values = new ContentValues();
-        values.put(AppConstant.PV_CODE, miTank.getPvCode());
-        values.put(AppConstant.HAB_CODE, miTank.getHabCode());
-        values.put(AppConstant.BENEFICIARY_NAME, miTank.getBeneficiaryName());
-        values.put(AppConstant.SECC_ID, miTank.getSeccId());
-        values.put(AppConstant.HABITATION_NAME, miTank.getHabitationName());
-        values.put(AppConstant.PV_NAME, miTank.getPvName());
+        values.put(AppConstant.MI_TANK_STRUCTURE_ID, miTank.getMiTankStructureId());
+        values.put(AppConstant.MI_TANK_STRUCTURE_NAME, miTank.getMiTankStructureName());
 
-        long id = db.insert(DBHelper.PMAY_LIST_TABLE_NAME,null,values);
-        Log.d("Inserted_id_PMAY_LIST", String.valueOf(id));
+        long id = db.insert(DBHelper.MI_TANK_STRUCTURE,null,values);
+        Log.d("Insert_id_TANK_STRUCT", String.valueOf(id));
 
         return miTank;
     }
 
-    public ArrayList<MITank > getAll_PMAYList(String pvcode, String habcode) {
+    public ArrayList<MITank > getAllTankStructure() {
 
         ArrayList<MITank > cards = new ArrayList<>();
         Cursor cursor = null;
 
-        String condition = "";
-
-        if (habcode != "") {
-            condition = " where pvcode = '" + pvcode+"' and habcode = '" + habcode+"'" ;
-        }else {
-            condition = "";
-        }
-
         try {
-            cursor = db.rawQuery("select * from "+DBHelper.PMAY_LIST_TABLE_NAME + condition,null);
-            // cursor = db.query(CardsDBHelper.TABLE_CARDS,
-            //       COLUMNS, null, null, null, null, null);
+            cursor = db.query(DBHelper.MI_TANK_STRUCTURE,
+                   new String[]{"*"}, null, null, null, null, null);
             if (cursor.getCount() > 0) {
                 while (cursor.moveToNext()) {
                     MITank  card = new MITank ();
-                    card.setPvCode(cursor.getString(cursor
-                            .getColumnIndexOrThrow(AppConstant.PV_CODE)));
-                    card.setHabCode(cursor.getString(cursor
-                            .getColumnIndexOrThrow(AppConstant.HAB_CODE)));
-                    card.setBeneficiaryName(cursor.getString(cursor
-                            .getColumnIndexOrThrow(AppConstant.BENEFICIARY_NAME)));
-                    card.setSeccId(cursor.getString(cursor
-                            .getColumnIndexOrThrow(AppConstant.SECC_ID)));
-                    card.setHabitationName(cursor.getString(cursor
-                            .getColumnIndexOrThrow(AppConstant.HABITATION_NAME)));
-                    card.setPvName(cursor.getString(cursor
-                            .getColumnIndexOrThrow(AppConstant.PV_NAME)));
+                    card.setMiTankStructureId(cursor.getString(cursor
+                            .getColumnIndexOrThrow(AppConstant.MI_TANK_STRUCTURE_ID)));
+                    card.setMiTankStructureName(cursor.getString(cursor
+                            .getColumnIndexOrThrow(AppConstant.MI_TANK_STRUCTURE_NAME)));
 
                     cards.add(card);
                 }
@@ -200,6 +179,78 @@ public class dbData {
         return cards;
     }
 
+    public MITank insertMITankData(MITank miTank) {
+
+        ContentValues values = new ContentValues();
+        values.put(AppConstant.DISTRICT_CODE, miTank.getDistictCode());
+        values.put(AppConstant.BLOCK_CODE, miTank.getBlockCode());
+        values.put(AppConstant.PV_CODE, miTank.getPvCode());
+        values.put(AppConstant.HAB_CODE, miTank.getHabCode());
+        values.put(AppConstant.MI_TANK_SURVEY_ID, miTank.getMiTankSurveyId());
+        values.put(AppConstant.MINOR_IRRIGATION_TYPE, miTank.getMinorIrrigationType());
+        values.put(AppConstant.NAME_OF_THE_MI_TANK, miTank.getNameOftheMITank());
+        values.put(AppConstant.LOCAL_NAME, miTank.getLocalName());
+        values.put(AppConstant.AREA, miTank.getArea());
+
+        long id = db.insert(DBHelper.MI_TANK_DATA,null,values);
+        Log.d("Insert_id_TANK_Data", String.valueOf(id));
+
+        return miTank;
+    }
+
+    public ArrayList<MITank > getAllMITankData() {
+
+        ArrayList<MITank > cards = new ArrayList<>();
+        Cursor cursor = null;
+
+        try {
+            cursor = db.query(DBHelper.MI_TANK_DATA,
+                    new String[]{"*"}, null, null, null, null, null);
+            if (cursor.getCount() > 0) {
+                while (cursor.moveToNext()) {
+                    MITank  card = new MITank ();
+
+                    card.setDistictCode(cursor.getString(cursor.getColumnIndexOrThrow(AppConstant.DISTRICT_CODE)));
+                    card.setBlockCode(cursor.getString(cursor.getColumnIndexOrThrow(AppConstant.BLOCK_CODE)));
+                    card.setPvCode(cursor.getString(cursor.getColumnIndexOrThrow(AppConstant.PV_CODE)));
+                    card.setHabCode(cursor.getString(cursor.getColumnIndexOrThrow(AppConstant.HAB_CODE)));
+                    card.setMiTankSurveyId(cursor.getString(cursor.getColumnIndexOrThrow(AppConstant.MI_TANK_SURVEY_ID)));
+                    card.setMinorIrrigationType(cursor.getString(cursor.getColumnIndexOrThrow(AppConstant.MINOR_IRRIGATION_TYPE)));
+                    card.setNameOftheMITank(cursor.getString(cursor.getColumnIndexOrThrow(AppConstant.NAME_OF_THE_MI_TANK)));
+                    card.setLocalName(cursor.getString(cursor.getColumnIndexOrThrow(AppConstant.LOCAL_NAME)));
+                    card.setArea(cursor.getString(cursor.getColumnIndexOrThrow(AppConstant.AREA)));
+
+                    cards.add(card);
+                }
+            }
+        } catch (Exception e){
+            //   Log.d(DEBUG_TAG, "Exception raised with a value of " + e);
+        } finally{
+            if (cursor != null) {
+                cursor.close();
+            }
+        }
+        return cards;
+    }
+
+    public MITank insertStructure(MITank miTank) {
+
+        ContentValues values = new ContentValues();
+        values.put(AppConstant.MI_TANK_STRUCTURE_DETAIL_ID,miTank.getMiTankStructureDetailId());
+        values.put(AppConstant.MI_TANK_SURVEY_ID,miTank.getMiTankSurveyId());
+        values.put(AppConstant.MI_TANK_STRUCTURE_ID,miTank.getMiTankStructureId());
+        values.put(AppConstant.MI_TANK_STRUCTURE_SERIAL_ID,miTank.getMiTankStructureSerialId());
+        values.put(AppConstant.MI_TANK_CONDITION_ID,miTank.getMiTankConditionId());
+        values.put(AppConstant.MI_TANK_CONDITION_NAME,miTank.getMiTankConditionName());
+        values.put(AppConstant.MI_TANK_SKILL_LEVEL,miTank.getMiTankSkillLevel());
+        values.put(AppConstant.MI_TANK_STRUCTURE_NAME,miTank.getMiTankStructureName());
+
+        long id = db.insert(DBHelper.STRUCTURES,null,values);
+        Log.d("Insert_id_structures", String.valueOf(id));
+
+        return miTank;
+    }
+
     public ArrayList<MITank> getSavedPMAYDetails() {
 
         ArrayList<MITank> cards = new ArrayList<>();
@@ -211,7 +262,6 @@ public class dbData {
         try {
 //            cursor = db.query(DBHelper.SAVE_PMAY_DETAILS,
 //                    new String[]{"*"}, selection, selectionArgs, null, null, null);
-            cursor = db.rawQuery("select * from "+DBHelper.SAVE_PMAY_DETAILS+" where id in (select pmay_id from "+DBHelper.SAVE_PMAY_IMAGES+")",null);
             if (cursor.getCount() > 0) {
                 while (cursor.moveToNext()) {
 
@@ -272,8 +322,8 @@ public class dbData {
 
 
         try {
-            cursor = db.query(DBHelper.SAVE_PMAY_IMAGES,
-                    new String[]{"*"}, selection, selectionArgs, null, null, null);
+//            cursor = db.query(DBHelper.SAVE_PMAY_IMAGES,
+//                    new String[]{"*"}, selection, selectionArgs, null, null, null);
             if (cursor.getCount() > 0) {
                 while (cursor.moveToNext()) {
 
@@ -313,23 +363,23 @@ public class dbData {
         db.execSQL("delete from " + DBHelper.VILLAGE_TABLE_NAME);
     }
 
-    public void deletePMAYTable() {
-        db.execSQL("delete from " + DBHelper.PMAY_LIST_TABLE_NAME);
+    public void deleteTankStructure() {
+        db.execSQL("delete from " + DBHelper.MI_TANK_STRUCTURE);
     }
 
-    public void deletePMAYDetails() { db.execSQL("delete from " + DBHelper.SAVE_PMAY_DETAILS); }
+    public void deleteMITankData() {
+        db.execSQL("delete from " + DBHelper.MI_TANK_DATA);
+    }
 
-    public void deletePMAYImages() { db.execSQL("delete from " + DBHelper.SAVE_PMAY_IMAGES);}
-
-
+    public void deleteStructures() {
+        db.execSQL("delete from " + DBHelper.STRUCTURES);
+    }
 
 
     public void deleteAll() {
 
         deleteVillageTable();
-        deletePMAYTable();
-        deletePMAYDetails();
-        deletePMAYImages();
+        deleteTankStructure();
     }
 
 

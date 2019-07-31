@@ -1,7 +1,10 @@
 package com.nic.MITank.adapter;
 
 import android.app.Activity;
+import android.content.Context;
+import android.content.Intent;
 import android.view.LayoutInflater;
+import android.view.View;
 import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
@@ -10,30 +13,31 @@ import androidx.recyclerview.widget.RecyclerView;
 
 
 import com.nic.MITank.R;
+import com.nic.MITank.activity.TanksPondsListScreen;
 import com.nic.MITank.databinding.TanksPondsTitleAdapterBinding;
 import com.nic.MITank.model.MITank;
 import com.nic.MITank.session.PrefManager;
 
 import org.json.JSONObject;
 
+import java.util.ArrayList;
 import java.util.List;
 
  
 
 public class TanksPondsTitleAdapter extends RecyclerView.Adapter<TanksPondsTitleAdapter.MyViewHolder> {
 
-    private static Activity context;
+    private Context context;
     private PrefManager prefManager;
-    private List<MITank> miTankList;
+    private ArrayList<MITank> miTankList;
     static JSONObject dataset = new JSONObject();
 
     private LayoutInflater layoutInflater;
 
-    public TanksPondsTitleAdapter(Activity context, List<MITank> miTankList) {
+    public TanksPondsTitleAdapter(Context context, ArrayList<MITank> miTankList) {
 
         this.context = context;
         prefManager = new PrefManager(context);
-
         this.miTankList = miTankList;
     }
 
@@ -61,13 +65,28 @@ public class TanksPondsTitleAdapter extends RecyclerView.Adapter<TanksPondsTitle
 
     @Override
     public void onBindViewHolder(@NonNull final MyViewHolder holder, final int position) {
-//        holder.tanksPondsTitleAdapterBinding.tvtitle.setText(miTankList.get(position).getTitle());
+       holder.tanksPondsTitleAdapterBinding.tvtitle.setText(miTankList.get(position).getMiTankStructureName());
 
+
+        holder.tanksPondsTitleAdapterBinding.cardView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                tanksPondsListScreen();
+            }
+        });
+
+    }
+
+    public void tanksPondsListScreen() {
+        Activity activity = (Activity) context;
+        Intent intent = new Intent(context, TanksPondsListScreen.class);
+        activity.startActivity(intent);
+        activity.overridePendingTransition(R.anim.slide_in, R.anim.slide_out);
     }
 
     @Override
     public int getItemCount() {
-        return 6;
+        return miTankList.size();
     }
 
 

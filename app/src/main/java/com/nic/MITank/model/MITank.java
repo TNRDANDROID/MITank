@@ -10,25 +10,132 @@ public class MITank {
 
     private String distictCode;
     private String districtName;
-
     private String blockCode;
-
-    public String getHabCode() {
-        return HabCode;
-    }
-
-    public void setHabCode(String habCode) {
-        HabCode = habCode;
-    }
-
+    private String Longitude;
+    private String typeOfPhoto;
+    private String imageRemark;
+    private String dateTime;
+    private String imageAvailable;
     private String HabCode;
-
     private String Description;
     private String Latitude;
     private String BeneficiaryName;
     private String HabitationName;
     private String pmayId;
     private String fatherName;
+    private String SeccId;
+    private String PvCode;
+    private String PvName;
+    private String blockName;
+
+    private String miTankStructureId;
+    private String miTankStructureName;
+    private String miTankSurveyId;
+    private String minorIrrigationType;
+    private String nameOftheMITank;
+    private String localName;
+    private String area;
+    private String miTankStructureDetailId;
+    private String miTankStructureSerialId;
+    private String miTankConditionId;
+    private String miTankConditionName;
+    private String miTankSkillLevel;
+
+    public String getMiTankStructureId() {
+        return miTankStructureId;
+    }
+
+    public void setMiTankStructureId(String miTankStructureId) {
+        this.miTankStructureId = miTankStructureId;
+    }
+
+    public String getMiTankStructureName() {
+        return miTankStructureName;
+    }
+
+    public void setMiTankStructureName(String miTankStructureName) {
+        this.miTankStructureName = miTankStructureName;
+    }
+
+    public String getMiTankSurveyId() {
+        return miTankSurveyId;
+    }
+
+    public void setMiTankSurveyId(String miTankSurveyId) {
+        this.miTankSurveyId = miTankSurveyId;
+    }
+
+    public String getMinorIrrigationType() {
+        return minorIrrigationType;
+    }
+
+    public void setMinorIrrigationType(String minorIrrigationType) {
+        this.minorIrrigationType = minorIrrigationType;
+    }
+
+    public String getNameOftheMITank() {
+        return nameOftheMITank;
+    }
+
+    public void setNameOftheMITank(String nameOftheMITank) {
+        this.nameOftheMITank = nameOftheMITank;
+    }
+
+    public String getLocalName() {
+        return localName;
+    }
+
+    public void setLocalName(String localName) {
+        this.localName = localName;
+    }
+
+    public String getArea() {
+        return area;
+    }
+
+    public void setArea(String area) {
+        this.area = area;
+    }
+
+    public String getMiTankStructureDetailId() {
+        return miTankStructureDetailId;
+    }
+
+    public void setMiTankStructureDetailId(String miTankStructureDetailId) {
+        this.miTankStructureDetailId = miTankStructureDetailId;
+    }
+
+    public String getMiTankStructureSerialId() {
+        return miTankStructureSerialId;
+    }
+
+    public void setMiTankStructureSerialId(String miTankStructureSerialId) {
+        this.miTankStructureSerialId = miTankStructureSerialId;
+    }
+
+    public String getMiTankConditionId() {
+        return miTankConditionId;
+    }
+
+    public void setMiTankConditionId(String miTankConditionId) {
+        this.miTankConditionId = miTankConditionId;
+    }
+
+    public String getMiTankConditionName() {
+        return miTankConditionName;
+    }
+
+    public void setMiTankConditionName(String miTankConditionName) {
+        this.miTankConditionName = miTankConditionName;
+    }
+
+    public String getMiTankSkillLevel() {
+        return miTankSkillLevel;
+    }
+
+    public void setMiTankSkillLevel(String miTankSkillLevel) {
+        this.miTankSkillLevel = miTankSkillLevel;
+    }
 
     public String getFatherName() {
         return fatherName;
@@ -71,13 +178,13 @@ public class MITank {
         SeccId = seccId;
     }
 
-    private String SeccId;
+    public String getHabCode() {
+        return HabCode;
+    }
 
-
-    private String PvCode;
-    private String PvName;
-
-    private String blockName;
+    public void setHabCode(String habCode) {
+        HabCode = habCode;
+    }
 
     public String getTypeOfPhoto() {
         return typeOfPhoto;
@@ -87,13 +194,6 @@ public class MITank {
         this.typeOfPhoto = typeOfPhoto;
     }
 
-    private String typeOfPhoto;
-    private String imageRemark;
-    private String dateTime;
-    private String imageAvailable;
-
-
-
     public String getImageAvailable() {
         return imageAvailable;
     }
@@ -101,7 +201,6 @@ public class MITank {
     public void setImageAvailable(String imageAvailable) {
         this.imageAvailable = imageAvailable;
     }
-
 
 
     public String getImageRemark() {
@@ -119,13 +218,6 @@ public class MITank {
     public void setDateTime(String dateTime) {
         this.dateTime = dateTime;
     }
-
-
-
-
-
-
-
 
 
     public String getDistrictName() {
@@ -170,10 +262,6 @@ public class MITank {
         this.blockName = blockName;
     }
 
-
-
-
-
     public String getLatitude() {
         return Latitude;
     }
@@ -189,8 +277,6 @@ public class MITank {
     public void setLongitude(String longitude) {
         Longitude = longitude;
     }
-
-    private String Longitude;
 
     public String getDescription() {
         return Description;
@@ -209,8 +295,6 @@ public class MITank {
     }
 
     private Bitmap Image;
-
-
 
     public String getPvCode() {
         return PvCode;

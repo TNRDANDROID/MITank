@@ -497,7 +497,7 @@ public class Utils {
 
     public static JSONObject tankPondListJsonParams() throws JSONException {
         JSONObject dataSet = new JSONObject();
-        dataSet.put(AppConstant.KEY_SERVICE_ID, AppConstant.KEY_MI_TANK_STRUCTURE);
+        dataSet.put(AppConstant.KEY_SERVICE_ID, AppConstant.KEY_MI_TANK_DATA);
         Log.d("object", "" + dataSet);
         return dataSet;
     }

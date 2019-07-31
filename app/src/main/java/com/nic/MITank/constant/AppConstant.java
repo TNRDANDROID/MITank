@@ -56,6 +56,28 @@ public class AppConstant {
     public static String PMAY_ID = "pmay_id";
     public static String KEY_PMAY_SOURCE_DATA_PHOTO = "pmay_source_data_photo";
 
+    /********** MI TANK STRUCTURE TABLE ***********/
+
+    public static String MI_TANK_STRUCTURE_ID = "mi_tank_structure_id";
+    public static String MI_TANK_STRUCTURE_NAME = "mi_tank_structure_name";
+
+    /********** MI TANK DATA TABLE ***********/
+
+    public static String MI_TANK_SURVEY_ID = "mi_tank_survey_id";
+    public static String MINOR_IRRIGATION_TYPE = "minor_irrigation_type";
+    public static String NAME_OF_THE_MI_TANK = "name_of_the_mi_tank";
+    public static String LOCAL_NAME = "local_name";
+    public static String AREA = "area";
+
+    /********** STRUCTURES ***********/
+
+    public static String STRUCTURES = "structures";
+    public static String MI_TANK_STRUCTURE_DETAIL_ID = "mi_tank_structure_detail_id";
+    public static String MI_TANK_STRUCTURE_SERIAL_ID = "mi_tank_structure_serial_id";
+    public static String MI_TANK_CONDITION_ID = "mi_tank_condition_id";
+    public static String MI_TANK_CONDITION_NAME = "mi_tank_condition_name";
+    public static String MI_TANK_SKILL_LEVEL = "mi_tank_sill_level";
+
 
 
 

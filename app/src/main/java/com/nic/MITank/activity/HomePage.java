@@ -252,12 +252,29 @@ public class HomePage extends AppCompatActivity implements Api.ServerResponseLis
         }
     }
 
+    public void getTankPondStructureList() {
+        try {
+            new ApiService(this).makeJSONObjectRequest("TankPondStructure", Api.Method.POST, UrlGenerator.getTankPondListUrl(), tankPondStructureListJsonParams(), "not cache", this);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+    }
+
     public JSONObject tankPondListJsonParams() throws JSONException {
         String authKey = Utils.encrypt(prefManager.getUserPassKey(), getResources().getString(R.string.init_vector), Utils.tankPondListJsonParams().toString());
         JSONObject dataSet = new JSONObject();
         dataSet.put(AppConstant.KEY_USER_NAME, prefManager.getUserName());
         dataSet.put(AppConstant.DATA_CONTENT, authKey);
         Log.d("tankPondList", "" + authKey);
+        return dataSet;
+    }
+
+    public JSONObject tankPondStructureListJsonParams() throws JSONException {
+        String authKey = Utils.encrypt(prefManager.getUserPassKey(), getResources().getString(R.string.init_vector), Utils.tankPondStructureListJsonParams().toString());
+        JSONObject dataSet = new JSONObject();
+        dataSet.put(AppConstant.KEY_USER_NAME, prefManager.getUserName());
+        dataSet.put(AppConstant.DATA_CONTENT, authKey);
+        Log.d("tankPondStructure", "" + authKey);
         return dataSet;
     }
 
@@ -273,7 +290,20 @@ public class HomePage extends AppCompatActivity implements Api.ServerResponseLis
                 String responseDecryptedBlockKey = Utils.decrypt(prefManager.getUserPassKey(), key);
                 JSONObject jsonObject = new JSONObject(responseDecryptedBlockKey);
                 if (jsonObject.getString("STATUS").equalsIgnoreCase("OK") && jsonObject.getString("RESPONSE").equalsIgnoreCase("OK")) {
-//                    new InsertPMAYTask().execute(jsonObject);
+                    insertMiTankData(jsonObject.getJSONArray(AppConstant.JSON_DATA));
+
+                } else if (jsonObject.getString("STATUS").equalsIgnoreCase("OK") && jsonObject.getString("RESPONSE").equalsIgnoreCase("NO_RECORD") && jsonObject.getString("MESSAGE").equalsIgnoreCase("NO_RECORD")) {
+                    Utils.showAlert(this, "No Record Found!");
+                }
+
+            }
+
+            if ("TankPondStructure".equals(urlType) && responseObj != null) {
+                String key = responseObj.getString(AppConstant.ENCODE_DATA);
+                String responseDecryptedBlockKey = Utils.decrypt(prefManager.getUserPassKey(), key);
+                JSONObject jsonObject = new JSONObject(responseDecryptedBlockKey);
+                if (jsonObject.getString("STATUS").equalsIgnoreCase("OK") && jsonObject.getString("RESPONSE").equalsIgnoreCase("OK")) {
+                    new InsertTankStructureTask().execute(jsonObject);
 
                 } else if (jsonObject.getString("STATUS").equalsIgnoreCase("OK") && jsonObject.getString("RESPONSE").equalsIgnoreCase("NO_RECORD") && jsonObject.getString("MESSAGE").equalsIgnoreCase("NO_RECORD")) {
                     Utils.showAlert(this, "No Record Found!");
@@ -336,60 +366,124 @@ public class HomePage extends AppCompatActivity implements Api.ServerResponseLis
 //    }
 
 
-//    public class InsertPMAYTask extends AsyncTask<JSONObject, Void, Void> {
-//
-//        @Override
-//        protected Void doInBackground(JSONObject... params) {
-//            dbData.deletePMAYTable();
-//            dbData.open();
-//            ArrayList<MITank> all_pmayListCount = dbData.getAll_PMAYList("", "");
-//            if (all_pmayListCount.size() <= 0) {
-//                if (params.length > 0) {
-//                    JSONArray jsonArray = new JSONArray();
-//                    try {
-//                        jsonArray = params[0].getJSONArray(AppConstant.JSON_DATA);
-//                    } catch (JSONException e) {
-//                        e.printStackTrace();
-//                    }
-//                    for (int i = 0; i < jsonArray.length(); i++) {
-//                        MITank pmaySurvey = new MITank();
-//                        try {
-//                            pmaySurvey.setPvCode(jsonArray.getJSONObject(i).getString(AppConstant.PV_CODE));
-//                            pmaySurvey.setHabCode(jsonArray.getJSONObject(i).getString(AppConstant.HAB_CODE));
-//                            pmaySurvey.setBeneficiaryName(jsonArray.getJSONObject(i).getString(AppConstant.BENEFICIARY_NAME));
-//                            pmaySurvey.setSeccId(jsonArray.getJSONObject(i).getString(AppConstant.SECC_ID));
-//                            pmaySurvey.setHabitationName(jsonArray.getJSONObject(i).getString(AppConstant.HABITATION_NAME));
-//                            pmaySurvey.setPvName(jsonArray.getJSONObject(i).getString(AppConstant.PV_NAME));
-//
-//                            dbData.insertPMAY(pmaySurvey);
-//                        } catch (JSONException e) {
-//                            e.printStackTrace();
-//                        }
-//
-//                    }
-//                }
-//
-//            }
-//            return null;
-//        }
-//
-//    }
-public void checkFields() {
-    if (!"Select Village".equalsIgnoreCase(Village.get(homeScreenBinding.villageSpinner.getSelectedItemPosition()).getPvName())) {
-        if (!"Select Habitation".equalsIgnoreCase(Habitation.get(homeScreenBinding.habitationSpinner.getSelectedItemPosition()).getHabitationName())) {
-            if((!homeScreenBinding.all.isChecked()) || (!homeScreenBinding.miTanks.isChecked()) || (!homeScreenBinding.ponds.isChecked())){
-                tanksPondsTitleScreen();
+    public class InsertTankStructureTask extends AsyncTask<JSONObject, Void, Void> {
+
+        @Override
+        protected Void doInBackground(JSONObject... params) {
+            dbData.deleteTankStructure();
+            dbData.open();
+            ArrayList<MITank> all_pmayListCount = dbData.getAllTankStructure();
+            if (all_pmayListCount.size() <= 0) {
+                if (params.length > 0) {
+                    JSONArray jsonArray = new JSONArray();
+                    try {
+                        jsonArray = params[0].getJSONArray(AppConstant.JSON_DATA);
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                    for (int i = 0; i < jsonArray.length(); i++) {
+                        MITank tankStructure = new MITank();
+                        try {
+                            tankStructure.setMiTankStructureId(jsonArray.getJSONObject(i).getString(AppConstant.MI_TANK_STRUCTURE_ID));
+                            tankStructure.setMiTankStructureName(jsonArray.getJSONObject(i).getString(AppConstant.MI_TANK_STRUCTURE_NAME));
+
+                            dbData.insertTankStructure(tankStructure);
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+
+                    }
+                }
+
             }
-            else{
-                Utils.showAlert(this, "Select MI Tanks/Ponds");
+            return null;
+        }
+
+    }
+
+    public void insertMiTankData(JSONArray tankdataArray) {
+
+        dbData.open();
+        if (Utils.isOnline()) {
+            dbData.deleteMITankData();
+            dbData.deleteStructures();
+        }
+        dbData.open();
+        ArrayList<MITank> tankData_count = dbData.getAllMITankData();
+        if(tankData_count.size() <= 0) {
+            for (int i = 0; i < tankdataArray.length(); i++) {
+                MITank miTankValue = new MITank();
+                try {
+
+
+                    miTankValue.setDistictCode(tankdataArray.getJSONObject(i).getString(AppConstant.DISTRICT_CODE));
+                    miTankValue.setBlockCode(tankdataArray.getJSONObject(i).getString(AppConstant.BLOCK_CODE));
+                    miTankValue.setPvCode(tankdataArray.getJSONObject(i).getString(AppConstant.PV_CODE));
+                    miTankValue.setHabCode(tankdataArray.getJSONObject(i).getString(AppConstant.HAB_CODE));
+                    miTankValue.setMiTankSurveyId(tankdataArray.getJSONObject(i).getString(AppConstant.MI_TANK_SURVEY_ID));
+                    miTankValue.setMinorIrrigationType(tankdataArray.getJSONObject(i).getString(AppConstant.MINOR_IRRIGATION_TYPE));
+                    miTankValue.setNameOftheMITank(tankdataArray.getJSONObject(i).getString(AppConstant.NAME_OF_THE_MI_TANK));
+                    miTankValue.setLocalName(tankdataArray.getJSONObject(i).getString(AppConstant.LOCAL_NAME));
+                    miTankValue.setArea(tankdataArray.getJSONObject(i).getString(AppConstant.AREA));
+
+                    dbData.insertMITankData(miTankValue);
+
+                    JSONArray structureArray = tankdataArray.getJSONObject(i).getJSONArray(AppConstant.STRUCTURES);
+                    new InsertStructureTask().execute(structureArray);
+
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+    }
+
+    public class  InsertStructureTask extends AsyncTask<JSONArray ,Void ,Void> {
+
+        @Override
+        protected Void doInBackground(JSONArray... params) {
+            dbData.open();
+            if (params.length > 0) {
+                JSONArray jsonArray = params[0];
+                for (int i = 0; i < jsonArray.length(); i++) {
+                    MITank sturctureValue = new MITank();
+                    try {
+                        sturctureValue.setMiTankStructureDetailId(jsonArray.getJSONObject(i).getString(AppConstant.MI_TANK_STRUCTURE_DETAIL_ID));
+                        sturctureValue.setMiTankSurveyId(jsonArray.getJSONObject(i).getString(AppConstant.MI_TANK_SURVEY_ID));
+                        sturctureValue.setMiTankStructureId(jsonArray.getJSONObject(i).getString(AppConstant.MI_TANK_STRUCTURE_ID));
+                        sturctureValue.setMiTankStructureSerialId(jsonArray.getJSONObject(i).getString(AppConstant.MI_TANK_STRUCTURE_SERIAL_ID));
+                        sturctureValue.setMiTankConditionId(jsonArray.getJSONObject(i).getString(AppConstant.MI_TANK_CONDITION_ID));
+                        sturctureValue.setMiTankConditionName(jsonArray.getJSONObject(i).getString(AppConstant.MI_TANK_CONDITION_NAME));
+                        sturctureValue.setMiTankSkillLevel(jsonArray.getJSONObject(i).getString(AppConstant.MI_TANK_SKILL_LEVEL));
+                        sturctureValue.setMiTankStructureName(jsonArray.getJSONObject(i).getString(AppConstant.MI_TANK_STRUCTURE_NAME));
+                        dbData.insertStructure(sturctureValue);
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+
+                }
+            }
+
+            return null;
+        }
+    }
+
+    public void checkFields() {
+        if (!"Select Village".equalsIgnoreCase(Village.get(homeScreenBinding.villageSpinner.getSelectedItemPosition()).getPvName())) {
+            if (!"Select Habitation".equalsIgnoreCase(Habitation.get(homeScreenBinding.habitationSpinner.getSelectedItemPosition()).getHabitationName())) {
+                if((!homeScreenBinding.all.isChecked()) || (!homeScreenBinding.miTanks.isChecked()) || (!homeScreenBinding.ponds.isChecked())){
+                    tanksPondsTitleScreen();
+                }
+                else{
+                    Utils.showAlert(this, "Select MI Tanks/Ponds");
+                }
+            } else {
+                Utils.showAlert(this, "Select Habitation!");
             }
         } else {
-            Utils.showAlert(this, "Select Habitation!");
+            Utils.showAlert(this, "Select Village!");
         }
-    } else {
-        Utils.showAlert(this, "Select Village!");
     }
-}
 
     public void tanksPondsTitleScreen() {
         Intent intent = new Intent(this, TanksPondsTitleScreen.class);
