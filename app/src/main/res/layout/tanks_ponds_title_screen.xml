@@ -1,0 +1,170 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout>
+    <data>
+        <variable
+            name="activity"
+            type="com.nic.MITank.activity.TanksPondsTitleScreen" />
+    </data>
+
+<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#EFEFEF">
+
+    <com.google.android.material.appbar.AppBarLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:fitsSystemWindows="true"
+        android:id="@+id/appbar"
+        android:theme="@style/AppTheme.AppBarOverlay">
+
+        <com.google.android.material.appbar.CollapsingToolbarLayout
+            android:layout_width="match_parent"
+            android:id="@+id/ctolbar"
+            android:fitsSystemWindows="true"
+            app:contentScrim="@color/colorPrimary"
+            app:expandedTitleMargin="5dp"
+            app:layout_scrollFlags="scroll|exitUntilCollapsed|snap"
+            android:layout_height="200dp">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@drawable/background"
+                android:orientation="vertical"
+                android:paddingTop="16dp">
+
+                <RelativeLayout
+                    android:id="@+id/rltop"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:paddingLeft="10dp"
+                    android:layout_gravity="center_horizontal">
+
+                    <TextView
+                        android:id="@+id/tvtitle"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_horizontal"
+                        android:layout_marginTop="8dp"
+                        android:fontFamily="sans-serif"
+                        android:letterSpacing="0.1"
+                        android:text="Select Items"
+                        android:visibility="visible"
+                        android:textColor="@android:color/white"
+                        android:textSize="25dp"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:id="@+id/tv_title_count"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_horizontal"
+                        android:fontFamily="sans-serif"
+                        android:letterSpacing="0.1"
+                        android:text="15 items"
+                        android:layout_below="@+id/tvtitle"
+                        android:textColor="@android:color/white"
+                        android:textSize="13dp" />
+
+
+                </RelativeLayout>
+
+            </LinearLayout>
+
+
+            <androidx.appcompat.widget.Toolbar
+                android:id="@+id/toolbar"
+                android:layout_width="match_parent"
+                android:layout_height="?attr/actionBarSize"
+                app:layout_collapseMode="pin"
+                app:title="My Profile"
+                app:popupTheme="@style/ThemeOverlay.AppCompat.Light" />
+
+        </com.google.android.material.appbar.CollapsingToolbarLayout>
+    </com.google.android.material.appbar.AppBarLayout>
+
+    <androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        app:behavior_overlapTop="100dp"
+        app:layout_anchor="@id/appbar"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:focusableInTouchMode="true"
+            android:orientation="vertical"
+            tools:context=".MainActivity"
+            tools:showIn="@layout/tanks_ponds_title_screen">
+
+<!--
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/gradient"
+                android:orientation="vertical"
+                android:paddingTop="16dp"
+                android:paddingBottom="16dp">
+
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="100dp"
+                    android:paddingLeft="10dp"
+                    android:layout_gravity="center_horizontal">
+
+                    <TextView
+                        android:id="@+id/tvtitle"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_horizontal"
+                        android:layout_marginTop="8dp"
+                        android:fontFamily="sans-serif"
+                        android:letterSpacing="0.1"
+                        android:text="My Dashboard"
+                        android:textColor="@android:color/white"
+                        android:textSize="25dp"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:id="@+id/tvdesc"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_horizontal"
+                        android:fontFamily="sans-serif"
+                        android:letterSpacing="0.1"
+                        android:text="15 items"
+                        android:layout_below="@+id/tvtitle"
+                        android:textColor="@android:color/white"
+                        android:textSize="13dp" />
+
+                    <ImageView
+                        android:id="@+id/profile_image"
+                        android:layout_width="25dp"
+                        android:layout_height="25dp"
+                        android:background="@drawable/ic_launcher_foreground"
+                        android:layout_marginRight="10dp"
+                        android:layout_alignParentRight="true"
+                        android:layout_centerHorizontal="true" />
+
+                </RelativeLayout>
+
+            </LinearLayout>
+-->
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/recycler_view"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent" />
+
+        </LinearLayout>
+
+    </androidx.core.widget.NestedScrollView>
+
+</androidx.coordinatorlayout.widget.CoordinatorLayout>
+</layout>

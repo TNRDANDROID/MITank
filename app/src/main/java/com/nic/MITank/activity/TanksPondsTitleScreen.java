@@ -1,0 +1,124 @@
+package com.nic.MITank.activity;
+
+import android.app.Activity;
+import android.content.res.Resources;
+import android.graphics.Rect;
+import android.os.Bundle;
+import android.util.TypedValue;
+import android.view.View;
+
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.databinding.DataBindingUtil;
+import androidx.recyclerview.widget.DefaultItemAnimator;
+import androidx.recyclerview.widget.GridLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+
+import com.google.android.material.appbar.AppBarLayout;
+import com.nic.MITank.R;
+import com.nic.MITank.adapter.TanksPondsTitleAdapter;
+import com.nic.MITank.databinding.TanksPondsTitleScreenBinding;
+import com.nic.MITank.model.MITank;
+
+import java.util.ArrayList;
+import java.util.List;
+
+public class TanksPondsTitleScreen extends AppCompatActivity {
+
+    public TanksPondsTitleScreenBinding tanksPondsTitleScreenBinding;
+    boolean ExpandedActionBar = true;
+    private TanksPondsTitleAdapter tanksPondsTitleAdapter;
+    private List<MITank> TanksPondsTitle;
+    @Override
+    protected void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        tanksPondsTitleScreenBinding = DataBindingUtil.setContentView(this, R.layout.tanks_ponds_title_screen);
+        tanksPondsTitleScreenBinding.setActivity(this);
+        setSupportActionBar(tanksPondsTitleScreenBinding.toolbar);
+        tanksPondsTitleScreenBinding.ctolbar.setTitle("");
+
+        tanksPondsTitleScreenBinding.appbar.addOnOffsetChangedListener(new AppBarLayout.OnOffsetChangedListener() {
+            boolean isShow = false;
+            int scrollRange = -1;
+            @Override
+            public void onOffsetChanged(AppBarLayout appBarLayout, int verticalOffset) {
+
+                if (Math.abs(verticalOffset) > 200){
+                    ExpandedActionBar = false;
+                    tanksPondsTitleScreenBinding.ctolbar.setTitle("Select Items");
+                    tanksPondsTitleScreenBinding.rltop.setVisibility(View.GONE);
+                    invalidateOptionsMenu();
+                } else {
+                    ExpandedActionBar = true;
+                    tanksPondsTitleScreenBinding.ctolbar.setTitle("");
+                    tanksPondsTitleScreenBinding.rltop.setVisibility(View.VISIBLE);
+                    invalidateOptionsMenu();
+                }
+            }
+        });
+
+        TanksPondsTitle = new ArrayList<>();
+        tanksPondsTitleAdapter = new TanksPondsTitleAdapter(this,TanksPondsTitle);
+        RecyclerView.LayoutManager mLayoutManager = new GridLayoutManager(this, 2);
+        tanksPondsTitleScreenBinding.recyclerView.setLayoutManager(mLayoutManager);
+        tanksPondsTitleScreenBinding.recyclerView.addItemDecoration(new GridSpacingItemDecoration(2, dpToPx(10), true));
+        tanksPondsTitleScreenBinding.recyclerView.setItemAnimator(new DefaultItemAnimator());
+        tanksPondsTitleScreenBinding.recyclerView.setAdapter(tanksPondsTitleAdapter);
+    }
+
+    public class GridSpacingItemDecoration extends RecyclerView.ItemDecoration {
+
+        private int spanCount;
+        private int spacing;
+        private boolean includeEdge;
+
+        public GridSpacingItemDecoration(int spanCount, int spacing, boolean includeEdge) {
+            this.spanCount = spanCount;
+            this.spacing = spacing;
+            this.includeEdge = includeEdge;
+        }
+
+        @Override
+        public void getItemOffsets(Rect outRect, View view, RecyclerView parent, RecyclerView.State state) {
+            int position = parent.getChildAdapterPosition(view); // item position
+            int column = position % spanCount; // item column
+
+            if (includeEdge) {
+                outRect.left = spacing - column * spacing / spanCount; // spacing - column * ((1f / spanCount) * spacing)
+                outRect.right = (column + 1) * spacing / spanCount; // (column + 1) * ((1f / spanCount) * spacing)
+
+                if (position < spanCount) { // top edge
+                    outRect.top = spacing;
+                }
+                outRect.bottom = spacing; // item bottom
+            } else {
+                outRect.left = column * spacing / spanCount; // column * ((1f / spanCount) * spacing)
+                outRect.right = spacing - (column + 1) * spacing / spanCount; // spacing - (column + 1) * ((1f /    spanCount) * spacing)
+                if (position >= spanCount) {
+                    outRect.top = spacing; // item top
+                }
+            }
+        }
+    }
+
+    /**
+     * Converting dp to pixel
+     */
+    public int dpToPx(int dp) {
+        Resources r = getResources();
+        return Math.round(TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, dp, r.getDisplayMetrics()));
+    }
+
+    public void onBackPress() {
+        super.onBackPressed();
+        setResult(Activity.RESULT_CANCELED);
+        overridePendingTransition(R.anim.slide_enter, R.anim.slide_exit);
+    }
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        overridePendingTransition(R.anim.slide_enter, R.anim.slide_exit);
+    }
+
+}

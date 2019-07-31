@@ -171,43 +171,151 @@
 
                 </RelativeLayout>
 
-
-
-            <RelativeLayout
-                android:id="@+id/tank_pond_layout"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_below="@+id/hab_layout"
-                android:orientation="vertical">
-
-
-                <androidx.recyclerview.widget.RecyclerView
-                    android:id="@+id/tank_pond_list"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_margin="5dp"
-                    android:fadeScrollbars="false"
-                    android:scrollbarSize="4dp"
-                    android:scrollbars="vertical"/>
-
                 <TextView
-                    android:id="@+id/not_found_tv"
+                    android:id="@+id/select_filter_tv"
+                    style="@string/font_circular_bold"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_below="@+id/tank_pond_list"
-                    android:text="No Projects Found!"
-                    android:textAlignment="center"
+                    android:layout_below="@+id/hab_layout"
+                    android:layout_marginLeft="@dimen/margin_left_20dp"
+                    android:layout_marginTop="@dimen/padding"
+                    android:layout_marginRight="@dimen/margin_left_20dp"
+                    android:text="Select MITank/Ponds/Uranis"
                     android:textColor="@android:color/black"
-                    android:textSize="@dimen/_16sdp"
-                    android:textStyle="bold"
-                    android:visibility="gone" />
-            </RelativeLayout>
+                    android:textSize="@dimen/_15sdp" />
+                <RelativeLayout
+                    android:id="@+id/start_activity"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/padding"
+                    android:layout_below="@+id/select_filter_tv">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+
+                        android:orientation="horizontal">
+
+                        <LinearLayout
+                            android:layout_width="0dp"
+                            android:layout_height="match_parent"
+                            android:layout_weight="3"
+                            android:gravity="center"
+                            android:orientation="vertical">
+
+                            <RelativeLayout
+
+                                android:layout_width="100dp"
+                                android:layout_height="@dimen/header"
+                                android:layout_gravity="center"
+
+                                android:background="@drawable/rectangle_box"
+                                android:gravity="center"
+                                android:orientation="horizontal">
+
+
+                                <CheckBox
+                                    android:id="@+id/all"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_alignParentStart="true"
+                                    android:layout_centerInParent="true"
+                                    android:layout_marginRight="@dimen/_40sdp"
+                                    android:checked="true"
+                                    android:gravity="center"
+                                    android:text="All "
+                                    android:textColor="@android:color/black"
+                                    android:textSize="13sp" />
+
+
+                            </RelativeLayout>
+
+                        </LinearLayout>
+
+
+                        <LinearLayout
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="3"
+                            android:gravity="center"
+                            android:orientation="vertical">
+
+                            <RelativeLayout
+
+                                android:layout_width="100dp"
+                                android:layout_height="@dimen/header"
+                                android:layout_below="@+id/hab_layout"
+
+
+                                android:background="@drawable/rectangle_box"
+                                android:layout_gravity="center"
+                                android:orientation="horizontal">
+
+                                <CheckBox
+                                    android:id="@+id/mi_tanks"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:layout_alignParentStart="true"
+                                    android:layout_centerInParent="true"
+                                    android:text="MI Tank"
+                                    android:textColor="@android:color/black"
+                                    android:textSize="13sp" />
+
+
+                            </RelativeLayout>
+                        </LinearLayout>
+
+
+                        <LinearLayout
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="3"
+                            android:gravity="center"
+                            android:orientation="vertical">
+
+                            <RelativeLayout
+
+                                android:layout_width="100dp"
+                                android:layout_height="@dimen/header"
+                                android:background="@drawable/rectangle_box"
+                                android:layout_gravity="center"
+                                android:orientation="horizontal">
+
+
+                                <CheckBox
+                                    android:id="@+id/ponds"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:layout_centerInParent="true"
+                                    android:layout_centerHorizontal="true"
+                                    android:text="Ponds"
+                                    android:textColor="@android:color/black"
+                                    android:textSize="13sp" />
+
+
+                            </RelativeLayout>
+                        </LinearLayout>
+                    </LinearLayout>
+                </RelativeLayout>
+
+                <ImageButton
+                    android:id="@+id/next"
+                    android:layout_width="50dp"
+                    android:layout_height="50dp"
+                    android:layout_below="@+id/start_activity"
+                    android:layout_alignParentEnd="true"
+                    android:layout_gravity="end"
+                    android:layout_marginTop="50dp"
+                    android:layout_marginEnd="25dp"
+                    android:background="@drawable/button_background"
+                    android:onClick="@{()-> activity.checkFields()}"
+                    android:src="@drawable/ic_arrow_forward_black_24dp" />
 
                 <RelativeLayout
                     android:id="@+id/syn_data"
                     android:layout_width="140dp"
                     android:layout_height="45dp"
-                    android:layout_below="@+id/tank_pond_layout"
+                    android:layout_below="@+id/next"
                     android:layout_centerHorizontal="true"
                     android:layout_marginTop="@dimen/padding"
                     android:background="@drawable/rectangle_box"
