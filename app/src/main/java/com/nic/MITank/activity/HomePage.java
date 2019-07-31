@@ -13,6 +13,7 @@ import android.view.KeyEvent;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.AdapterView;
+import android.widget.CompoundButton;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
@@ -105,6 +106,35 @@ public class HomePage extends AppCompatActivity implements Api.ServerResponseLis
 
             @Override
             public void onNothingSelected(AdapterView<?> parent) {
+
+            }
+        });
+        homeScreenBinding.all.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                if (isChecked) {
+                    homeScreenBinding.miTanks.setChecked(false);
+                    homeScreenBinding.ponds.setChecked(false);
+
+                }
+            }
+        });
+        homeScreenBinding.miTanks.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                if (isChecked) {
+                    homeScreenBinding.ponds.setChecked(false);
+                    homeScreenBinding.all.setChecked(false);
+                }
+            }
+        });
+        homeScreenBinding.ponds.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                if (isChecked) {
+                    homeScreenBinding.all.setChecked(false);
+                    homeScreenBinding.miTanks.setChecked(false);
+                }
 
             }
         });
@@ -344,5 +374,26 @@ public class HomePage extends AppCompatActivity implements Api.ServerResponseLis
 //        }
 //
 //    }
+public void checkFields() {
+    if (!"Select Village".equalsIgnoreCase(Village.get(homeScreenBinding.villageSpinner.getSelectedItemPosition()).getPvName())) {
+        if (!"Select Habitation".equalsIgnoreCase(Habitation.get(homeScreenBinding.habitationSpinner.getSelectedItemPosition()).getHabitationName())) {
+            if((!homeScreenBinding.all.isChecked()) || (!homeScreenBinding.miTanks.isChecked()) || (!homeScreenBinding.ponds.isChecked())){
+                tanksPondsTitleScreen();
+            }
+            else{
+                Utils.showAlert(this, "Select MI Tanks/Ponds");
+            }
+        } else {
+            Utils.showAlert(this, "Select Habitation!");
+        }
+    } else {
+        Utils.showAlert(this, "Select Village!");
+    }
+}
 
+    public void tanksPondsTitleScreen() {
+        Intent intent = new Intent(this, TanksPondsTitleScreen.class);
+        startActivity(intent);
+        overridePendingTransition(R.anim.slide_in, R.anim.slide_out);
+    }
 }

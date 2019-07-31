@@ -3,7 +3,7 @@
     <data>
         <variable
             name="activity"
-            type="com.nic.MITank.activity.TanksPondsTitleScreen" />
+            type="com.nic.MITank.activity.TanksPondsListScreen" />
     </data>
 
 <androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
@@ -44,13 +44,14 @@
                     android:layout_gravity="center_horizontal">
 
                     <TextView
+                        android:id="@+id/tvtitle"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_gravity="center_horizontal"
                         android:layout_marginTop="8dp"
                         android:fontFamily="sans-serif"
                         android:letterSpacing="0.1"
-                        android:text="Tank list"
+                        android:text="Select Items"
                         android:visibility="visible"
                         android:textColor="@android:color/white"
                         android:textSize="25dp"
@@ -80,39 +81,7 @@
                 android:layout_height="?attr/actionBarSize"
                 app:layout_collapseMode="pin"
                 app:title="My Profile"
-                app:popupTheme="@style/ThemeOverlay.AppCompat.Light" >
-                <RelativeLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content">
-
-
-                    <TextView
-                        android:id="@+id/title_tv"
-                        style="@style/font_circular_bold"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_centerInParent="true"
-                        android:text="Select Tank"
-                        android:textColor="@android:color/white"
-                        android:textSize="@dimen/_15sdp" />
-
-
-                    <ImageView
-                        android:id="@+id/log_out"
-                        android:layout_width="30dp"
-                        android:layout_height="30dp"
-                        android:layout_centerInParent="true"
-                        android:layout_alignParentRight="true"
-                        android:layout_marginTop="15dp"
-                        android:layout_marginRight="15dp"
-                        android:adjustViewBounds="true"
-                        android:scaleType="centerInside"
-                        android:src="@mipmap/log_out" />
-
-                </RelativeLayout>
-
-
-            </androidx.appcompat.widget.Toolbar>
+                app:popupTheme="@style/ThemeOverlay.AppCompat.Light" />
 
         </com.google.android.material.appbar.CollapsingToolbarLayout>
     </com.google.android.material.appbar.AppBarLayout>
