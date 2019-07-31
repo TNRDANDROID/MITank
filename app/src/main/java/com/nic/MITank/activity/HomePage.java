@@ -140,6 +140,7 @@ public class HomePage extends AppCompatActivity implements Api.ServerResponseLis
         });
         if (Utils.isOnline()) {
             getTankPondList();
+            getTankPondStructureList();
         }
 
     }
