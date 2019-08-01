@@ -98,8 +98,7 @@ public class HomePage extends AppCompatActivity implements Api.ServerResponseLis
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 if (position > 0) {
 
-                    pref_Village = Village.get(position).getHabitationName();
-                    prefManager.setHabCode(Village.get(position).getHabCode());
+                    prefManager.setHabCode(Habitation.get(position).getHabCode());
 
                 }
             }
@@ -138,7 +137,7 @@ public class HomePage extends AppCompatActivity implements Api.ServerResponseLis
 
             }
         });
-        if (Utils.isOnline()) {
+        if (Utils.isOnline() && !isHome.equalsIgnoreCase("Home")) {
             getTankPondList();
             getTankPondStructureList();
         }
@@ -410,7 +409,7 @@ public class HomePage extends AppCompatActivity implements Api.ServerResponseLis
             dbData.deleteStructures();
         }
         dbData.open();
-        ArrayList<MITank> tankData_count = dbData.getAllMITankData();
+        ArrayList<MITank> tankData_count = dbData.getAllMITankData("insert","","","","","");
         if(tankData_count.size() <= 0) {
             for (int i = 0; i < tankdataArray.length(); i++) {
                 MITank miTankValue = new MITank();
@@ -487,6 +486,18 @@ public class HomePage extends AppCompatActivity implements Api.ServerResponseLis
     }
 
     public void tanksPondsTitleScreen() {
+        String checkboxvalue = "";
+        if(homeScreenBinding.all.isChecked()){
+            checkboxvalue = "all";
+        }
+        else if(homeScreenBinding.miTanks.isChecked()){
+            checkboxvalue = "1";
+        }
+        else if(homeScreenBinding.ponds.isChecked()){
+            checkboxvalue = "2";
+        }
+        prefManager.setCheckBoxClicked(checkboxvalue);
+
         Intent intent = new Intent(this, TanksPondsTitleScreen.class);
         startActivity(intent);
         overridePendingTransition(R.anim.slide_in, R.anim.slide_out);

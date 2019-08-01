@@ -58,6 +58,7 @@ public class PrefManager {
     private static final String SCHEDULE_MASTER_ID = "schedule_master_id";
     private static final String KEY_DELETE_ID = "deleteId";
     private static final String KEY_DELETE_POSITION = "deletePosition";
+    private static final String CHECK_BOX_CLICKED = "checkboxvalue";
 
 
     public PrefManager(Context context) {
@@ -351,6 +352,15 @@ public class PrefManager {
 
     public String getVillageListPvName() {
         return pref.getString(KEY_VILLAGE_LIST_PV_NAME, null);
+    }
+
+    public void setCheckBoxClicked(String key) {
+        editor.putString(CHECK_BOX_CLICKED,  key);
+        editor.commit();
+    }
+
+    public String getCheckBoxClicked() {
+        return pref.getString(CHECK_BOX_CLICKED, null);
     }
 
 }

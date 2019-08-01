@@ -15,6 +15,7 @@ import com.nic.MITank.session.PrefManager;
 
 import org.json.JSONObject;
 
+import java.util.ArrayList;
 import java.util.List;
 
 
@@ -22,17 +23,16 @@ public class TanksPondsListAdapter extends RecyclerView.Adapter<TanksPondsListAd
 
     private static Activity context;
     private PrefManager prefManager;
-    private List<MITank> miTankList;
+    private ArrayList<MITank> miTankData;
     static JSONObject dataset = new JSONObject();
 
     private LayoutInflater layoutInflater;
 
-    public TanksPondsListAdapter(Activity context, List<MITank> miTankList) {
+    public TanksPondsListAdapter(Activity context, ArrayList<MITank> miTankList) {
 
         this.context = context;
         prefManager = new PrefManager(context);
-
-        this.miTankList = miTankList;
+        this.miTankData = miTankList;
     }
 
     @Override
@@ -59,13 +59,15 @@ public class TanksPondsListAdapter extends RecyclerView.Adapter<TanksPondsListAd
 
     @Override
     public void onBindViewHolder(@NonNull final MyViewHolder holder, final int position) {
-//        holder.tanksPondsTitleAdapterBinding.tvtitle.setText(miTankList.get(position).getTitle());
+       holder.tanksPondsListAdapterBinding.nameOfTank.setText(miTankData.get(position).getNameOftheMITank());
+       holder.tanksPondsListAdapterBinding.localName.setText(miTankData.get(position).getLocalName());
+       holder.tanksPondsListAdapterBinding.area.setText(miTankData.get(position).getArea()+" hectare");
 
     }
 
     @Override
     public int getItemCount() {
-        return 6;
+        return miTankData.size();
     }
 
 

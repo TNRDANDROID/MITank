@@ -198,14 +198,29 @@ public class dbData {
         return miTank;
     }
 
-    public ArrayList<MITank > getAllMITankData() {
+    public ArrayList<MITank > getAllMITankData(String purpose,String dcode,String bcode,String pvcode,String habcode,String checkboxvalue) {
 
         ArrayList<MITank > cards = new ArrayList<>();
         Cursor cursor = null;
+        String selection = null;
+        String[] selectionArgs = null;
+
+       if(purpose.equals("fetch")){
+
+           if(checkboxvalue.equals("all")){
+               selection = "dcode = ? and bcode = ? and pvcode = ? and habcode = ? ";
+               selectionArgs = new String[]{dcode,bcode,pvcode,habcode};
+           }else {
+               selection = "dcode = ? and bcode = ? and pvcode = ? and habcode = ? and minor_irrigation_type = ?";
+               selectionArgs = new String[]{dcode,bcode,pvcode,habcode,checkboxvalue};
+           }
+
+        }
+
 
         try {
             cursor = db.query(DBHelper.MI_TANK_DATA,
-                    new String[]{"*"}, null, null, null, null, null);
+                    new String[]{"*"}, selection, selectionArgs, null, null, null);
             if (cursor.getCount() > 0) {
                 while (cursor.moveToNext()) {
                     MITank  card = new MITank ();
