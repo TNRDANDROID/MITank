@@ -71,15 +71,16 @@ public class TanksPondsTitleAdapter extends RecyclerView.Adapter<TanksPondsTitle
         holder.tanksPondsTitleAdapterBinding.cardView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                tanksPondsListScreen();
+                tanksPondsListScreen(position);
             }
         });
 
     }
 
-    public void tanksPondsListScreen() {
+    public void tanksPondsListScreen(int position) {
         Activity activity = (Activity) context;
         Intent intent = new Intent(context, TanksPondsListScreen.class);
+        intent.putExtra("Title",miTankList.get(position).getMiTankStructureName());
         activity.startActivity(intent);
         activity.overridePendingTransition(R.anim.slide_in, R.anim.slide_out);
     }

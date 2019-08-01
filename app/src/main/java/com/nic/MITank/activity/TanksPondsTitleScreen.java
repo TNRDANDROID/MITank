@@ -24,7 +24,6 @@ import com.nic.MITank.databinding.TanksPondsTitleScreenBinding;
 import com.nic.MITank.model.MITank;
 
 import java.util.ArrayList;
-import java.util.List;
 
 public class TanksPondsTitleScreen extends AppCompatActivity {
 
@@ -49,7 +48,7 @@ public class TanksPondsTitleScreen extends AppCompatActivity {
 
                 if (Math.abs(verticalOffset) > 200){
                     ExpandedActionBar = false;
-                    tanksPondsTitleScreenBinding.ctolbar.setTitle("Select Items");
+                    tanksPondsTitleScreenBinding.ctolbar.setTitle("Select Structure");
                     tanksPondsTitleScreenBinding.rltop.setVisibility(View.GONE);
                     invalidateOptionsMenu();
                 } else {
@@ -69,6 +68,7 @@ public class TanksPondsTitleScreen extends AppCompatActivity {
         tanksPondsTitleScreenBinding.recyclerView.setItemAnimator(new DefaultItemAnimator());
         tanksPondsTitleScreenBinding.recyclerView.setAdapter(tanksPondsTitleAdapter);
         new fetchMITanktask().execute();
+
     }
 
     public class fetchMITanktask extends AsyncTask<Void, Void,
@@ -79,6 +79,7 @@ public class TanksPondsTitleScreen extends AppCompatActivity {
             TanksPondsTitle = new ArrayList<>();
             TanksPondsTitle = dbData.getAllTankStructure();
             Log.d("TANKS_COUNT", String.valueOf(TanksPondsTitle.size()));
+            tanksPondsTitleScreenBinding.tvTitleCount.setText(String.valueOf(TanksPondsTitle.size()).concat(" Items"));
             return TanksPondsTitle;
         }
 
