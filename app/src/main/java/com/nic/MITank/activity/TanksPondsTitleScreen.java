@@ -91,7 +91,7 @@ public class TanksPondsTitleScreen extends AppCompatActivity {
                 tanksPondsTitleAdapter = new TanksPondsTitleAdapter(TanksPondsTitleScreen.this,TanksPondsTitle);
                 tanksPondsTitleScreenBinding.recyclerView.setAdapter(tanksPondsTitleAdapter);
             }else {
-               // tanksPondsTitleScreenBinding.notFoundTv.setVisibility(View.VISIBLE);
+                tanksPondsTitleScreenBinding.notFoundTv.setVisibility(View.VISIBLE);
             }
 
         }

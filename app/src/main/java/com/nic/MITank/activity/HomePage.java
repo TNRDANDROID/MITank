@@ -231,6 +231,7 @@ public class HomePage extends AppCompatActivity implements Api.ServerResponseLis
                         latLongData.put(AppConstant.PV_CODE, saveLatLongLists.get(i).getPvCode());
                         latLongData.put(AppConstant.HAB_CODE, saveLatLongLists.get(i).getHabCode());
                         latLongData.put(AppConstant.KEY_POINT_TYPE, saveLatLongLists.get(i).getPointType());
+                        latLongData.put(AppConstant.KEY_POINT_SERIAL_NO, String.valueOf(saveLatLongLists.get(i).getPointSerialNo()));
                         latLongData.put(AppConstant.KEY_LATITUDE, saveLatLongLists.get(i).getLatitude());
                         latLongData.put(AppConstant.KEY_LONGITUDE, saveLatLongLists.get(i).getLongitude());
                         latLongData.put(AppConstant.MI_TANK_SURVEY_ID, saveLatLongLists.get(i).getMiTankSurveyId());
@@ -511,8 +512,6 @@ public class HomePage extends AppCompatActivity implements Api.ServerResponseLis
                 JSONObject jsonObject = new JSONObject(responseDecryptedBlockKey);
                 if (jsonObject.getString("STATUS").equalsIgnoreCase("OK") && jsonObject.getString("RESPONSE").equalsIgnoreCase("OK")) {
                     dbData.open();
-                    dbData.deleteMITankData();
-                    dbData.deleteTankStructure();
                     dbData.update_Track();
                     datasetTrack = new JSONObject();
                     Utils.showAlert(this, "Lat Long Saved");

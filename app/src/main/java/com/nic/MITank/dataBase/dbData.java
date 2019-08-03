@@ -547,6 +547,7 @@ public class dbData {
                     postLatLong.setLatitude(cursor.getString(cursor.getColumnIndexOrThrow(AppConstant.KEY_LATITUDE)));
                     postLatLong.setLongitude(cursor.getString(cursor.getColumnIndexOrThrow(AppConstant.KEY_LONGITUDE)));
                     postLatLong.setPointType(cursor.getString(cursor.getColumnIndex(AppConstant.KEY_POINT_TYPE)));
+                    postLatLong.setPointSerialNo(cursor.getInt(cursor.getColumnIndex(AppConstant.KEY_POINT_SERIAL_NO)));
 
 
                     sendPostLatLong.add(postLatLong);

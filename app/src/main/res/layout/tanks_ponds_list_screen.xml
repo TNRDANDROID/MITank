@@ -105,6 +105,7 @@
                     android:textColor="@android:color/black"
                     android:textSize="@dimen/_16sdp"
                     android:textStyle="bold"
+                    android:layout_centerInParent="true"
                     android:visibility="gone" />
 
 
