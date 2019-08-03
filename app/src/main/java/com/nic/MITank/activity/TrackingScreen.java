@@ -202,6 +202,7 @@ public class TrackingScreen extends AppCompatActivity implements LocationListene
 
             if (pointType.equalsIgnoreCase("1")) {
                 trackData.setPointType(pointType);
+                trackData.setPointSerialNo(pointSerialNo);
                 marquee_tv.setVisibility(View.VISIBLE);
                 start_lat_long_click_view.setBackgroundResource(R.drawable.start_disable_button);
                 middle_lat_long_click_view.setBackgroundResource(R.drawable.middle_button);
@@ -211,10 +212,12 @@ public class TrackingScreen extends AppCompatActivity implements LocationListene
                 marquee_tv.startAnimation(marquee);
             } else if (pointType.equalsIgnoreCase("2")) {
                 trackData.setPointType(pointType);
+                trackData.setPointSerialNo(pointSerialNo);
                 end_lat_long_click_view.setClickable(true);
                 end_lat_long_click_view.setBackgroundResource(R.drawable.end_button);
             } else {
                 trackData.setPointType(pointType);
+                trackData.setPointSerialNo(pointSerialNo);
                 start_lat_long_click_view.setBackgroundResource(R.drawable.start_button);
                 start_lat_long_click_view.setClickable(true);
             }
@@ -223,7 +226,7 @@ public class TrackingScreen extends AppCompatActivity implements LocationListene
             trackData.setBlockCode(prefManager.getBlockCode());
             trackData.setPvCode(prefManager.getPvCode());
             trackData.setHabCode(prefManager.getHabCode());
-            trackData.setPointSerialNo(pointSerialNo);
+
             trackData.setMiTankSurveyId(getIntent().getStringExtra(AppConstant.MI_TANK_SURVEY_ID));
             trackData.setLatitude(offlatTextValue.toString());
             trackData.setLongitude(offlongTextValue.toString());

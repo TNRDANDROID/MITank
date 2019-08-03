@@ -315,7 +315,7 @@ public class MITank {
     }
 
     public Integer getPointSerialNo() {
-        return 0;
+        return pointSerialNo;
     }
 
     public void setPointSerialNo(Integer pointType) {
