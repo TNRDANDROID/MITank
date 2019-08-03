@@ -422,7 +422,7 @@ public class CameraScreen extends AppCompatActivity implements View.OnClickListe
             Log.d("insIdsaveImageLatLong", String.valueOf(id));
 
         } catch (Exception e) {
-            Utils.showAlert(CameraScreen.this, "Atleast Capture one Photo");
+            Utils.showAlert(CameraScreen.this, "Please Capture Photo");
             //e.printStackTrace();
         }
     }

@@ -87,8 +87,13 @@ public class TanksPondsTitleScreen extends AppCompatActivity {
         @Override
         protected void onPostExecute(ArrayList<MITank> tanksList) {
             super.onPostExecute(tanksList);
-            tanksPondsTitleAdapter = new TanksPondsTitleAdapter(TanksPondsTitleScreen.this,TanksPondsTitle);
-            tanksPondsTitleScreenBinding.recyclerView.setAdapter(tanksPondsTitleAdapter);
+            if (tanksList.size() > 0 ) {
+                tanksPondsTitleAdapter = new TanksPondsTitleAdapter(TanksPondsTitleScreen.this,TanksPondsTitle);
+                tanksPondsTitleScreenBinding.recyclerView.setAdapter(tanksPondsTitleAdapter);
+            }else {
+               // tanksPondsTitleScreenBinding.notFoundTv.setVisibility(View.VISIBLE);
+            }
+
         }
     }
 
@@ -147,4 +152,10 @@ public class TanksPondsTitleScreen extends AppCompatActivity {
         overridePendingTransition(R.anim.slide_enter, R.anim.slide_exit);
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        tanksPondsTitleAdapter.notifyDataSetChanged();
+        tanksPondsTitleScreenBinding.recyclerView.setAdapter(tanksPondsTitleAdapter);
+    }
 }

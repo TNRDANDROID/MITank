@@ -46,13 +46,14 @@ public class FullImageActivity extends AppCompatActivity implements View.OnClick
     private PrefManager prefManager;
     private static ArrayList<MITank> activityImage = new ArrayList<>();
     private com.nic.MITank.dataBase.dbData dbData = new dbData(this);
+    String onofftype;
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         fullImageRecyclerBinding = DataBindingUtil.setContentView(this, R.layout.full_image_recycler);
         fullImageRecyclerBinding.setActivity(this);
         prefManager = new PrefManager(this);
-//        work_id = ;
+        onofftype = getIntent().getStringExtra("ONOFFTYPE");
 
         RecyclerView.LayoutManager mLayoutManager = new GridLayoutManager(getApplicationContext(),2);
         fullImageRecyclerBinding.imagePreviewRecyclerview.setLayoutManager(mLayoutManager);
@@ -61,7 +62,10 @@ public class FullImageActivity extends AppCompatActivity implements View.OnClick
         fullImageRecyclerBinding.imagePreviewRecyclerview.setNestedScrollingEnabled(false);
         fullImageRecyclerBinding.imagePreviewRecyclerview.setFocusable(false);
         fullImageRecyclerBinding.imagePreviewRecyclerview.setAdapter(fullImageAdapter);
-        new fetchImagetask().execute();
+        if(onofftype.equalsIgnoreCase("offline")) {
+            new fetchImagetask().execute();
+        }
+
 //        if(Utils.isOnline()){
 //            getOnlineImage();
 //        }
@@ -73,11 +77,11 @@ public class FullImageActivity extends AppCompatActivity implements View.OnClick
         @Override
         protected ArrayList<MITank> doInBackground(Void... params) {
 
-            final String pmay_id = getIntent().getStringExtra(AppConstant.PMAY_ID);
+            final String mi_tank_structure_detail_id = getIntent().getStringExtra(AppConstant.MI_TANK_STRUCTURE_DETAIL_ID);
 
             dbData.open();
             activityImage = new ArrayList<>();
-          //  activityImage = dbData.getSavedPMAYImages(pmay_id,"");
+            activityImage = dbData.selectImage(prefManager.getDistrictCode(),prefManager.getBlockCode(),prefManager.getPvCode(),prefManager.getHabCode(),mi_tank_structure_detail_id);
 
 
             Log.d("IMAGE_COUNT", String.valueOf(activityImage.size()));
