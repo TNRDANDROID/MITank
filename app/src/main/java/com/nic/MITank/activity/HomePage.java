@@ -57,6 +57,7 @@ public class HomePage extends AppCompatActivity implements Api.ServerResponseLis
     private List<MITank> Habitation = new ArrayList<>();
     String lastInsertedID;
     JSONObject dataset = new JSONObject();
+    JSONObject datasetTrack = new JSONObject();
 
 
     String pref_Village;
@@ -152,6 +153,7 @@ public class HomePage extends AppCompatActivity implements Api.ServerResponseLis
     public void toUpload() {
         if(Utils.isOnline()) {
             new toUploadTankTask().execute();
+            new toUploadTankTrackDataTask().execute();
         }
         else {
             Utils.showAlert(this,"Please Turn on Your Mobile Data to Upload");
@@ -212,6 +214,48 @@ public class HomePage extends AppCompatActivity implements Api.ServerResponseLis
         protected void onPostExecute(JSONObject dataset) {
             super.onPostExecute(dataset);
            syncData();
+        }
+    }
+
+    public class toUploadTankTrackDataTask extends AsyncTask<Void, Void,
+            JSONObject> {
+        @Override
+        protected JSONObject doInBackground(Void... params) {
+            try {
+                dbData.open();
+                ArrayList<MITank> saveLatLongLists = dbData.getSavedTrack();
+                JSONArray saveLatLongArray = new JSONArray();
+                if (saveLatLongLists.size() > 0) {
+                    for (int i = 0; i < saveLatLongLists.size(); i++) {
+                        JSONObject latLongData = new JSONObject();
+                        latLongData.put(AppConstant.PV_CODE, saveLatLongLists.get(i).getPvCode());
+                        latLongData.put(AppConstant.HAB_CODE, saveLatLongLists.get(i).getHabCode());
+                        latLongData.put(AppConstant.KEY_POINT_TYPE, saveLatLongLists.get(i).getPointType());
+                        latLongData.put(AppConstant.KEY_LATITUDE, saveLatLongLists.get(i).getLatitude());
+                        latLongData.put(AppConstant.KEY_LONGITUDE, saveLatLongLists.get(i).getLongitude());
+                        latLongData.put(AppConstant.MI_TANK_SURVEY_ID, saveLatLongLists.get(i).getMiTankSurveyId());
+
+                        saveLatLongArray.put(latLongData);
+                    }
+                }
+
+                datasetTrack = new JSONObject();
+                try {
+                    datasetTrack.put(AppConstant.KEY_SERVICE_ID, AppConstant.KEY_TANK_TRACK_SAVE);
+                    datasetTrack.put(AppConstant.KEY_TRACK_DATA, saveLatLongArray);
+
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+            return datasetTrack;
+        }
+
+        protected void onPostExecute(JSONObject dataset) {
+            super.onPostExecute(dataset);
+            syncDataTrack();
         }
     }
 
@@ -383,6 +427,23 @@ public class HomePage extends AppCompatActivity implements Api.ServerResponseLis
         return dataSet;
     }
 
+    public void syncDataTrack() {
+        try {
+            new ApiService(this).makeJSONObjectRequest("saveTrackDataList", Api.Method.POST, UrlGenerator.getTankPondListUrl(), saveTrackDataListJsonParams(), "not cache", this);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public JSONObject saveTrackDataListJsonParams() throws JSONException {
+        String authKey = Utils.encrypt(prefManager.getUserPassKey(), getResources().getString(R.string.init_vector), dataset.toString());
+        JSONObject dataSet = new JSONObject();
+        dataSet.put(AppConstant.KEY_USER_NAME, prefManager.getUserName());
+        dataSet.put(AppConstant.DATA_CONTENT, authKey);
+        Log.d("saveTrackDataList", "" + authKey);
+        return dataSet;
+    }
+
     @Override
     public void OnMyResponse(ServerResponse serverResponse) {
 
@@ -435,16 +496,29 @@ public class HomePage extends AppCompatActivity implements Api.ServerResponseLis
                 JSONObject jsonObject = new JSONObject(responseDecryptedBlockKey);
                 if (jsonObject.getString("STATUS").equalsIgnoreCase("OK") && jsonObject.getString("RESPONSE").equalsIgnoreCase("OK")) {
                     dbData.open();
-                 //   dbData.deleteRoadListTable();
-                  //  dbData.deleteAssetTable();
-                  //  dbData.update_image();
+                    dbData.deleteMITankData();
+                    dbData.deleteTankStructure();
                     dataset = new JSONObject();
-                  //  getAssetList();
-                  //  getRoadList();
-                    Utils.showAlert(this,"Asset Saved");
+                    getTankPondList();
+                    Utils.showAlert(this,"Saved");
                     syncButtonVisibility();
                 }
-                Log.d("saved_Asset", "" + responseDecryptedBlockKey);
+                Log.d("saved_TankData", "" + responseDecryptedBlockKey);
+            }
+            if ("saveTrackDataList".equals(urlType) && responseObj != null) {
+                String key = responseObj.getString(AppConstant.ENCODE_DATA);
+                String responseDecryptedBlockKey = Utils.decrypt(prefManager.getUserPassKey(), key);
+                JSONObject jsonObject = new JSONObject(responseDecryptedBlockKey);
+                if (jsonObject.getString("STATUS").equalsIgnoreCase("OK") && jsonObject.getString("RESPONSE").equalsIgnoreCase("OK")) {
+                    dbData.open();
+                    dbData.deleteMITankData();
+                    dbData.deleteTankStructure();
+                    dbData.update_Track();
+                    datasetTrack = new JSONObject();
+                    Utils.showAlert(this, "Lat Long Saved");
+                    syncButtonVisibility();
+                }
+                Log.d("saved_TrackDataList", "" + responseDecryptedBlockKey);
             }
 
         } catch (JSONException e) {
@@ -494,8 +568,9 @@ public class HomePage extends AppCompatActivity implements Api.ServerResponseLis
     public void syncButtonVisibility() {
         dbData.open();
         ArrayList<MITank> TankImageCount = dbData.getSavedData(prefManager.getDistrictCode(),prefManager.getBlockCode());
+        ArrayList<MITank> trackCount = dbData.getSavedTrack();
 
-        if (TankImageCount.size() > 0) {
+        if (TankImageCount.size() > 0 || trackCount.size() > 0) {
             homeScreenBinding.synData.setVisibility(View.VISIBLE);
         }else {
             homeScreenBinding.synData.setVisibility(View.GONE);
@@ -643,7 +718,7 @@ public class HomePage extends AppCompatActivity implements Api.ServerResponseLis
     public void checkFields() {
         if (!"Select Village".equalsIgnoreCase(Village.get(homeScreenBinding.villageSpinner.getSelectedItemPosition()).getPvName())) {
             if (!"Select Habitation".equalsIgnoreCase(Habitation.get(homeScreenBinding.habitationSpinner.getSelectedItemPosition()).getHabitationName())) {
-                if((!homeScreenBinding.all.isChecked()) || (!homeScreenBinding.miTanks.isChecked()) || (!homeScreenBinding.ponds.isChecked())){
+                if((homeScreenBinding.all.isChecked()) || (homeScreenBinding.miTanks.isChecked()) || (homeScreenBinding.ponds.isChecked())){
                     tanksPondsTitleScreen();
                 }
                 else{

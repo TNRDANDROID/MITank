@@ -275,7 +275,6 @@
                             android:layout_gravity="bottom"
                             android:layout_marginLeft="15dp"
                             android:layout_marginRight="15dp"
-                            android:visibility="gone"
                             android:background="@drawable/background" />
 
 
@@ -287,7 +286,7 @@
 
 
                             <TextView
-                                android:id="@+id/view_offline_images"
+                                android:id="@+id/view_structure"
                                 style="@string/font_circular_medium"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
@@ -295,13 +294,12 @@
                                 android:layout_centerInParent="true"
                                 android:layout_gravity="center"
                                 android:padding="@dimen/_12sdp"
-                                android:text="View Offline Images"
+                                android:text="View Structure"
                                 android:textColor="#000080"
-                                android:textSize="16sp"
-                                android:visibility="gone" />
+                                android:textSize="16sp" />
 
                             <TextView
-                                android:id="@+id/view_online_images"
+                                android:id="@+id/track_data"
                                 style="@string/font_circular_bold"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
@@ -309,8 +307,7 @@
                                 android:layout_centerInParent="true"
                                 android:layout_gravity="center"
                                 android:padding="@dimen/_12sdp"
-                                android:text="View Online Images"
-                                android:visibility="gone"
+                                android:text="Track Data"
                                 android:textColor="#000080"
                                 android:textSize="16sp" />
 

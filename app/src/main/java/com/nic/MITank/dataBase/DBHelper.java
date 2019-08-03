@@ -17,6 +17,7 @@ public class DBHelper extends SQLiteOpenHelper {
     public static final String STRUCTURES = "structures";
     public static final String MI_TANK_CONDITION = "mi_tank_condition";
     public static final String SAVE_MI_TANK_IMAGES = "save_mi_tank_images";
+    public static final String SAVE_TRACK_TABLE = "TrackTable";
 
 
     private Context context;
@@ -87,7 +88,17 @@ public class DBHelper extends SQLiteOpenHelper {
                 "latitude TEXT," +
                 "longitude TEXT)");
 
-
+        db.execSQL("CREATE TABLE " + SAVE_TRACK_TABLE + " ("
+                +"dcode INTEGER," +
+                "bcode INTEGER," +
+                "pvcode INTEGER," +
+                "habcode INTEGER," +
+                "mi_tank_survey_id INTEGER," +
+                "server_flag  INTEGER DEFAULT 0," +
+                "point_sl_no INTEGER," +
+                "point_type TEXT," +
+                "latitude TEXT," +
+                "longitude TEXT)");
     }
 
     @Override
@@ -100,6 +111,7 @@ public class DBHelper extends SQLiteOpenHelper {
             db.execSQL("DROP TABLE IF EXISTS " + MI_TANK_DATA);
             db.execSQL("DROP TABLE IF EXISTS " + STRUCTURES);
             db.execSQL("DROP TABLE IF EXISTS " + MI_TANK_CONDITION);
+            db.execSQL("DROP TABLE IF EXISTS " + SAVE_TRACK_TABLE);
             onCreate(db);
         }
     }

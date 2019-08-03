@@ -40,6 +40,8 @@ public class MITank {
     private String miTankConditionId;
     private String miTankConditionName;
     private String miTankSkillLevel;
+    public String pointType;
+    public Integer pointSerialNo;
 
     public String getMiTankStructureId() {
         return miTankStructureId;
@@ -304,6 +306,19 @@ public class MITank {
         this.PvCode = pvCode;
     }
 
+    public String getPointType() {
+        return pointType;
+    }
 
+    public void setPointType(String pointType) {
+        this.pointType = pointType;
+    }
 
+    public Integer getPointSerialNo() {
+        return 0;
+    }
+
+    public void setPointSerialNo(Integer pointType) {
+        this.pointSerialNo = pointType;
+    }
 }

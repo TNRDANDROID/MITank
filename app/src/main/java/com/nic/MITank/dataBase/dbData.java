@@ -9,12 +9,14 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.util.Base64;
 import android.util.Log;
-
+import android.widget.Toast;
 
 import com.nic.MITank.constant.AppConstant;
 import com.nic.MITank.model.MITank;
 
 import java.util.ArrayList;
+
+import es.dmoral.toasty.Toasty;
 
 
 public class dbData {
@@ -495,7 +497,78 @@ public class dbData {
     }
 
 
+    public MITank saveLatLong(MITank saveLatLongValue) {
+        ContentValues values = new ContentValues();
+        String pointtype = saveLatLongValue.getPointType();
+        values.put(AppConstant.DISTRICT_CODE, saveLatLongValue.getDistictCode());
+        values.put(AppConstant.BLOCK_CODE, saveLatLongValue.getBlockCode());
+        values.put(AppConstant.PV_CODE, saveLatLongValue.getPvCode());
+        values.put(AppConstant.HAB_CODE, saveLatLongValue.getHabCode());
+        values.put(AppConstant.MI_TANK_SURVEY_ID, saveLatLongValue.getMiTankSurveyId());
+        values.put(AppConstant.KEY_POINT_SERIAL_NO, saveLatLongValue.getPointSerialNo());
+        values.put(AppConstant.KEY_POINT_TYPE, pointtype);
+        values.put(AppConstant.KEY_LATITUDE, saveLatLongValue.getLatitude());
+        values.put(AppConstant.KEY_LONGITUDE, saveLatLongValue.getLongitude());
+        long id = db.insert(DBHelper.SAVE_TRACK_TABLE, null, values);
+        if (id > 0) {
+            if (pointtype.equalsIgnoreCase("1")) {
+                Toasty.success(context, "Start Point Inserted", Toast.LENGTH_SHORT, true).show();
+            } else if (pointtype.equalsIgnoreCase("2")) {
+                Toasty.success(context, "Middle Point Inserted", Toast.LENGTH_SHORT, true).show();
+            } else if (pointtype.equalsIgnoreCase("3")) {
+                Toasty.success(context, "End Point Inserted", Toast.LENGTH_SHORT, true).show();
+            }
 
+        }
+        Log.d("Inserted_id_saveLatLong", String.valueOf(id));
+
+        return saveLatLongValue;
+    }
+
+    public ArrayList<MITank> getSavedTrack() {
+
+        ArrayList<MITank> sendPostLatLong = new ArrayList<>();
+        Cursor cursor = null;
+
+        try {
+            // cursor = db.rawQuery("select * from " + DBHelper.SAVE_LAT_LONG_TABLE, null);
+            cursor = db.query(DBHelper.SAVE_TRACK_TABLE,
+                    new String[]{"*"}, "server_flag = ?", new String[]{"0"}, null, null, null);
+
+            if (cursor.getCount() > 0) {
+                while (cursor.moveToNext()) {
+                    MITank postLatLong = new MITank();
+
+                    postLatLong.setDistictCode(cursor.getString(cursor.getColumnIndexOrThrow(AppConstant.DISTRICT_CODE)));
+                    postLatLong.setBlockCode(cursor.getString(cursor.getColumnIndexOrThrow(AppConstant.BLOCK_CODE)));
+                    postLatLong.setPvCode(cursor.getString(cursor.getColumnIndexOrThrow(AppConstant.PV_CODE)));
+                    postLatLong.setHabCode(cursor.getString(cursor.getColumnIndexOrThrow(AppConstant.HAB_CODE)));
+                    postLatLong.setMiTankSurveyId(cursor.getString(cursor.getColumnIndexOrThrow(AppConstant.MI_TANK_SURVEY_ID)));
+                    postLatLong.setLatitude(cursor.getString(cursor.getColumnIndexOrThrow(AppConstant.KEY_LATITUDE)));
+                    postLatLong.setLongitude(cursor.getString(cursor.getColumnIndexOrThrow(AppConstant.KEY_LONGITUDE)));
+                    postLatLong.setPointType(cursor.getString(cursor.getColumnIndex(AppConstant.KEY_POINT_TYPE)));
+
+
+                    sendPostLatLong.add(postLatLong);
+                }
+            }
+        } catch (Exception e) {
+            //   Log.d(DEBUG_TAG, "Exception raised with a value of " + e);
+        } finally {
+            if (cursor != null) {
+                cursor.close();
+            }
+        }
+        return sendPostLatLong;
+    }
+
+    public void update_Track() {
+        String whereClause = "server_flag = server_flag";
+        Log.d("Update id is ", "id");
+        ContentValues values = new ContentValues();
+        values.put("server_flag", 1);
+        db.update(DBHelper.SAVE_TRACK_TABLE, values, whereClause, null);
+    }
 
     public void deleteVillageTable() {
         db.execSQL("delete from " + DBHelper.VILLAGE_TABLE_NAME);

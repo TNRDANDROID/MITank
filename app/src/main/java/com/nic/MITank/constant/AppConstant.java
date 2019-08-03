@@ -36,26 +36,23 @@ public class AppConstant {
     public static String BLOCK_NAME = "bname";
     public static String PV_NAME = "pvname";
     public static String DESIG_NAME = "desig_name";
+    public static String KEY_POINT_SERIAL_NO = "point_sl_no";
+    public static String KEY_TANK_TRACK_SAVE = "mi_tank_track_save";
 
-
-    public static String KEY_MOTIVATOR_SCHEDULE = "motivator_schedule";
 
 
     public static String KEY_VILLAGE_LIST_DISTRICT_BLOCK_WISE = "village_list_district_block_wise";
     public static String KEY_HABITATION_LIST_DISTRICT_BLOCK_WISE = "habitation_list_district_block_wise";
 
-    public static String BENEFICIARY_NAME = "beneficiary_name";
-    public static String BENEFICIARY_FATHER_NAME = "beneficiary_father_name";
     public static String HABITATION_NAME = "habitation_name";
-    public static String SECC_ID = "secc_id";
-    public static String TYPE_OF_PHOTO = "type_of_photo";
+
     public static String KEY_LATITUDE = "latitude";
     public static String KEY_LONGITUDE = "longitude";
     public static String KEY_IMAGE = "image";
-    public static String PMAY_SOURCE_SAVE = "pmay_source_save";
+
     public static String KEY_TRACK_DATA = "track_data";
     public static String PMAY_ID = "pmay_id";
-    public static String KEY_PMAY_SOURCE_DATA_PHOTO = "pmay_source_data_photo";
+
 
     /********** MI TANK STRUCTURE TABLE ***********/
 
@@ -81,7 +78,9 @@ public class AppConstant {
 
     public static String CHECK_BOX_CLICKED = "checkboxvalue";
 
+    /*********** Track Data***********/
 
+    public static String KEY_POINT_TYPE = "point_type";
 
 
 }

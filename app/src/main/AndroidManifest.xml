@@ -93,6 +93,12 @@
             android:windowSoftInputMode="stateUnchanged|adjustPan" />
 
         <activity
+            android:name="com.nic.MITank.activity.TrackingScreen"
+            android:configChanges="orientation|keyboardHidden"
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="stateUnchanged|adjustPan" />
+
+        <activity
             android:name="com.nic.MITank.activity.AppUpdateDialog"
             android:configChanges="orientation|keyboardHidden"
             android:screenOrientation="portrait"

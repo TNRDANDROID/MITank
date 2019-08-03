@@ -13,6 +13,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.nic.MITank.R;
 import com.nic.MITank.activity.PondsStructureScreen;
 import com.nic.MITank.activity.TanksPondsTitleScreen;
+import com.nic.MITank.activity.TrackingScreen;
 import com.nic.MITank.constant.AppConstant;
 import com.nic.MITank.databinding.TanksPondsListAdapterBinding;
 import com.nic.MITank.model.MITank;
@@ -68,14 +69,30 @@ public class TanksPondsListAdapter extends RecyclerView.Adapter<TanksPondsListAd
        holder.tanksPondsListAdapterBinding.localName.setText(miTankData.get(position).getLocalName());
        holder.tanksPondsListAdapterBinding.area.setText(miTankData.get(position).getArea()+" hectare");
 
-        holder.tanksPondsListAdapterBinding.cardView.setOnClickListener(new View.OnClickListener() {
+        holder.tanksPondsListAdapterBinding.viewStructure.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 selectStructure(position);
             }
         });
 
+        holder.tanksPondsListAdapterBinding.trackData.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                trackDataScreen(position);
+            }
+        });
 
+
+    }
+
+    public void trackDataScreen(int position){
+        Activity activity = (Activity) context;
+        Intent intent = new Intent(activity, TrackingScreen.class);
+        intent.putExtra(AppConstant.MI_TANK_SURVEY_ID,miTankData.get(position).getMiTankSurveyId());
+        intent.putExtra(AppConstant.NAME_OF_THE_MI_TANK,miTankData.get(position).getNameOftheMITank());
+        activity.startActivity(intent);
+        activity.overridePendingTransition(R.anim.slide_in, R.anim.slide_out);
     }
 
     public void selectStructure(int position) {
