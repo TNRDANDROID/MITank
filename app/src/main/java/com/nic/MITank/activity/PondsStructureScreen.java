@@ -92,4 +92,11 @@ public class PondsStructureScreen extends AppCompatActivity {
         overridePendingTransition(R.anim.slide_enter, R.anim.slide_exit);
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        pondsStructureAdapter.notifyDataSetChanged();
+        pondsStructureScreenBinding.recyclerView.setAdapter(pondsStructureAdapter);
+    }
+
 }

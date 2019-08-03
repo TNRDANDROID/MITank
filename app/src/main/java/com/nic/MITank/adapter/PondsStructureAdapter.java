@@ -12,6 +12,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.nic.MITank.R;
 import com.nic.MITank.activity.CameraScreen;
+import com.nic.MITank.activity.FullImageActivity;
 import com.nic.MITank.activity.TanksPondsListScreen;
 import com.nic.MITank.constant.AppConstant;
 import com.nic.MITank.dataBase.DBHelper;
@@ -71,23 +72,36 @@ public class PondsStructureAdapter extends RecyclerView.Adapter<PondsStructureAd
        holder.tanksPondsListAdapterBinding.structureName.setText(Structure.get(position).getMiTankStructureName()+" "+Structure.get(position).getMiTankStructureSerialId());
        holder.tanksPondsListAdapterBinding.condition.setText(Structure.get(position).getMiTankConditionName());
 
+        String dcode = prefManager.getDistrictCode();
+        String bcode = prefManager.getBlockCode();
+        String pvcode = prefManager.getPvCode();
+        String habcode = prefManager.getHabCode();
+        String mi_tank_structure_detail_id = Structure.get(position).getMiTankStructureDetailId();
 
 
-//        ArrayList<MITank> imageOffline = dbData.selectImage(dcode,bcode,pvcode,habcode,mi_tank_structure_detail_id);
-//
-//        if(imageOffline.size() < 1) {
-//            id = db.insert(DBHelper.SAVE_MI_TANK_IMAGES, null, values);
-//        }
-//        else {
-//            id = db.update(DBHelper.SAVE_MI_TANK_IMAGES, values, whereClause, whereArgs);
-//        }
-//
-//       holder.tanksPondsListAdapterBinding.cameraActivity.setOnClickListener(new View.OnClickListener() {
-//           @Override
-//           public void onClick(View v) {
-//               openCamera(position);
-//           }
-//       });
+        ArrayList<MITank> imageOffline = dbData.selectImage(dcode,bcode,pvcode,habcode,mi_tank_structure_detail_id);
+
+        if(imageOffline.size() < 1) {
+            holder.tanksPondsListAdapterBinding.viewOfflineImages.setVisibility(View.GONE);
+        }
+        else {
+            holder.tanksPondsListAdapterBinding.viewOfflineImages.setVisibility(View.VISIBLE);
+        }
+
+       holder.tanksPondsListAdapterBinding.cameraActivity.setOnClickListener(new View.OnClickListener() {
+           @Override
+           public void onClick(View v) {
+               openCamera(position);
+           }
+       });
+
+        holder.tanksPondsListAdapterBinding.viewOfflineImages.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                viewOfflineImages(position);
+            }
+        });
+
     }
 
     public void openCamera(int position) {
@@ -96,6 +110,15 @@ public class PondsStructureAdapter extends RecyclerView.Adapter<PondsStructureAd
         intent.putExtra(AppConstant.MI_TANK_STRUCTURE_DETAIL_ID,Structure.get(position).getMiTankStructureDetailId());
         intent.putExtra(AppConstant.MI_TANK_SURVEY_ID,Structure.get(position).getMiTankSurveyId());
         intent.putExtra(AppConstant.MI_TANK_STRUCTURE_ID,Structure.get(position).getMiTankStructureId());
+        activity.startActivity(intent);
+        activity.overridePendingTransition(R.anim.slide_in, R.anim.slide_out);
+    }
+
+    public void viewOfflineImages(int position){
+        Activity activity = (Activity) context;
+        Intent intent = new Intent(context, FullImageActivity.class);
+        intent.putExtra("ONOFFTYPE","offline");
+        intent.putExtra(AppConstant.MI_TANK_STRUCTURE_DETAIL_ID,Structure.get(position).getMiTankStructureDetailId());
         activity.startActivity(intent);
         activity.overridePendingTransition(R.anim.slide_in, R.anim.slide_out);
     }
