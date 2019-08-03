@@ -591,6 +591,10 @@ public class dbData {
         db.execSQL("delete from " + DBHelper.MI_TANK_CONDITION);
     }
 
+    public void deleteMITankImages() {
+        db.execSQL("delete from " + DBHelper.SAVE_MI_TANK_IMAGES);
+    }
+
 
     public void deleteAll() {
 
@@ -599,6 +603,7 @@ public class dbData {
         deleteMITankData();
         deleteStructures();
         deleteMITankCondition();
+        deleteMITankImages();
     }
 
 

@@ -23,7 +23,7 @@
                 android:layout_centerInParent="true"
                 android:layout_marginTop="@dimen/margin"
                 android:text="View Image"
-                android:textColor="@android:color/black"
+                android:textColor="@android:color/white"
                 android:textSize="18sp" />
 
             <ImageView
@@ -34,8 +34,7 @@
                 android:layout_centerInParent="true"
                 android:layout_marginLeft="@dimen/_12sdp"
                 android:onClick="@{()-> activity.onBackPress()}"
-                android:background="@mipmap/back_arrow"
-                android:backgroundTint="@android:color/black"/>
+                android:background="@mipmap/back_arrow" />
 
             <ImageView
                 android:id="@+id/home_img"
@@ -45,8 +44,7 @@
                 android:layout_centerInParent="true"
                 android:layout_marginRight="@dimen/_12sdp"
                 android:onClick="@{()-> activity.homePage()}"
-                android:background="@mipmap/home_img"
-                android:backgroundTint="@android:color/black"/>
+                android:background="@mipmap/home_img" />
 
         </RelativeLayout>
 

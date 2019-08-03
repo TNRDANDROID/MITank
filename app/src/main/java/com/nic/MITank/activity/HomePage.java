@@ -339,19 +339,22 @@ public class HomePage extends AppCompatActivity implements Api.ServerResponseLis
         }
     }
 
-//    public void logout() {
-//        dbData.open();
-//        ArrayList<MITank> ImageCount = dbData.getSavedPMAYDetails();
-//        if (!Utils.isOnline()) {
-//            Utils.showAlert(this, "Logging out while offline may leads to loss of data!");
-//        } else {
-//            if (!(ImageCount.size() > 0)) {
-//                closeApplication();
-//            } else {
-//                Utils.showAlert(this, "Sync all the data before logout!");
-//            }
-//        }
-//    }
+    public void logout() {
+        dbData.open();
+        ArrayList<MITank> TankImageCount = dbData.getSavedData(prefManager.getDistrictCode(),prefManager.getBlockCode());
+        ArrayList<MITank> trackCount = dbData.getSavedTrack();
+
+
+        if (!Utils.isOnline()) {
+            Utils.showAlert(this, "Logging out while offline may leads to loss of data!");
+        } else {
+            if (!(TankImageCount.size() > 0 || trackCount.size() > 0)) {
+                closeApplication();
+            } else {
+                Utils.showAlert(this, "Sync all the data before logout!");
+            }
+        }
+    }
 
     @Override
     protected void onResume() {
@@ -437,7 +440,7 @@ public class HomePage extends AppCompatActivity implements Api.ServerResponseLis
     }
 
     public JSONObject saveTrackDataListJsonParams() throws JSONException {
-        String authKey = Utils.encrypt(prefManager.getUserPassKey(), getResources().getString(R.string.init_vector), dataset.toString());
+        String authKey = Utils.encrypt(prefManager.getUserPassKey(), getResources().getString(R.string.init_vector), datasetTrack.toString());
         JSONObject dataSet = new JSONObject();
         dataSet.put(AppConstant.KEY_USER_NAME, prefManager.getUserName());
         dataSet.put(AppConstant.DATA_CONTENT, authKey);
@@ -499,6 +502,7 @@ public class HomePage extends AppCompatActivity implements Api.ServerResponseLis
                     dbData.open();
                     dbData.deleteMITankData();
                     dbData.deleteTankStructure();
+                    dbData.deleteMITankImages();
                     dataset = new JSONObject();
                     getTankPondList();
                     Utils.showAlert(this,"Saved");
@@ -514,7 +518,7 @@ public class HomePage extends AppCompatActivity implements Api.ServerResponseLis
                     dbData.open();
                     dbData.update_Track();
                     datasetTrack = new JSONObject();
-                    Utils.showAlert(this, "Lat Long Saved");
+                    Utils.showAlert(this, "Tracked Data Saved");
                     syncButtonVisibility();
                 }
                 Log.d("saved_TrackDataList", "" + responseDecryptedBlockKey);
