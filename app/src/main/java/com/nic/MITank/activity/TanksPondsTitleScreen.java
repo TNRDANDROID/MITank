@@ -19,6 +19,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.google.android.material.appbar.AppBarLayout;
 import com.nic.MITank.R;
 import com.nic.MITank.adapter.TanksPondsTitleAdapter;
+import com.nic.MITank.constant.AppConstant;
 import com.nic.MITank.dataBase.dbData;
 import com.nic.MITank.databinding.TanksPondsTitleScreenBinding;
 import com.nic.MITank.model.MITank;
@@ -77,7 +78,7 @@ public class TanksPondsTitleScreen extends AppCompatActivity {
         protected ArrayList<MITank> doInBackground(Void... params) {
             dbData.open();
             TanksPondsTitle = new ArrayList<>();
-            TanksPondsTitle = dbData.getAllTankStructure();
+            TanksPondsTitle = dbData.getStructureForParticularTank(getIntent().getStringExtra(AppConstant.MI_TANK_SURVEY_ID));
             Log.d("TANKS_COUNT", String.valueOf(TanksPondsTitle.size()));
             tanksPondsTitleScreenBinding.tvTitleCount.setText(String.valueOf(TanksPondsTitle.size()).concat(" Items"));
             return TanksPondsTitle;

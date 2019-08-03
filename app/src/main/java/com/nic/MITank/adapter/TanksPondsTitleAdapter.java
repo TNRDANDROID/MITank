@@ -13,7 +13,9 @@ import androidx.recyclerview.widget.RecyclerView;
 
 
 import com.nic.MITank.R;
+import com.nic.MITank.activity.PondsStructureScreen;
 import com.nic.MITank.activity.TanksPondsListScreen;
+import com.nic.MITank.constant.AppConstant;
 import com.nic.MITank.databinding.TanksPondsTitleAdapterBinding;
 import com.nic.MITank.model.MITank;
 import com.nic.MITank.session.PrefManager;
@@ -79,7 +81,8 @@ public class TanksPondsTitleAdapter extends RecyclerView.Adapter<TanksPondsTitle
 
     public void tanksPondsListScreen(int position) {
         Activity activity = (Activity) context;
-        Intent intent = new Intent(context, TanksPondsListScreen.class);
+        Intent intent = new Intent(context, PondsStructureScreen.class);
+        intent.putExtra(AppConstant.MI_TANK_STRUCTURE_ID,miTankList.get(position).getMiTankStructureId());
         intent.putExtra("Title",miTankList.get(position).getMiTankStructureName());
         activity.startActivity(intent);
         activity.overridePendingTransition(R.anim.slide_in, R.anim.slide_out);

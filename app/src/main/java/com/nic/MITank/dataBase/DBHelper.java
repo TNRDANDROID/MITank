@@ -15,6 +15,8 @@ public class DBHelper extends SQLiteOpenHelper {
     public static final String MI_TANK_STRUCTURE = "mi_tank_structure";
     public static final String MI_TANK_DATA = "mi_tank_data";
     public static final String STRUCTURES = "structures";
+    public static final String MI_TANK_CONDITION = "mi_tank_condition";
+    public static final String SAVE_MI_TANK_IMAGES = "save_mi_tank_images";
 
 
     private Context context;
@@ -46,6 +48,10 @@ public class DBHelper extends SQLiteOpenHelper {
                 + "mi_tank_structure_id  INTEGER," +
                 "mi_tank_structure_name TEXT)");
 
+        db.execSQL("CREATE TABLE " + MI_TANK_CONDITION + " ("
+                + "mi_tank_condition_id  INTEGER," +
+                "mi_tank_condition_name TEXT)");
+
         db.execSQL("CREATE TABLE " + MI_TANK_DATA + " ("
                 + "dcode INTEGER," +
                 "bcode INTEGER," +
@@ -68,6 +74,19 @@ public class DBHelper extends SQLiteOpenHelper {
                 "mi_tank_sill_level TEXT," +
                 "mi_tank_structure_name TEXT)");
 
+        db.execSQL("CREATE TABLE " + SAVE_MI_TANK_IMAGES + " ("
+                +   "dcode INTEGER," +
+                "bcode INTEGER," +
+                "pvcode INTEGER," +
+                "habcode INTEGER," +
+                "mi_tank_structure_detail_id INTEGER,"+
+                "mi_tank_survey_id INTEGER,"+
+                "mi_tank_structure_id INTEGER,"+
+                "mi_tank_condition_id INTEGER,"+
+                "image BLOB," +
+                "latitude TEXT," +
+                "longitude TEXT)");
+
 
     }
 
@@ -80,6 +99,7 @@ public class DBHelper extends SQLiteOpenHelper {
             db.execSQL("DROP TABLE IF EXISTS " + MI_TANK_STRUCTURE);
             db.execSQL("DROP TABLE IF EXISTS " + MI_TANK_DATA);
             db.execSQL("DROP TABLE IF EXISTS " + STRUCTURES);
+            db.execSQL("DROP TABLE IF EXISTS " + MI_TANK_CONDITION);
             onCreate(db);
         }
     }

@@ -77,7 +77,7 @@ public class FullImageActivity extends AppCompatActivity implements View.OnClick
 
             dbData.open();
             activityImage = new ArrayList<>();
-            activityImage = dbData.getSavedPMAYImages(pmay_id,"");
+          //  activityImage = dbData.getSavedPMAYImages(pmay_id,"");
 
 
             Log.d("IMAGE_COUNT", String.valueOf(activityImage.size()));

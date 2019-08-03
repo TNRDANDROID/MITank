@@ -14,6 +14,7 @@ public class AppConstant {
 
     public static String KEY_MI_TANK_DATA = "mi_tank_data";
     public static String KEY_MI_TANK_STRUCTURE = "mi_tank_structure";
+    public static String KEY_MI_TANK_CONDITION = "mi_tank_condition";
 
 
     public static String USER_LOGIN_KEY = "user_login_key";
@@ -79,7 +80,6 @@ public class AppConstant {
     public static String MI_TANK_SKILL_LEVEL = "mi_tank_sill_level";
 
     public static String CHECK_BOX_CLICKED = "checkboxvalue";
-
 
 
 

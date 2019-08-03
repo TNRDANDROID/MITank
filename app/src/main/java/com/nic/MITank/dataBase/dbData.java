@@ -179,6 +179,36 @@ public class dbData {
         return cards;
     }
 
+    public ArrayList<MITank > getStructureForParticularTank(String mi_tank_survey_id) {
+
+        ArrayList<MITank > cards = new ArrayList<>();
+        Cursor cursor = null;
+
+        try {
+            cursor = db.query(DBHelper.MI_TANK_STRUCTURE,
+                    new String[]{"*"}, null, null, null, null, null);
+            cursor = db.rawQuery("select a.mi_tank_structure_id as mi_tank_structure_id,b.mi_tank_structure_name as mi_tank_structure_name from (select distinct mi_tank_structure_id from "+DBHelper.STRUCTURES+" where mi_tank_survey_id = "+mi_tank_survey_id+")a left join (select * from "+DBHelper.MI_TANK_STRUCTURE+") b on a.mi_tank_structure_id = b.mi_tank_structure_id",null);
+            if (cursor.getCount() > 0) {
+                while (cursor.moveToNext()) {
+                    MITank  card = new MITank ();
+                    card.setMiTankStructureId(cursor.getString(cursor
+                            .getColumnIndexOrThrow(AppConstant.MI_TANK_STRUCTURE_ID)));
+                    card.setMiTankStructureName(cursor.getString(cursor
+                            .getColumnIndexOrThrow(AppConstant.MI_TANK_STRUCTURE_NAME)));
+
+                    cards.add(card);
+                }
+            }
+        } catch (Exception e){
+            //   Log.d(DEBUG_TAG, "Exception raised with a value of " + e);
+        } finally{
+            if (cursor != null) {
+                cursor.close();
+            }
+        }
+        return cards;
+    }
+
     public MITank insertMITankData(MITank miTank) {
 
         ContentValues values = new ContentValues();
@@ -266,51 +296,40 @@ public class dbData {
         return miTank;
     }
 
-    public ArrayList<MITank> getSavedPMAYDetails() {
+    public ArrayList<MITank> getStructure(String mi_tank_survey_id,String mi_tank_structure_id) {
 
-        ArrayList<MITank> cards = new ArrayList<>();
+        ArrayList<MITank > cards = new ArrayList<>();
         Cursor cursor = null;
         String selection = null;
         String[] selectionArgs = null;
 
+        selection = "mi_tank_survey_id = ? and mi_tank_structure_id = ? ";
+        selectionArgs = new String[]{mi_tank_survey_id,mi_tank_structure_id};
+
+
 
         try {
-//            cursor = db.query(DBHelper.SAVE_PMAY_DETAILS,
-//                    new String[]{"*"}, selection, selectionArgs, null, null, null);
+            cursor = db.query(DBHelper.STRUCTURES,
+                    new String[]{"*"}, selection, selectionArgs, null, null, null);
             if (cursor.getCount() > 0) {
                 while (cursor.moveToNext()) {
+                    MITank  card = new MITank ();
 
-                    MITank card = new MITank();
-
-
-                    card.setPmayId(cursor.getString(cursor
-                            .getColumnIndexOrThrow("id")));
-                    card.setDistictCode(cursor.getString(cursor
-                            .getColumnIndexOrThrow(AppConstant.DISTRICT_CODE)));
-                    card.setBlockCode(cursor.getString(cursor
-                            .getColumnIndexOrThrow(AppConstant.BLOCK_CODE)));
-                    card.setPvCode(cursor.getString(cursor
-                            .getColumnIndexOrThrow(AppConstant.PV_CODE)));
-                    card.setHabCode(cursor.getString(cursor
-                            .getColumnIndexOrThrow(AppConstant.HAB_CODE)));
-                    card.setPvName(cursor.getString(cursor
-                            .getColumnIndexOrThrow(AppConstant.PV_NAME)));
-                    card.setHabitationName(cursor.getString(cursor
-                            .getColumnIndexOrThrow(AppConstant.HABITATION_NAME)));
-                    card.setSeccId(cursor.getString(cursor
-                            .getColumnIndexOrThrow(AppConstant.SECC_ID)));
-                    card.setBeneficiaryName(cursor.getString(cursor
-                            .getColumnIndexOrThrow(AppConstant.BENEFICIARY_NAME)));
-                    card.setFatherName(cursor.getString(cursor
-                            .getColumnIndexOrThrow(AppConstant.BENEFICIARY_FATHER_NAME)));
-
+                    card.setMiTankStructureDetailId(cursor.getString(cursor.getColumnIndexOrThrow(AppConstant.MI_TANK_STRUCTURE_DETAIL_ID)));
+                    card.setMiTankSurveyId(cursor.getString(cursor.getColumnIndexOrThrow(AppConstant.MI_TANK_SURVEY_ID)));
+                    card.setMiTankStructureId(cursor.getString(cursor.getColumnIndexOrThrow(AppConstant.MI_TANK_STRUCTURE_ID)));
+                    card.setMiTankStructureSerialId(cursor.getString(cursor.getColumnIndexOrThrow(AppConstant.MI_TANK_STRUCTURE_SERIAL_ID)));
+                    card.setMiTankConditionId(cursor.getString(cursor.getColumnIndexOrThrow(AppConstant.MI_TANK_CONDITION_ID)));
+                    card.setMiTankConditionName(cursor.getString(cursor.getColumnIndexOrThrow(AppConstant.MI_TANK_CONDITION_NAME)));
+                    card.setMiTankSkillLevel(cursor.getString(cursor.getColumnIndexOrThrow(AppConstant.MI_TANK_SKILL_LEVEL)));
+                    card.setMiTankStructureName(cursor.getString(cursor.getColumnIndexOrThrow(AppConstant.MI_TANK_STRUCTURE_NAME)));
 
                     cards.add(card);
                 }
             }
-        } catch (Exception e) {
+        } catch (Exception e){
             //   Log.d(DEBUG_TAG, "Exception raised with a value of " + e);
-        } finally {
+        } finally{
             if (cursor != null) {
                 cursor.close();
             }
@@ -318,27 +337,61 @@ public class dbData {
         return cards;
     }
 
+    public MITank insertTankCondition(MITank miTank) {
 
-    public ArrayList<MITank> getSavedPMAYImages(String pmay_id, String type_of_photo) {
+        ContentValues values = new ContentValues();
+        values.put(AppConstant.MI_TANK_CONDITION_ID, miTank.getMiTankConditionId());
+        values.put(AppConstant.MI_TANK_CONDITION_NAME, miTank.getMiTankConditionName());
 
+        long id = db.insert(DBHelper.MI_TANK_CONDITION,null,values);
+        Log.d("Insert_id_CONDITION", String.valueOf(id));
+
+        return miTank;
+    }
+
+    public ArrayList<MITank > getTankCondition() {
+
+        ArrayList<MITank > cards = new ArrayList<>();
+        Cursor cursor = null;
+
+        try {
+            cursor = db.query(DBHelper.MI_TANK_CONDITION,
+                    new String[]{"*"}, null, null, null, null, null);
+            if (cursor.getCount() > 0) {
+                while (cursor.moveToNext()) {
+                    MITank  card = new MITank ();
+                    card.setMiTankConditionId(cursor.getString(cursor
+                            .getColumnIndexOrThrow(AppConstant.MI_TANK_CONDITION_ID)));
+                    card.setMiTankConditionName(cursor.getString(cursor
+                            .getColumnIndexOrThrow(AppConstant.MI_TANK_CONDITION_NAME)));
+
+                    cards.add(card);
+                }
+            }
+        } catch (Exception e){
+            //   Log.d(DEBUG_TAG, "Exception raised with a value of " + e);
+        } finally{
+            if (cursor != null) {
+                cursor.close();
+            }
+        }
+        return cards;
+    }
+
+    public ArrayList<MITank> selectImage(String dcode,String bcode, String pvcode,String habcode,String mi_tank_structure_detail_id) {
+        db.isOpen();
         ArrayList<MITank> cards = new ArrayList<>();
         Cursor cursor = null;
         String selection = null;
         String[] selectionArgs = null;
 
-        if(!type_of_photo.isEmpty()){
-            selection = "pmay_id = ? and type_of_photo = ? ";
-            selectionArgs = new String[]{pmay_id,type_of_photo};
-        }
-        else if(type_of_photo.isEmpty()) {
-            selection = "pmay_id = ? ";
-            selectionArgs = new String[]{pmay_id};
-        }
+        selection = "dcode = ? and bcode = ? and pvcode = ? and habcode = ? and mi_tank_structure_detail_id = ? ";
+        selectionArgs = new String[]{dcode,bcode,pvcode,habcode,mi_tank_structure_detail_id};
 
 
         try {
-//            cursor = db.query(DBHelper.SAVE_PMAY_IMAGES,
-//                    new String[]{"*"}, selection, selectionArgs, null, null, null);
+            cursor = db.query(DBHelper.SAVE_MI_TANK_IMAGES,
+                    new String[]{"*"}, selection,selectionArgs, null, null, null);
             if (cursor.getCount() > 0) {
                 while (cursor.moveToNext()) {
 
@@ -348,30 +401,100 @@ public class dbData {
 
                     MITank card = new MITank();
 
-
-                    card.setPmayId(cursor.getString(cursor
-                            .getColumnIndexOrThrow(AppConstant.PMAY_ID)));
-                    card.setTypeOfPhoto(cursor.getString(cursor
-                            .getColumnIndexOrThrow(AppConstant.TYPE_OF_PHOTO)));
+                    card.setDistictCode(cursor.getString(cursor
+                            .getColumnIndexOrThrow(AppConstant.DISTRICT_CODE)));
+                    card.setBlockCode(cursor.getString(cursor
+                            .getColumnIndex(AppConstant.BLOCK_CODE)));
+                    card.setPvCode(cursor.getString(cursor
+                            .getColumnIndexOrThrow(AppConstant.PV_CODE)));
+                    card.setHabCode(cursor.getString(cursor
+                            .getColumnIndexOrThrow(AppConstant.HAB_CODE)));
+                    card.setMiTankStructureDetailId(cursor.getString(cursor
+                            .getColumnIndexOrThrow(AppConstant.MI_TANK_STRUCTURE_DETAIL_ID)));
+                    card.setMiTankStructureId(cursor.getString(cursor
+                            .getColumnIndexOrThrow(AppConstant.MI_TANK_STRUCTURE_ID)));
+                    card.setMiTankSurveyId(cursor.getString(cursor
+                            .getColumnIndexOrThrow(AppConstant.MI_TANK_SURVEY_ID)));
+                    card.setMiTankConditionId(cursor.getString(cursor
+                            .getColumnIndexOrThrow(AppConstant.MI_TANK_CONDITION_ID)));
                     card.setLatitude(cursor.getString(cursor
                             .getColumnIndexOrThrow(AppConstant.KEY_LATITUDE)));
                     card.setLongitude(cursor.getString(cursor
                             .getColumnIndexOrThrow(AppConstant.KEY_LONGITUDE)));
-
                     card.setImage(decodedByte);
 
                     cards.add(card);
                 }
             }
-        } catch (Exception e) {
+        } catch (Exception e){
             //   Log.d(DEBUG_TAG, "Exception raised with a value of " + e);
-        } finally {
+        } finally{
             if (cursor != null) {
                 cursor.close();
             }
         }
         return cards;
     }
+
+    public ArrayList<MITank> getSavedData(String dcode,String bcode) {
+        db.isOpen();
+        ArrayList<MITank> cards = new ArrayList<>();
+        Cursor cursor = null;
+        String selection = null;
+        String[] selectionArgs = null;
+
+        selection = "dcode = ? and bcode = ? ";
+        selectionArgs = new String[]{dcode,bcode};
+
+
+        try {
+            cursor = db.query(DBHelper.SAVE_MI_TANK_IMAGES,
+                    new String[]{"*"}, selection,selectionArgs, null, null, null);
+            if (cursor.getCount() > 0) {
+                while (cursor.moveToNext()) {
+
+                    byte[] photo = cursor.getBlob(cursor.getColumnIndexOrThrow(AppConstant.KEY_IMAGE));
+                    byte[] decodedString = Base64.decode(photo, Base64.DEFAULT);
+                    Bitmap decodedByte = BitmapFactory.decodeByteArray(decodedString, 0, decodedString.length);
+
+                    MITank card = new MITank();
+
+                    card.setDistictCode(cursor.getString(cursor
+                            .getColumnIndexOrThrow(AppConstant.DISTRICT_CODE)));
+                    card.setBlockCode(cursor.getString(cursor
+                            .getColumnIndex(AppConstant.BLOCK_CODE)));
+                    card.setPvCode(cursor.getString(cursor
+                            .getColumnIndexOrThrow(AppConstant.PV_CODE)));
+                    card.setHabCode(cursor.getString(cursor
+                            .getColumnIndexOrThrow(AppConstant.HAB_CODE)));
+                    card.setMiTankStructureDetailId(cursor.getString(cursor
+                            .getColumnIndexOrThrow(AppConstant.MI_TANK_STRUCTURE_DETAIL_ID)));
+                    card.setMiTankStructureId(cursor.getString(cursor
+                            .getColumnIndexOrThrow(AppConstant.MI_TANK_STRUCTURE_ID)));
+                    card.setMiTankSurveyId(cursor.getString(cursor
+                            .getColumnIndexOrThrow(AppConstant.MI_TANK_SURVEY_ID)));
+                    card.setMiTankConditionId(cursor.getString(cursor
+                            .getColumnIndexOrThrow(AppConstant.MI_TANK_CONDITION_ID)));
+                    card.setLatitude(cursor.getString(cursor
+                            .getColumnIndexOrThrow(AppConstant.KEY_LATITUDE)));
+                    card.setLongitude(cursor.getString(cursor
+                            .getColumnIndexOrThrow(AppConstant.KEY_LONGITUDE)));
+                    card.setImage(decodedByte);
+
+                    cards.add(card);
+                }
+            }
+        } catch (Exception e){
+            //   Log.d(DEBUG_TAG, "Exception raised with a value of " + e);
+        } finally{
+            if (cursor != null) {
+                cursor.close();
+            }
+        }
+        return cards;
+    }
+
+
 
 
     public void deleteVillageTable() {
@@ -390,11 +513,18 @@ public class dbData {
         db.execSQL("delete from " + DBHelper.STRUCTURES);
     }
 
+    public void deleteMITankCondition() {
+        db.execSQL("delete from " + DBHelper.MI_TANK_CONDITION);
+    }
+
 
     public void deleteAll() {
 
         deleteVillageTable();
         deleteTankStructure();
+        deleteMITankData();
+        deleteStructures();
+        deleteMITankCondition();
     }
 
 

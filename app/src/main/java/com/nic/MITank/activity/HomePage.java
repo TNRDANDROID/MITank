@@ -5,9 +5,11 @@ import android.app.AlertDialog;
 import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.graphics.Bitmap;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
+import android.util.Base64;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
@@ -39,6 +41,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.ByteArrayOutputStream;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -53,6 +56,7 @@ public class HomePage extends AppCompatActivity implements Api.ServerResponseLis
     private List<MITank> Village = new ArrayList<>();
     private List<MITank> Habitation = new ArrayList<>();
     String lastInsertedID;
+    JSONObject dataset = new JSONObject();
 
 
     String pref_Village;
@@ -140,8 +144,75 @@ public class HomePage extends AppCompatActivity implements Api.ServerResponseLis
         if (Utils.isOnline() && !isHome.equalsIgnoreCase("Home")) {
             getTankPondList();
             getTankPondStructureList();
+            getTankCondition();
+        }
+        syncButtonVisibility();
+    }
+
+    public void toUpload() {
+        if(Utils.isOnline()) {
+            new toUploadTankTask().execute();
+        }
+        else {
+            Utils.showAlert(this,"Please Turn on Your Mobile Data to Upload");
         }
 
+    }
+
+    public class toUploadTankTask extends AsyncTask<Void, Void,
+            JSONObject> {
+        @Override
+        protected JSONObject doInBackground(Void... voids) {
+            dbData.open();
+            JSONArray track_data = new JSONArray();
+            ArrayList<MITank> tanks = dbData.getSavedData(prefManager.getDistrictCode(),prefManager.getBlockCode());
+
+            if (tanks.size() > 0) {
+                for (int i = 0; i < tanks.size(); i++) {
+                    JSONObject jsonObject = new JSONObject();
+                    try {
+                        jsonObject.put(AppConstant.PV_CODE,tanks.get(i).getPvCode());
+                        jsonObject.put(AppConstant.HAB_CODE,tanks.get(i).getHabCode());
+                        jsonObject.put(AppConstant.MI_TANK_STRUCTURE_DETAIL_ID,tanks.get(i).getMiTankStructureDetailId());
+                        jsonObject.put(AppConstant.MI_TANK_STRUCTURE_ID,tanks.get(i).getMiTankStructureId());
+                        jsonObject.put(AppConstant.MI_TANK_SURVEY_ID,tanks.get(i).getMiTankSurveyId());
+                        jsonObject.put(AppConstant.MI_TANK_CONDITION_ID,tanks.get(i).getMiTankConditionId());
+                        jsonObject.put(AppConstant.KEY_LATITUDE,tanks.get(i).getLatitude());
+                        jsonObject.put(AppConstant.KEY_LONGITUDE,tanks.get(i).getLongitude());
+
+                        Bitmap bitmap = tanks.get(i).getImage();
+                        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+                        bitmap.compress(Bitmap.CompressFormat.JPEG, 90, baos);
+                        byte[] imageInByte = baos.toByteArray();
+                        String image_str = Base64.encodeToString(imageInByte, Base64.DEFAULT);
+
+                        jsonObject.put(AppConstant.KEY_IMAGE,image_str);
+
+                        track_data.put(jsonObject);
+
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                }
+
+                dataset = new JSONObject();
+
+                try {
+                    dataset.put(AppConstant.KEY_SERVICE_ID,"mi_tank_detail_save");
+                    dataset.put(AppConstant.KEY_TRACK_DATA,track_data);
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+
+            return dataset;
+        }
+
+        @Override
+        protected void onPostExecute(JSONObject dataset) {
+            super.onPostExecute(dataset);
+           syncData();
+        }
     }
 
 
@@ -240,7 +311,7 @@ public class HomePage extends AppCompatActivity implements Api.ServerResponseLis
     @Override
     protected void onResume() {
         super.onResume();
-
+        syncButtonVisibility();
     }
 
 
@@ -255,6 +326,14 @@ public class HomePage extends AppCompatActivity implements Api.ServerResponseLis
     public void getTankPondStructureList() {
         try {
             new ApiService(this).makeJSONObjectRequest("TankPondStructure", Api.Method.POST, UrlGenerator.getTankPondListUrl(), tankPondStructureListJsonParams(), "not cache", this);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void getTankCondition() {
+        try {
+            new ApiService(this).makeJSONObjectRequest("TankCondition", Api.Method.POST, UrlGenerator.getTankPondListUrl(), tankConditionJsonParams(), "not cache", this);
         } catch (JSONException e) {
             e.printStackTrace();
         }
@@ -278,6 +357,32 @@ public class HomePage extends AppCompatActivity implements Api.ServerResponseLis
         return dataSet;
     }
 
+    public JSONObject tankConditionJsonParams() throws JSONException {
+        String authKey = Utils.encrypt(prefManager.getUserPassKey(), getResources().getString(R.string.init_vector), Utils.tankConditionListJsonParams().toString());
+        JSONObject dataSet = new JSONObject();
+        dataSet.put(AppConstant.KEY_USER_NAME, prefManager.getUserName());
+        dataSet.put(AppConstant.DATA_CONTENT, authKey);
+        Log.d("tankCondition", "" + authKey);
+        return dataSet;
+    }
+
+    public void syncData() {
+        try {
+            new ApiService(this).makeJSONObjectRequest("saveTankData", Api.Method.POST, UrlGenerator.getTankPondListUrl(), saveTankListJsonParams(), "not cache", this);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public JSONObject saveTankListJsonParams() throws JSONException {
+        String authKey = Utils.encrypt(prefManager.getUserPassKey(), getResources().getString(R.string.init_vector), dataset.toString());
+        JSONObject dataSet = new JSONObject();
+        dataSet.put(AppConstant.KEY_USER_NAME, prefManager.getUserName());
+        dataSet.put(AppConstant.DATA_CONTENT, authKey);
+        Log.d("savebridgesList", "" + authKey);
+        return dataSet;
+    }
+
     @Override
     public void OnMyResponse(ServerResponse serverResponse) {
 
@@ -293,7 +398,7 @@ public class HomePage extends AppCompatActivity implements Api.ServerResponseLis
                     insertMiTankData(jsonObject.getJSONArray(AppConstant.JSON_DATA));
 
                 } else if (jsonObject.getString("STATUS").equalsIgnoreCase("OK") && jsonObject.getString("RESPONSE").equalsIgnoreCase("NO_RECORD") && jsonObject.getString("MESSAGE").equalsIgnoreCase("NO_RECORD")) {
-                    Utils.showAlert(this, "No Record Found!");
+                    Utils.showAlert(this, "No Record Found !");
                 }
 
             }
@@ -306,10 +411,42 @@ public class HomePage extends AppCompatActivity implements Api.ServerResponseLis
                     new InsertTankStructureTask().execute(jsonObject);
 
                 } else if (jsonObject.getString("STATUS").equalsIgnoreCase("OK") && jsonObject.getString("RESPONSE").equalsIgnoreCase("NO_RECORD") && jsonObject.getString("MESSAGE").equalsIgnoreCase("NO_RECORD")) {
-                    Utils.showAlert(this, "No Record Found!");
+                    Utils.showAlert(this, "No Record Found !");
                 }
 
             }
+
+            if ("TankCondition".equals(urlType) && responseObj != null) {
+                String key = responseObj.getString(AppConstant.ENCODE_DATA);
+                String responseDecryptedBlockKey = Utils.decrypt(prefManager.getUserPassKey(), key);
+                JSONObject jsonObject = new JSONObject(responseDecryptedBlockKey);
+                if (jsonObject.getString("STATUS").equalsIgnoreCase("OK") && jsonObject.getString("RESPONSE").equalsIgnoreCase("OK")) {
+                    new InsertTankConditionTask().execute(jsonObject);
+
+
+                } else if (jsonObject.getString("STATUS").equalsIgnoreCase("OK") && jsonObject.getString("RESPONSE").equalsIgnoreCase("NO_RECORD") && jsonObject.getString("MESSAGE").equalsIgnoreCase("NO_RECORD")) {
+                    Utils.showAlert(this, "No Record Found !");
+                }
+
+            }
+            if ("saveTankData".equals(urlType) && responseObj != null) {
+                String key = responseObj.getString(AppConstant.ENCODE_DATA);
+                String responseDecryptedBlockKey = Utils.decrypt(prefManager.getUserPassKey(), key);
+                JSONObject jsonObject = new JSONObject(responseDecryptedBlockKey);
+                if (jsonObject.getString("STATUS").equalsIgnoreCase("OK") && jsonObject.getString("RESPONSE").equalsIgnoreCase("OK")) {
+                    dbData.open();
+                 //   dbData.deleteRoadListTable();
+                  //  dbData.deleteAssetTable();
+                  //  dbData.update_image();
+                    dataset = new JSONObject();
+                  //  getAssetList();
+                  //  getRoadList();
+                    Utils.showAlert(this,"Asset Saved");
+                    syncButtonVisibility();
+                }
+                Log.d("saved_Asset", "" + responseDecryptedBlockKey);
+            }
+
         } catch (JSONException e) {
             e.printStackTrace();
         }
@@ -318,7 +455,7 @@ public class HomePage extends AppCompatActivity implements Api.ServerResponseLis
 
     @Override
     public void OnError(VolleyError volleyError) {
-
+        volleyError.printStackTrace();
     }
 
 
@@ -354,16 +491,16 @@ public class HomePage extends AppCompatActivity implements Api.ServerResponseLis
     }
 
 
-//    public void syncButtonVisibility() {
-//        dbData.open();
-//        ArrayList<MITank> workImageCount = dbData.getSavedPMAYDetails();
-//
-//        if (workImageCount.size() > 0) {
-//            homeScreenBinding.synData.setVisibility(View.VISIBLE);
-//        }else {
-//            homeScreenBinding.synData.setVisibility(View.GONE);
-//        }
-//    }
+    public void syncButtonVisibility() {
+        dbData.open();
+        ArrayList<MITank> TankImageCount = dbData.getSavedData(prefManager.getDistrictCode(),prefManager.getBlockCode());
+
+        if (TankImageCount.size() > 0) {
+            homeScreenBinding.synData.setVisibility(View.VISIBLE);
+        }else {
+            homeScreenBinding.synData.setVisibility(View.GONE);
+        }
+    }
 
 
     public class InsertTankStructureTask extends AsyncTask<JSONObject, Void, Void> {
@@ -388,6 +525,41 @@ public class HomePage extends AppCompatActivity implements Api.ServerResponseLis
                             tankStructure.setMiTankStructureName(jsonArray.getJSONObject(i).getString(AppConstant.MI_TANK_STRUCTURE_NAME));
 
                             dbData.insertTankStructure(tankStructure);
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+
+                    }
+                }
+
+            }
+            return null;
+        }
+
+    }
+
+    public class InsertTankConditionTask extends AsyncTask<JSONObject, Void, Void> {
+
+        @Override
+        protected Void doInBackground(JSONObject... params) {
+            dbData.deleteMITankCondition();
+            dbData.open();
+            ArrayList<MITank> condition_Count = dbData.getTankCondition();
+            if (condition_Count.size() <= 0) {
+                if (params.length > 0) {
+                    JSONArray jsonArray = new JSONArray();
+                    try {
+                        jsonArray = params[0].getJSONArray(AppConstant.JSON_DATA);
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                    for (int i = 0; i < jsonArray.length(); i++) {
+                        MITank tankCondition = new MITank();
+                        try {
+                            tankCondition.setMiTankConditionId(jsonArray.getJSONObject(i).getString(AppConstant.MI_TANK_CONDITION_ID));
+                            tankCondition.setMiTankConditionName(jsonArray.getJSONObject(i).getString(AppConstant.MI_TANK_CONDITION_NAME));
+
+                            dbData.insertTankCondition(tankCondition);
                         } catch (JSONException e) {
                             e.printStackTrace();
                         }
@@ -487,18 +659,23 @@ public class HomePage extends AppCompatActivity implements Api.ServerResponseLis
 
     public void tanksPondsTitleScreen() {
         String checkboxvalue = "";
+        String selectedTitle = "";
         if(homeScreenBinding.all.isChecked()){
             checkboxvalue = "all";
+            selectedTitle = "ALL";
         }
         else if(homeScreenBinding.miTanks.isChecked()){
             checkboxvalue = "1";
+            selectedTitle = "MI TANKS";
         }
         else if(homeScreenBinding.ponds.isChecked()){
             checkboxvalue = "2";
+            selectedTitle = "PONDS";
         }
-        prefManager.setCheckBoxClicked(checkboxvalue);
 
-        Intent intent = new Intent(this, TanksPondsTitleScreen.class);
+        Intent intent = new Intent(this, TanksPondsListScreen.class);
+        intent.putExtra("Title",selectedTitle);
+        intent.putExtra(AppConstant.CHECK_BOX_CLICKED,checkboxvalue);
         startActivity(intent);
         overridePendingTransition(R.anim.slide_in, R.anim.slide_out);
     }

@@ -59,6 +59,7 @@ public class PrefManager {
     private static final String KEY_DELETE_ID = "deleteId";
     private static final String KEY_DELETE_POSITION = "deletePosition";
     private static final String CHECK_BOX_CLICKED = "checkboxvalue";
+    private static final String MI_TANK_SURVEY_ID = "mi_tank_survey_id";
 
 
     public PrefManager(Context context) {
@@ -361,6 +362,15 @@ public class PrefManager {
 
     public String getCheckBoxClicked() {
         return pref.getString(CHECK_BOX_CLICKED, null);
+    }
+
+    public void setMiTankSurveyId(String key) {
+        editor.putString(MI_TANK_SURVEY_ID,  key);
+        editor.commit();
+    }
+
+    public String getMiTankSurveyId() {
+        return pref.getString(MI_TANK_SURVEY_ID, null);
     }
 
 }

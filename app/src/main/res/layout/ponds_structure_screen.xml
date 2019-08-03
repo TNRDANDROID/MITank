@@ -5,7 +5,7 @@
 
         <variable
             name="activity"
-            type="com.nic.MITank.activity.TanksPondsListScreen" />
+            type="com.nic.MITank.activity.PondsStructureScreen" />
     </data>
 
     <androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
@@ -100,7 +100,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_below="@+id/recyclerView"
-                    android:text="No Data Found!"
+                    android:text="No Projects Found!"
                     android:textAlignment="center"
                     android:textColor="@android:color/black"
                     android:textSize="@dimen/_16sdp"

@@ -508,4 +508,11 @@ public class Utils {
         Log.d("object", "" + dataSet);
         return dataSet;
     }
+
+    public static JSONObject tankConditionListJsonParams() throws JSONException {
+        JSONObject dataSet = new JSONObject();
+        dataSet.put(AppConstant.KEY_SERVICE_ID, AppConstant.KEY_MI_TANK_CONDITION);
+        Log.d("object", "" + dataSet);
+        return dataSet;
+    }
 }

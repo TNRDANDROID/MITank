@@ -31,6 +31,7 @@ import java.util.ArrayList;
 import java.util.List;
 import com.nic.MITank.dataBase.dbData;
 import com.nic.MITank.session.PrefManager;
+import com.nic.MITank.utils.Utils;
 
 public class TanksPondsListScreen extends AppCompatActivity {
 
@@ -40,7 +41,7 @@ public class TanksPondsListScreen extends AppCompatActivity {
     private ArrayList<MITank> tankDataList;
     public dbData dbData = new dbData(this);
     private PrefManager prefManager;
-    String miTankStructureId;
+    String checkboxvalue;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -57,6 +58,7 @@ public class TanksPondsListScreen extends AppCompatActivity {
         tanksPondsListScreenBinding.recyclerView.setLayoutManager(mLayoutManager);
         tanksPondsListScreenBinding.recyclerView.setItemAnimator(new DefaultItemAnimator());
         tanksPondsListScreenBinding.recyclerView.setAdapter(tanksPondsListAdapter);
+        checkboxvalue = getIntent().getStringExtra(AppConstant.CHECK_BOX_CLICKED);
         new fetchtankDatatask().execute();
     }
 
@@ -66,7 +68,7 @@ public class TanksPondsListScreen extends AppCompatActivity {
         protected ArrayList<MITank> doInBackground(Void... params) {
             dbData.open();
             tankDataList = new ArrayList<>();
-            tankDataList = dbData.getAllMITankData("fetch",prefManager.getDistrictCode(),prefManager.getBlockCode(),prefManager.getPvCode(),prefManager.getHabCode(),prefManager.getCheckBoxClicked());
+            tankDataList = dbData.getAllMITankData("fetch",prefManager.getDistrictCode(),prefManager.getBlockCode(),prefManager.getPvCode(),prefManager.getHabCode(),checkboxvalue);
             Log.d("TANKS_DATA_COUNT", String.valueOf(tankDataList.size()));
             return tankDataList;
         }
@@ -74,8 +76,14 @@ public class TanksPondsListScreen extends AppCompatActivity {
         @Override
         protected void onPostExecute(ArrayList<MITank> tanksDataList) {
             super.onPostExecute(tanksDataList);
-            tanksPondsListAdapter = new TanksPondsListAdapter(TanksPondsListScreen.this,tankDataList);
-            tanksPondsListScreenBinding.recyclerView.setAdapter(tanksPondsListAdapter);
+            if(tanksDataList.size() > 0){
+                tanksPondsListAdapter = new TanksPondsListAdapter(TanksPondsListScreen.this,tankDataList);
+                tanksPondsListScreenBinding.recyclerView.setAdapter(tanksPondsListAdapter);
+            }
+            else {
+                 tanksPondsListScreenBinding.notFoundTv.setVisibility(View.VISIBLE);
+            }
+
         }
     }
 

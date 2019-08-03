@@ -8,6 +8,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Bitmap;
 import android.graphics.Matrix;
@@ -22,6 +23,7 @@ import android.provider.MediaStore;
 import android.util.Base64;
 import android.util.Log;
 import android.view.View;
+import android.widget.ImageView;
 import android.widget.Toast;
 
 import androidx.annotation.Nullable;
@@ -37,12 +39,14 @@ import com.karumi.dexter.PermissionToken;
 import com.karumi.dexter.listener.PermissionRequest;
 import com.karumi.dexter.listener.multi.MultiplePermissionsListener;
 import com.nic.MITank.R;
+import com.nic.MITank.adapter.CommonAdapter;
 import com.nic.MITank.api.Api;
 import com.nic.MITank.api.ServerResponse;
 import com.nic.MITank.constant.AppConstant;
 import com.nic.MITank.dataBase.DBHelper;
 import com.nic.MITank.dataBase.dbData;
 import com.nic.MITank.databinding.CameraScreenBinding;
+import com.nic.MITank.model.MITank;
 import com.nic.MITank.session.PrefManager;
 import com.nic.MITank.support.MyLocationListener;
 import com.nic.MITank.utils.CameraUtils;
@@ -52,6 +56,7 @@ import com.nic.MITank.utils.Utils;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import es.dmoral.toasty.Toasty;
@@ -81,8 +86,7 @@ public class CameraScreen extends AppCompatActivity implements View.OnClickListe
     public static DBHelper dbHelper;
     public static SQLiteDatabase db;
     private com.nic.MITank.dataBase.dbData dbData = new dbData(this);
-    String pmay_id;
-
+    private List<MITank> ConditionList = new ArrayList<>();
 
 
 
@@ -100,6 +104,7 @@ public class CameraScreen extends AppCompatActivity implements View.OnClickListe
 
 
         intializeUI();
+        loadConditionSpinnervalue();
     }
 
     public void intializeUI() {
@@ -107,9 +112,32 @@ public class CameraScreen extends AppCompatActivity implements View.OnClickListe
 
         mlocManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
         mlocListener = new MyLocationListener();
+    }
 
-        pmay_id = getIntent().getStringExtra("lastInsertedID");
+    public void loadConditionSpinnervalue() {
+        Cursor conditionCursor = null;
+        conditionCursor = db.rawQuery("SELECT * FROM " + DBHelper.MI_TANK_CONDITION, null);
 
+        ConditionList.clear();
+        MITank conditionListValue = new MITank();
+        conditionListValue.setMiTankConditionName("Select Condition");
+        ConditionList.add(conditionListValue);
+        if (conditionCursor.getCount() > 0) {
+            if (conditionCursor.moveToFirst()) {
+                do {
+                    MITank conditionList = new MITank();
+                    String miTankConditionId = conditionCursor.getString(conditionCursor.getColumnIndexOrThrow(AppConstant.MI_TANK_CONDITION_ID));
+                    String miTankConditionName = conditionCursor.getString(conditionCursor.getColumnIndexOrThrow(AppConstant.MI_TANK_CONDITION_NAME));
+
+                    conditionList.setMiTankConditionId(miTankConditionId);
+                    conditionList.setMiTankConditionName(miTankConditionName);
+
+                    ConditionList.add(conditionList);
+                    Log.d("conditonsize", "" + ConditionList.size());
+                } while (conditionCursor.moveToNext());
+            }
+        }
+        cameraScreenBinding.condition.setAdapter(new CommonAdapter(this, ConditionList, "ConditionList"));
     }
 
     @Override
@@ -330,6 +358,73 @@ public class CameraScreen extends AppCompatActivity implements View.OnClickListe
         super.onBackPressed();
         setResult(Activity.RESULT_CANCELED);
         overridePendingTransition(R.anim.slide_enter, R.anim.slide_exit);
+    }
+
+    public void checkSave() {
+        if (!"Select Condition".equalsIgnoreCase(ConditionList.get(cameraScreenBinding.condition.getSelectedItemPosition()).getMiTankConditionName())) {
+            saveImage();
+        } else {
+            Utils.showAlert(this, "Select Condition!");
+        }
+    }
+    public void saveImage() {
+        dbData.open();
+        long id = 0; String whereClause = "";String[] whereArgs = null;
+        String mi_tank_structure_detail_id = getIntent().getStringExtra(AppConstant.MI_TANK_STRUCTURE_DETAIL_ID);
+        String mi_tank_survey_id = getIntent().getStringExtra(AppConstant.MI_TANK_SURVEY_ID);
+        String mi_tank_structure_id = getIntent().getStringExtra(AppConstant.MI_TANK_STRUCTURE_ID);
+        String dcode = prefManager.getDistrictCode();
+        String bcode = prefManager.getBlockCode();
+        String pvcode = prefManager.getPvCode();
+        String habcode = prefManager.getHabCode();
+
+        ImageView imageView = (ImageView) findViewById(R.id.image_view);
+        byte[] imageInByte = new byte[0];
+        String image_str = "";
+        try {
+            Bitmap bitmap = ((BitmapDrawable) imageView.getDrawable()).getBitmap();
+            ByteArrayOutputStream baos = new ByteArrayOutputStream();
+            bitmap.compress(Bitmap.CompressFormat.JPEG, 90, baos);
+            imageInByte = baos.toByteArray();
+            image_str = Base64.encodeToString(imageInByte, Base64.DEFAULT);
+
+            ContentValues values = new ContentValues();
+            values.put(AppConstant.DISTRICT_CODE, dcode);
+            values.put(AppConstant.BLOCK_CODE, bcode);
+            values.put(AppConstant.PV_CODE, pvcode);
+            values.put(AppConstant.HAB_CODE, habcode);
+            values.put(AppConstant.MI_TANK_STRUCTURE_DETAIL_ID, mi_tank_structure_detail_id);
+            values.put(AppConstant.MI_TANK_STRUCTURE_ID, mi_tank_structure_id);
+            values.put(AppConstant.MI_TANK_SURVEY_ID, mi_tank_survey_id);
+            values.put(AppConstant.MI_TANK_CONDITION_ID,ConditionList.get(cameraScreenBinding.condition.getSelectedItemPosition()).getMiTankConditionId() );
+            values.put(AppConstant.KEY_LATITUDE, offlatTextValue.toString());
+            values.put(AppConstant.KEY_LONGITUDE, offlongTextValue.toString());
+            values.put(AppConstant.KEY_IMAGE,image_str.trim());
+           // values.put(AppConstant.KEY_CREATED_DATE,sdf.format(new Date()));
+
+
+                whereClause = "dcode = ? and bcode = ? and pvcode = ? and habcode = ? and mi_tank_structure_detail_id = ?";
+                whereArgs = new String[]{dcode,bcode,pvcode,habcode,mi_tank_structure_detail_id};
+                dbData.open();
+                ArrayList<MITank> imageOffline = dbData.selectImage(dcode,bcode,pvcode,habcode,mi_tank_structure_detail_id);
+
+                if(imageOffline.size() < 1) {
+                    id = db.insert(DBHelper.SAVE_MI_TANK_IMAGES, null, values);
+                }
+                else {
+                    id = db.update(DBHelper.SAVE_MI_TANK_IMAGES, values, whereClause, whereArgs);
+                }
+
+            if(id > 0){
+                Toasty.success(this, "Success!", Toast.LENGTH_LONG, true).show();
+                onBackPressed();
+            }
+            Log.d("insIdsaveImageLatLong", String.valueOf(id));
+
+        } catch (Exception e) {
+            Utils.showAlert(CameraScreen.this, "Atleast Capture one Photo");
+            //e.printStackTrace();
+        }
     }
 
 

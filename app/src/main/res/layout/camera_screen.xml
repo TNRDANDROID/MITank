@@ -57,6 +57,51 @@
         android:layout_below="@+id/header_layout"
         android:orientation="vertical">
 
+        <TextView
+            android:id="@+id/alert_severity_title"
+            style="@style/font_circular_bold"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="@dimen/margin_left_20dp"
+            android:layout_marginTop="@dimen/padding"
+            android:layout_marginRight="@dimen/margin_left_20dp"
+            android:text="Select Condition"
+            android:textColor="@android:color/black"
+            android:textSize="@dimen/_15sdp"
+            android:visibility="visible" />
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/header"
+            android:layout_marginLeft="@dimen/margin_left_20dp"
+            android:layout_marginTop="@dimen/padding"
+            android:layout_marginRight="@dimen/margin_left_20dp"
+            android:background="@drawable/rectangle_box"
+            android:orientation="vertical"
+            android:visibility="visible">
+
+            <TextView
+                style="@style/font_normal"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentStart="true"
+                android:layout_centerInParent="true"
+                android:layout_marginLeft="15dp"
+                android:textColor="@android:color/black"
+                android:textSize="@dimen/_15sdp"
+                android:visibility="visible" />
+
+            <Spinner
+                android:id="@+id/condition"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_alignParentEnd="true"
+                android:layout_centerInParent="true"
+                android:layout_marginLeft="10dp"
+                android:layout_marginRight="10dp"
+                android:gravity="center" />
+
+        </RelativeLayout>
 
 
         <RelativeLayout
@@ -169,6 +214,7 @@
                 android:layout_centerInParent="true"
                 android:background="@drawable/button_background"
                 android:text="SAVE IMAGE"
+                android:onClick="@{()-> activity.checkSave()}"
                 android:textAllCaps="false"
                 android:textColor="@android:color/white" />
         </RelativeLayout>
@@ -178,7 +224,6 @@
         android:id="@+id/save"
         android:layout_width="match_parent"
         android:layout_height="?attr/actionBarSize"
-        android:layout_below="@+id/empty"
         android:layout_alignParentBottom="true"
         android:padding="15dp"
         android:text="Sofware Designed &amp; Developed by NIC"
