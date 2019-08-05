@@ -41,7 +41,7 @@ public class TrackingScreen extends AppCompatActivity implements LocationListene
     private PrefManager prefManager;
     private ImageView back_img, home_img;
 
-    private TextView tank_pond_name, marquee_tv;
+    private TextView tank_pond_name, marquee_tv,title_tank_pond;
     private Button start_lat_long_click_view, middle_lat_long_click_view, end_lat_long_click_view, save_btn;
 
     Handler myHandler = new Handler();
@@ -73,6 +73,7 @@ public class TrackingScreen extends AppCompatActivity implements LocationListene
         end_lat_long_click_view = (Button) findViewById(R.id.end_lat_long_click_view);
         tank_pond_name = (TextView) findViewById(R.id.tank_pond_name);
         marquee_tv = (TextView) findViewById(R.id.marquee_tv);
+        title_tank_pond = (TextView) findViewById(R.id.title_tank_pond);
 
 
         back_img.setOnClickListener(this);
@@ -87,6 +88,11 @@ public class TrackingScreen extends AppCompatActivity implements LocationListene
         end_lat_long_click_view.setBackgroundResource(R.drawable.end_disable_button);
         middle_lat_long_click_view.setClickable(false);
         end_lat_long_click_view.setClickable(false);
+        if(!prefManager.getSchemeName().equalsIgnoreCase("ALL")) {
+            title_tank_pond.setText("Name of the" +" "+ prefManager.getSchemeName());
+        }else{
+            title_tank_pond.setText("Name of the Tanks/Ponds");
+        }
     }
 
     @Override
@@ -139,7 +145,7 @@ public class TrackingScreen extends AppCompatActivity implements LocationListene
         new AlertDialog.Builder(this)
                 .setTitle("Alert")
                 .setMessage(alert)
-                .setIcon(android.R.drawable.ic_dialog_alert)
+                .setIcon(R.mipmap.alert)
                 .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int whichButton) {
                         getLocationPermissionWithLatLong();

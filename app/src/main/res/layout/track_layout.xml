@@ -111,15 +111,16 @@
                                         android:background="@drawable/background">
 
                                         <TextView
+                                            android:id="@+id/title_tank_pond"
                                             style="@style/font_circular_bold"
                                             android:layout_width="wrap_content"
                                             android:layout_height="wrap_content"
                                             android:layout_alignParentStart="true"
                                             android:layout_centerInParent="true"
                                             android:padding="10dp"
-                                            android:text="Name of the Tank:"
+                                            android:text="Name of the Tank"
                                             android:textAlignment="gravity"
-                                            android:textColor="#000080"
+                                            android:textColor="@android:color/white"
                                             android:textSize="18sp" />
 
                                         <TextView

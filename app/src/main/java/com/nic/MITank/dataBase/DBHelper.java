@@ -14,7 +14,7 @@ public class DBHelper extends SQLiteOpenHelper {
     public static final String HABITATION_TABLE_NAME = " habitaionTable";
     public static final String MI_TANK_STRUCTURE = "mi_tank_structure";
     public static final String MI_TANK_DATA = "mi_tank_data";
-    public static final String STRUCTURES = "structures";
+    public static final String MI_TANK_DATA_STRUCTURES = "mi_tank_data_structures";
     public static final String MI_TANK_CONDITION = "mi_tank_condition";
     public static final String SAVE_MI_TANK_IMAGES = "save_mi_tank_images";
     public static final String SAVE_TRACK_TABLE = "TrackTable";
@@ -65,7 +65,7 @@ public class DBHelper extends SQLiteOpenHelper {
                 "area TEXT)");
 
 
-        db.execSQL("CREATE TABLE " + STRUCTURES + " ("
+        db.execSQL("CREATE TABLE " + MI_TANK_DATA_STRUCTURES + " ("
                 + "mi_tank_structure_detail_id INTEGER,"+
                 "mi_tank_survey_id INTEGER," +
                 "mi_tank_structure_id INTEGER," +
@@ -73,6 +73,7 @@ public class DBHelper extends SQLiteOpenHelper {
                 "mi_tank_condition_id INTEGER," +
                 "mi_tank_condition_name TEXT," +
                 "mi_tank_sill_level TEXT," +
+                "image_available TEXT," +
                 "mi_tank_structure_name TEXT)");
 
         db.execSQL("CREATE TABLE " + SAVE_MI_TANK_IMAGES + " ("
@@ -84,6 +85,7 @@ public class DBHelper extends SQLiteOpenHelper {
                 "mi_tank_survey_id INTEGER,"+
                 "mi_tank_structure_id INTEGER,"+
                 "mi_tank_condition_id INTEGER,"+
+                "mi_tank_condition_name TEXT," +
                 "image BLOB," +
                 "latitude TEXT," +
                 "longitude TEXT)");
@@ -109,7 +111,7 @@ public class DBHelper extends SQLiteOpenHelper {
             db.execSQL("DROP TABLE IF EXISTS " + HABITATION_TABLE_NAME);
             db.execSQL("DROP TABLE IF EXISTS " + MI_TANK_STRUCTURE);
             db.execSQL("DROP TABLE IF EXISTS " + MI_TANK_DATA);
-            db.execSQL("DROP TABLE IF EXISTS " + STRUCTURES);
+            db.execSQL("DROP TABLE IF EXISTS " + MI_TANK_DATA_STRUCTURES);
             db.execSQL("DROP TABLE IF EXISTS " + MI_TANK_CONDITION);
             db.execSQL("DROP TABLE IF EXISTS " + SAVE_TRACK_TABLE);
             onCreate(db);

@@ -177,6 +177,17 @@
         </LinearLayout>
 
     </androidx.core.widget.NestedScrollView>
-
+    <TextView
+        android:id="@+id/save"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
+        android:layout_gravity="bottom"
+        android:padding="15dp"
+        android:text="Sofware Designed &amp; Developed by NIC"
+        android:textAlignment="center"
+        android:textColor="@android:color/white"
+        android:textSize="@dimen/_14sdp"
+        android:background="@drawable/background"
+        style="@string/font_circular_medium" />
 </androidx.coordinatorlayout.widget.CoordinatorLayout>
 </layout>

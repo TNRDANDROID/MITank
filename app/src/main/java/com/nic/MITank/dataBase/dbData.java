@@ -189,7 +189,7 @@ public class dbData {
         try {
             cursor = db.query(DBHelper.MI_TANK_STRUCTURE,
                     new String[]{"*"}, null, null, null, null, null);
-            cursor = db.rawQuery("select a.mi_tank_structure_id as mi_tank_structure_id,b.mi_tank_structure_name as mi_tank_structure_name from (select distinct mi_tank_structure_id from "+DBHelper.STRUCTURES+" where mi_tank_survey_id = "+mi_tank_survey_id+")a left join (select * from "+DBHelper.MI_TANK_STRUCTURE+") b on a.mi_tank_structure_id = b.mi_tank_structure_id",null);
+            cursor = db.rawQuery("select a.mi_tank_structure_id as mi_tank_structure_id,b.mi_tank_structure_name as mi_tank_structure_name from (select distinct mi_tank_structure_id from " + DBHelper.MI_TANK_DATA_STRUCTURES + " where mi_tank_survey_id = " + mi_tank_survey_id + ")a left join (select * from " + DBHelper.MI_TANK_STRUCTURE + ") b on a.mi_tank_structure_id = b.mi_tank_structure_id", null);
             if (cursor.getCount() > 0) {
                 while (cursor.moveToNext()) {
                     MITank  card = new MITank ();
@@ -291,8 +291,9 @@ public class dbData {
         values.put(AppConstant.MI_TANK_CONDITION_NAME,miTank.getMiTankConditionName());
         values.put(AppConstant.MI_TANK_SKILL_LEVEL,miTank.getMiTankSkillLevel());
         values.put(AppConstant.MI_TANK_STRUCTURE_NAME,miTank.getMiTankStructureName());
+        values.put(AppConstant.IMAGE_AVAILABLE, miTank.getImageAvailable());
 
-        long id = db.insert(DBHelper.STRUCTURES,null,values);
+        long id = db.insert(DBHelper.MI_TANK_DATA_STRUCTURES, null, values);
         Log.d("Insert_id_structures", String.valueOf(id));
 
         return miTank;
@@ -311,7 +312,7 @@ public class dbData {
 
 
         try {
-            cursor = db.query(DBHelper.STRUCTURES,
+            cursor = db.query(DBHelper.MI_TANK_DATA_STRUCTURES,
                     new String[]{"*"}, selection, selectionArgs, null, null, null);
             if (cursor.getCount() > 0) {
                 while (cursor.moveToNext()) {
@@ -325,6 +326,7 @@ public class dbData {
                     card.setMiTankConditionName(cursor.getString(cursor.getColumnIndexOrThrow(AppConstant.MI_TANK_CONDITION_NAME)));
                     card.setMiTankSkillLevel(cursor.getString(cursor.getColumnIndexOrThrow(AppConstant.MI_TANK_SKILL_LEVEL)));
                     card.setMiTankStructureName(cursor.getString(cursor.getColumnIndexOrThrow(AppConstant.MI_TANK_STRUCTURE_NAME)));
+                    card.setImageAvailable(cursor.getString(cursor.getColumnIndexOrThrow(AppConstant.IMAGE_AVAILABLE)));
 
                     cards.add(card);
                 }
@@ -419,6 +421,8 @@ public class dbData {
                             .getColumnIndexOrThrow(AppConstant.MI_TANK_SURVEY_ID)));
                     card.setMiTankConditionId(cursor.getString(cursor
                             .getColumnIndexOrThrow(AppConstant.MI_TANK_CONDITION_ID)));
+                    card.setMiTankConditionName(cursor.getString(cursor
+                            .getColumnIndexOrThrow(AppConstant.MI_TANK_CONDITION_NAME)));
                     card.setLatitude(cursor.getString(cursor
                             .getColumnIndexOrThrow(AppConstant.KEY_LATITUDE)));
                     card.setLongitude(cursor.getString(cursor
@@ -575,6 +579,10 @@ public class dbData {
         db.execSQL("delete from " + DBHelper.VILLAGE_TABLE_NAME);
     }
 
+    public void deleteHabitationTable() {
+        db.execSQL("delete from " + DBHelper.HABITATION_TABLE_NAME);
+    }
+
     public void deleteTankStructure() {
         db.execSQL("delete from " + DBHelper.MI_TANK_STRUCTURE);
     }
@@ -584,7 +592,7 @@ public class dbData {
     }
 
     public void deleteStructures() {
-        db.execSQL("delete from " + DBHelper.STRUCTURES);
+        db.execSQL("delete from " + DBHelper.MI_TANK_DATA_STRUCTURES);
     }
 
     public void deleteMITankCondition() {
@@ -595,15 +603,21 @@ public class dbData {
         db.execSQL("delete from " + DBHelper.SAVE_MI_TANK_IMAGES);
     }
 
+    public void deleteSaveTrackTable() {
+        db.execSQL("delete from " + DBHelper.SAVE_TRACK_TABLE);
+    }
+
 
     public void deleteAll() {
 
         deleteVillageTable();
+        deleteHabitationTable();
         deleteTankStructure();
         deleteMITankData();
         deleteStructures();
         deleteMITankCondition();
         deleteMITankImages();
+        deleteSaveTrackTable();
     }
 
 

@@ -463,8 +463,9 @@ public class HomePage extends AppCompatActivity implements Api.ServerResponseLis
                     insertMiTankData(jsonObject.getJSONArray(AppConstant.JSON_DATA));
 
                 } else if (jsonObject.getString("STATUS").equalsIgnoreCase("OK") && jsonObject.getString("RESPONSE").equalsIgnoreCase("NO_RECORD") && jsonObject.getString("MESSAGE").equalsIgnoreCase("NO_RECORD")) {
-                    Utils.showAlert(this, "No Record Found !");
+//                    Utils.showAlert(this, "No Record Found !");
                 }
+                Log.d("TankPondList", "" + responseDecryptedBlockKey);
 
             }
 
@@ -476,9 +477,9 @@ public class HomePage extends AppCompatActivity implements Api.ServerResponseLis
                     new InsertTankStructureTask().execute(jsonObject);
 
                 } else if (jsonObject.getString("STATUS").equalsIgnoreCase("OK") && jsonObject.getString("RESPONSE").equalsIgnoreCase("NO_RECORD") && jsonObject.getString("MESSAGE").equalsIgnoreCase("NO_RECORD")) {
-                    Utils.showAlert(this, "No Record Found !");
+//                    Utils.showAlert(this, "No Record Found !");
                 }
-
+                Log.d("TankPondStructure", "" + responseDecryptedBlockKey);
             }
 
             if ("TankCondition".equals(urlType) && responseObj != null) {
@@ -490,9 +491,9 @@ public class HomePage extends AppCompatActivity implements Api.ServerResponseLis
 
 
                 } else if (jsonObject.getString("STATUS").equalsIgnoreCase("OK") && jsonObject.getString("RESPONSE").equalsIgnoreCase("NO_RECORD") && jsonObject.getString("MESSAGE").equalsIgnoreCase("NO_RECORD")) {
-                    Utils.showAlert(this, "No Record Found !");
+//                    Utils.showAlert(this, "No Record Found !");
                 }
-
+                Log.d("TankCondition", "" + responseDecryptedBlockKey);
             }
             if ("saveTankData".equals(urlType) && responseObj != null) {
                 String key = responseObj.getString(AppConstant.ENCODE_DATA);
@@ -501,8 +502,8 @@ public class HomePage extends AppCompatActivity implements Api.ServerResponseLis
                 if (jsonObject.getString("STATUS").equalsIgnoreCase("OK") && jsonObject.getString("RESPONSE").equalsIgnoreCase("OK")) {
                     dbData.open();
                     dbData.deleteMITankData();
-                    dbData.deleteTankStructure();
                     dbData.deleteMITankImages();
+                    dbData.deleteStructures();
                     dataset = new JSONObject();
                     getTankPondList();
                     Utils.showAlert(this,"Saved");
@@ -706,6 +707,7 @@ public class HomePage extends AppCompatActivity implements Api.ServerResponseLis
                         sturctureValue.setMiTankConditionName(jsonArray.getJSONObject(i).getString(AppConstant.MI_TANK_CONDITION_NAME));
                         sturctureValue.setMiTankSkillLevel(jsonArray.getJSONObject(i).getString(AppConstant.MI_TANK_SKILL_LEVEL));
                         sturctureValue.setMiTankStructureName(jsonArray.getJSONObject(i).getString(AppConstant.MI_TANK_STRUCTURE_NAME));
+                        sturctureValue.setImageAvailable(jsonArray.getJSONObject(i).getString(AppConstant.IMAGE_AVAILABLE));
                         dbData.insertStructure(sturctureValue);
                     } catch (JSONException e) {
                         e.printStackTrace();
@@ -750,7 +752,7 @@ public class HomePage extends AppCompatActivity implements Api.ServerResponseLis
             checkboxvalue = "2";
             selectedTitle = "PONDS";
         }
-
+        prefManager.setSchemeName(selectedTitle);
         Intent intent = new Intent(this, TanksPondsListScreen.class);
         intent.putExtra("Title",selectedTitle);
         intent.putExtra(AppConstant.CHECK_BOX_CLICKED,checkboxvalue);

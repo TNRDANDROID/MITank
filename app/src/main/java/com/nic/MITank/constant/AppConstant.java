@@ -77,6 +77,8 @@ public class AppConstant {
     public static String MI_TANK_SKILL_LEVEL = "mi_tank_sill_level";
 
     public static String CHECK_BOX_CLICKED = "checkboxvalue";
+    public static String IMAGE_AVAILABLE = "image_available";
+    public static String MI_TANK_DATA_IMAGE = "mi_tank_data_image";
 
     /*********** Track Data***********/
 

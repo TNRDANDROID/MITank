@@ -13,6 +13,7 @@ import com.nic.MITank.R;
 import com.nic.MITank.databinding.SplashScreenBinding;
 import com.nic.MITank.helper.AppVersionHelper;
 import com.nic.MITank.session.PrefManager;
+import com.nic.MITank.utils.Utils;
 
 
 public class SplashScreen extends AppCompatActivity implements
@@ -30,13 +31,12 @@ public class SplashScreen extends AppCompatActivity implements
         splashScreenBinding = DataBindingUtil.setContentView(this, R.layout.splash_screen);
         splashScreenBinding.setActivity(this);
         prefManager = new PrefManager(this);
-        showSignInScreen();
-//        if (Utils.isOnline()) {
-//           checkAppVersion();
-//        } else {
-//            showSignInScreen();
-//
-//        }
+        if (Utils.isOnline()) {
+           checkAppVersion();
+        } else {
+            showSignInScreen();
+
+        }
     }
 
 
