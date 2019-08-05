@@ -332,7 +332,7 @@
                         android:layout_centerInParent="true"
                         android:layout_gravity="center"
                         android:textAlignment="center"
-                        android:text="Syn Data"
+                        android:text="Sync Data"
                         android:textStyle="bold"
                         android:textAllCaps="false"
                         android:textColor="@android:color/black"

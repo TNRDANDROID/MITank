@@ -87,12 +87,12 @@ public class SlideshowDialogFragment extends DialogFragment {
         lblCount.setText((position + 1) + " of " + images.size());
 
         MITank image = images.get(position);
-//        if(!image.getImageRemark().equalsIgnoreCase("")){
-//            lblDescription.setVisibility(View.VISIBLE);
-//            lblDescription.setText(image.getImageRemark());
-//        }else{
-//            lblDescription.setVisibility(View.GONE);
-//        }
+        if(!image.getMiTankConditionName().equalsIgnoreCase("")){
+            lblDescription.setVisibility(View.VISIBLE);
+            lblDescription.setText(image.getMiTankConditionName());
+        }else{
+            lblDescription.setVisibility(View.GONE);
+        }
     }
 
     @Override

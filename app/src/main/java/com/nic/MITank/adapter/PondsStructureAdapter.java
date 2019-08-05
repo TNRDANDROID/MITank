@@ -21,6 +21,7 @@ import com.nic.MITank.databinding.PondsStructureAdapterBinding;
 import com.nic.MITank.databinding.TanksPondsListAdapterBinding;
 import com.nic.MITank.model.MITank;
 import com.nic.MITank.session.PrefManager;
+import com.nic.MITank.utils.Utils;
 
 import org.json.JSONObject;
 
@@ -77,6 +78,7 @@ public class PondsStructureAdapter extends RecyclerView.Adapter<PondsStructureAd
         String pvcode = prefManager.getPvCode();
         String habcode = prefManager.getHabCode();
         String mi_tank_structure_detail_id = Structure.get(position).getMiTankStructureDetailId();
+        String image_available = Structure.get(position).getImageAvailable();
 
 
         ArrayList<MITank> imageOffline = dbData.selectImage(dcode,bcode,pvcode,habcode,mi_tank_structure_detail_id);
@@ -86,6 +88,13 @@ public class PondsStructureAdapter extends RecyclerView.Adapter<PondsStructureAd
         }
         else {
             holder.tanksPondsListAdapterBinding.viewOfflineImages.setVisibility(View.VISIBLE);
+        }
+
+        if(image_available.equalsIgnoreCase("Y")) {
+            holder.tanksPondsListAdapterBinding.viewOnlineImages.setVisibility(View.VISIBLE);
+        }
+        else {
+            holder.tanksPondsListAdapterBinding.viewOnlineImages.setVisibility(View.GONE);
         }
 
        holder.tanksPondsListAdapterBinding.cameraActivity.setOnClickListener(new View.OnClickListener() {
@@ -98,7 +107,21 @@ public class PondsStructureAdapter extends RecyclerView.Adapter<PondsStructureAd
         holder.tanksPondsListAdapterBinding.viewOfflineImages.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                viewOfflineImages(position);
+                viewImages(position,"offline");
+            }
+        });
+
+        holder.tanksPondsListAdapterBinding.viewOnlineImages.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                if(Utils.isOnline()){
+                    viewImages(position,"online");
+                }
+                else {
+                    Utils.showAlert(context,"Your Internet seems to be Offline.Image can be viewed only in Online mode.");
+                }
+
             }
         });
 
@@ -114,11 +137,12 @@ public class PondsStructureAdapter extends RecyclerView.Adapter<PondsStructureAd
         activity.overridePendingTransition(R.anim.slide_in, R.anim.slide_out);
     }
 
-    public void viewOfflineImages(int position){
+    public void viewImages(int position,String type){
         Activity activity = (Activity) context;
         Intent intent = new Intent(context, FullImageActivity.class);
-        intent.putExtra("ONOFFTYPE","offline");
+        intent.putExtra("ONOFFTYPE",type);
         intent.putExtra(AppConstant.MI_TANK_STRUCTURE_DETAIL_ID,Structure.get(position).getMiTankStructureDetailId());
+        intent.putExtra(AppConstant.MI_TANK_SURVEY_ID,Structure.get(position).getMiTankSurveyId());
         activity.startActivity(intent);
         activity.overridePendingTransition(R.anim.slide_in, R.anim.slide_out);
     }

@@ -397,6 +397,7 @@ public class CameraScreen extends AppCompatActivity implements View.OnClickListe
             values.put(AppConstant.MI_TANK_STRUCTURE_ID, mi_tank_structure_id);
             values.put(AppConstant.MI_TANK_SURVEY_ID, mi_tank_survey_id);
             values.put(AppConstant.MI_TANK_CONDITION_ID,ConditionList.get(cameraScreenBinding.condition.getSelectedItemPosition()).getMiTankConditionId() );
+            values.put(AppConstant.MI_TANK_CONDITION_NAME,ConditionList.get(cameraScreenBinding.condition.getSelectedItemPosition()).getMiTankConditionName() );
             values.put(AppConstant.KEY_LATITUDE, offlatTextValue.toString());
             values.put(AppConstant.KEY_LONGITUDE, offlongTextValue.toString());
             values.put(AppConstant.KEY_IMAGE,image_str.trim());

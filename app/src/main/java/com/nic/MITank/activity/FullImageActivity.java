@@ -64,11 +64,13 @@ public class FullImageActivity extends AppCompatActivity implements View.OnClick
         fullImageRecyclerBinding.imagePreviewRecyclerview.setAdapter(fullImageAdapter);
         if(onofftype.equalsIgnoreCase("offline")) {
             new fetchImagetask().execute();
+        }else if(onofftype.equalsIgnoreCase("online")){
+            if (Utils.isOnline()) {
+                getOnlineImage();
+            }
         }
 
-//        if(Utils.isOnline()){
-//            getOnlineImage();
-//        }
+
 
 
     }
@@ -120,34 +122,33 @@ public class FullImageActivity extends AppCompatActivity implements View.OnClick
 
     }
 
-//    public void getOnlineImage() {
-//        try {
-//            new ApiService(this).makeJSONObjectRequest("OnlineImage", Api.Method.POST, UrlGenerator.getPMAYListUrl(), ImagesJsonParams(), "not cache", this);
-//        } catch (JSONException e) {
-//            e.printStackTrace();
-//        }
-//    }
-//
-//    public JSONObject ImagesJsonParams() throws JSONException {
-//        String authKey = Utils.encrypt(prefManager.getUserPassKey(), getResources().getString(R.string.init_vector), ImagesListJsonParams().toString());
-//        JSONObject dataSet = new JSONObject();
-//        dataSet.put(AppConstant.KEY_USER_NAME, prefManager.getUserName());
-//        dataSet.put(AppConstant.DATA_CONTENT, authKey);
-//        Log.d("utils_ImageEncrydataSet", "" + authKey);
-//        return dataSet;
-//    }
-//
-//    public JSONObject ImagesListJsonParams() throws JSONException {
-//        JSONObject dataSet = new JSONObject();
-//        dataSet.put(AppConstant.KEY_SERVICE_ID, AppConstant.KEY_PMAY_SOURCE_DATA_PHOTO);
-//        dataSet.put(AppConstant.DISTRICT_CODE, prefManager.getDistrictCode());
-//        dataSet.put(AppConstant.BLOCK_CODE, prefManager.getBlockCode());
-//        dataSet.put(AppConstant.PV_CODE, getIntent().getStringExtra(AppConstant.PV_CODE));
-//        dataSet.put(AppConstant.HAB_CODE, getIntent().getStringExtra(AppConstant.HAB_CODE));
-//        dataSet.put(AppConstant.SECC_ID, getIntent().getStringExtra(AppConstant.SECC_ID));
-//        Log.d("utils_imageDataset", "" + dataSet);
-//        return dataSet;
-//    }
+    public void getOnlineImage() {
+        try {
+            new ApiService(this).makeJSONObjectRequest("OnlineImage", Api.Method.POST, UrlGenerator.getTankPondListUrl(), ImagesJsonParams(), "not cache", this);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public JSONObject ImagesJsonParams() throws JSONException {
+        String authKey = Utils.encrypt(prefManager.getUserPassKey(), getResources().getString(R.string.init_vector), ImagesListJsonParams().toString());
+        JSONObject dataSet = new JSONObject();
+        dataSet.put(AppConstant.KEY_USER_NAME, prefManager.getUserName());
+        dataSet.put(AppConstant.DATA_CONTENT, authKey);
+        Log.d("utils_ImageEncrydataSet", "" + authKey);
+        return dataSet;
+    }
+
+    public JSONObject ImagesListJsonParams() throws JSONException {
+        JSONObject dataSet = new JSONObject();
+        dataSet.put(AppConstant.KEY_SERVICE_ID, AppConstant.MI_TANK_DATA_IMAGE);
+        dataSet.put(AppConstant.PV_CODE, prefManager.getPvCode());
+        dataSet.put(AppConstant.HAB_CODE, prefManager.getHabCode());
+        dataSet.put(AppConstant.MI_TANK_SURVEY_ID, getIntent().getStringExtra(AppConstant.MI_TANK_SURVEY_ID));
+        dataSet.put(AppConstant.MI_TANK_STRUCTURE_DETAIL_ID, getIntent().getStringExtra(AppConstant.MI_TANK_STRUCTURE_DETAIL_ID));
+        Log.d("utils_imageDataset", "" + dataSet);
+        return dataSet;
+    }
 
     @Override
     public void OnMyResponse(ServerResponse serverResponse) {
@@ -180,6 +181,7 @@ public class FullImageActivity extends AppCompatActivity implements View.OnClick
                     Bitmap decodedByte = BitmapFactory.decodeByteArray(decodedString, 0, decodedString.length);
 
                     imageOnline.setImage(decodedByte);
+                    imageOnline.setMiTankConditionName(jsonArray.getJSONObject(i).getString(AppConstant.MI_TANK_CONDITION_NAME));
 
                     activityImage.add(imageOnline);
                 } catch (JSONException e) {
