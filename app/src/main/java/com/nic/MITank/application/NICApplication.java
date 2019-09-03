@@ -11,6 +11,7 @@ import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.HurlStack;
 import com.android.volley.toolbox.ImageLoader;
 import com.android.volley.toolbox.Volley;
+import com.nic.MITank.BuildConfig;
 import com.nic.MITank.R;
 import com.nic.MITank.api.LruBitmapCache;
 import com.nic.MITank.utils.UrlGenerator;
@@ -81,10 +82,13 @@ public class NICApplication extends Application {
 
     public RequestQueue getRequestQueue() {
         if (mRequestQueue == null) {
-//            mRequestQueue = Volley.newRequestQueue(getApplicationContext());
-          mRequestQueue = Volley.newRequestQueue(this, new HurlStack(null, getSocketFactory())); //This for SSl Certificate
-        }
+            if (BuildConfig.BUILD_TYPE.equalsIgnoreCase("production")) {
+                mRequestQueue = Volley.newRequestQueue(this, new HurlStack(null, getSocketFactory())); //This for SSl Certificate
 
+            } else {
+                mRequestQueue = Volley.newRequestQueue(getApplicationContext());
+            }
+        }
         return mRequestQueue;
     }
 

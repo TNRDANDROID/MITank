@@ -38,13 +38,28 @@ android {
             signingConfig signingConfigs.debug
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
+        local_host {
+            debuggable true
+            minifyEnabled false
+            signingConfig signingConfigs.debug
+            resValue "string", "LOGIN_URL", "http://10.163.19.140/rdweb/project/webservices_forms/login_service/login_services.php"
+            resValue "string", "BASE_SERVICES_URL", "http://10.163.19.140/rdweb/project/webservices_forms/master_services/master_services.php"
+            resValue "string", "APP_MAIN_SERVICES_URL", "http://10.163.19.140/rdweb/project/webservices_forms/mi_tank/mi_tank_services.php"
+            resValue "string", "TNRD_HOST_NAME", "10.163.19.140"
+            resValue "string", "SUB_DOMAIN", "10.163.19.140"
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
         production {
             debuggable false
             minifyEnabled false
             shrinkResources false
             signingConfig signingConfigs.debug
-            proguardFiles getDefaultProguardFile('proguard-android.txt'),
-                    'proguard-rules.pro'
+            resValue "string", "LOGIN_URL", "https://tnrd.gov.in/project/webservices_forms/login_service/login_services.php"
+            resValue "string", "BASE_SERVICES_URL", "https://tnrd.gov.in/project/webservices_forms/master_services/master_services.php"
+            resValue "string", "APP_MAIN_SERVICES_URL", "https://tnrd.gov.in/project/webservices_forms/mi_tank/mi_tank_services.php"
+            resValue "string", "TNRD_HOST_NAME", "tnrd.gov.in"
+            resValue "string", "SUB_DOMAIN", "www.tnrd.gov.in"
+            proguardFiles getDefaultProguardFile('proguard-android.txt'),'proguard-rules.pro'
         }
     }
 
