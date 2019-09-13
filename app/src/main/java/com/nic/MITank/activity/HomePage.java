@@ -151,13 +151,16 @@ public class HomePage extends AppCompatActivity implements Api.ServerResponseLis
     }
 
     public void toUpload() {
-        if(Utils.isOnline()) {
-            new toUploadTankTask().execute();
-            new toUploadTankTrackDataTask().execute();
-        }
-        else {
-            Utils.showAlert(this,"Please Turn on Your Mobile Data to Upload");
-        }
+//        if(Utils.isOnline()) {
+//            new toUploadTankTask().execute();
+//            new toUploadTankTrackDataTask().execute();
+//        }
+//        else {
+//            Utils.showAlert(this,"Please Turn on Your Mobile Data to Upload");
+//        }
+        Intent intent = new Intent(this, PendingScreen.class);
+        startActivity(intent);
+        overridePendingTransition(R.anim.slide_in, R.anim.slide_out);
 
     }
 
