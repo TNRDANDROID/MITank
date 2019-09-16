@@ -83,6 +83,7 @@
                                 android:text="Local Name"
                                 android:textAlignment="viewEnd"
                                 android:textColor="#000"
+
                                 android:textSize="18sp" />
 
 

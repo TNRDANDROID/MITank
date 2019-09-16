@@ -58,6 +58,7 @@ public class HomePage extends AppCompatActivity implements Api.ServerResponseLis
     String lastInsertedID;
     JSONObject dataset = new JSONObject();
     JSONObject datasetTrack = new JSONObject();
+    public static HomePage instance;
 
 
     String pref_Village;
@@ -69,6 +70,7 @@ public class HomePage extends AppCompatActivity implements Api.ServerResponseLis
         homeScreenBinding = DataBindingUtil.setContentView(this, R.layout.home_screen);
         homeScreenBinding.setActivity(this);
         prefManager = new PrefManager(this);
+        instance = this;
         try {
             dbHelper = new DBHelper(this);
             db = dbHelper.getWritableDatabase();
@@ -641,5 +643,9 @@ public class HomePage extends AppCompatActivity implements Api.ServerResponseLis
         intent.putExtra(AppConstant.CHECK_BOX_CLICKED,checkboxvalue);
         startActivity(intent);
         overridePendingTransition(R.anim.slide_in, R.anim.slide_out);
+    }
+
+    public static HomePage getInstance(){
+        return instance;
     }
 }

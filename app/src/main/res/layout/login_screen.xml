@@ -216,7 +216,8 @@
                         android:text="Version"
                         android:textAlignment="center"
                         android:textColor="@android:color/white"
-                        android:textStyle="bold" />
+                        android:textStyle="bold"
+                        android:textSize="@dimen/_15sdp"/>
 
                 </RelativeLayout>
             </LinearLayout>

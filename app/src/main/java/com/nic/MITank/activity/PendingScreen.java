@@ -48,6 +48,7 @@ public class PendingScreen extends AppCompatActivity implements Api.ServerRespon
     public static SQLiteDatabase db;
     private Activity context;
     ArrayList<MITank> pendingLists = new ArrayList<>();
+    public HomePage homePage = new HomePage();
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -136,7 +137,7 @@ public class PendingScreen extends AppCompatActivity implements Api.ServerRespon
                 String responseDecryptedBlockKey = Utils.decrypt(prefManager.getUserPassKey(), key);
                 JSONObject jsonObject = new JSONObject(responseDecryptedBlockKey);
                 if (jsonObject.getString("STATUS").equalsIgnoreCase("OK") && jsonObject.getString("RESPONSE").equalsIgnoreCase("OK")) {
-                    Utils.showAlert(this, "Uploaded");
+                    Utils.showAlert(this, "Your track data is synchronized to the server!");
                    db.delete(DBHelper.SAVE_TRACK_TABLE, "mi_tank_survey_id = ?", new String[]{prefManager.getKeyDeleteId()});
                     new fetchPendingtask().execute();
                     pendingAdapter.notifyDataSetChanged();
@@ -157,7 +158,8 @@ public class PendingScreen extends AppCompatActivity implements Api.ServerRespon
                     db.delete(DBHelper.SAVE_MI_TANK_IMAGES, "mi_tank_survey_id = ?", new String[]{prefManager.getKeyDeleteId()});
                     new fetchPendingtask().execute();
                     pendingAdapter.notifyDataSetChanged();
-                    Utils.showAlert(this,"Saved");
+                    HomePage.getInstance().getTankPondList();
+                    Utils.showAlert(this,"Your Stucture data is syncronized to the server!");
 
                 }
                 Log.d("saved_TankData", "" + responseDecryptedBlockKey);
