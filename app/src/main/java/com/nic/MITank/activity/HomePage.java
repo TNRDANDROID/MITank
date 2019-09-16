@@ -5,11 +5,9 @@ import android.app.AlertDialog;
 import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
-import android.graphics.Bitmap;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
-import android.util.Base64;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
@@ -41,7 +39,6 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.ByteArrayOutputStream;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -314,40 +311,6 @@ public class HomePage extends AppCompatActivity implements Api.ServerResponseLis
         return dataSet;
     }
 
-    public void syncData() {
-        try {
-            new ApiService(this).makeJSONObjectRequest("saveTankData", Api.Method.POST, UrlGenerator.getTankPondListUrl(), saveTankListJsonParams(), "not cache", this);
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-    }
-
-    public JSONObject saveTankListJsonParams() throws JSONException {
-        String authKey = Utils.encrypt(prefManager.getUserPassKey(), getResources().getString(R.string.init_vector), dataset.toString());
-        JSONObject dataSet = new JSONObject();
-        dataSet.put(AppConstant.KEY_USER_NAME, prefManager.getUserName());
-        dataSet.put(AppConstant.DATA_CONTENT, authKey);
-        Log.d("savebridgesList", "" + authKey);
-        return dataSet;
-    }
-
-    public void syncDataTrack() {
-        try {
-            new ApiService(this).makeJSONObjectRequest("saveTrackDataList", Api.Method.POST, UrlGenerator.getTankPondListUrl(), saveTrackDataListJsonParams(), "not cache", this);
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-    }
-
-    public JSONObject saveTrackDataListJsonParams() throws JSONException {
-        String authKey = Utils.encrypt(prefManager.getUserPassKey(), getResources().getString(R.string.init_vector), datasetTrack.toString());
-        JSONObject dataSet = new JSONObject();
-        dataSet.put(AppConstant.KEY_USER_NAME, prefManager.getUserName());
-        dataSet.put(AppConstant.DATA_CONTENT, authKey);
-        Log.d("saveTrackDataList", "" + authKey);
-        return dataSet;
-    }
-
     @Override
     public void OnMyResponse(ServerResponse serverResponse) {
 
@@ -394,20 +357,6 @@ public class HomePage extends AppCompatActivity implements Api.ServerResponseLis
 //                    Utils.showAlert(this, "No Record Found !");
                 }
                 Log.d("TankCondition", "" + responseDecryptedBlockKey);
-            }
-
-            if ("saveTrackDataList".equals(urlType) && responseObj != null) {
-                String key = responseObj.getString(AppConstant.ENCODE_DATA);
-                String responseDecryptedBlockKey = Utils.decrypt(prefManager.getUserPassKey(), key);
-                JSONObject jsonObject = new JSONObject(responseDecryptedBlockKey);
-                if (jsonObject.getString("STATUS").equalsIgnoreCase("OK") && jsonObject.getString("RESPONSE").equalsIgnoreCase("OK")) {
-                    dbData.open();
-                    dbData.update_Track();
-                    datasetTrack = new JSONObject();
-                    Utils.showAlert(this, "Tracked Data Saved");
-                    syncButtonVisibility();
-                }
-                Log.d("saved_TrackDataList", "" + responseDecryptedBlockKey);
             }
 
         } catch (JSONException e) {
