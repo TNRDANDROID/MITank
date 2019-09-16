@@ -500,6 +500,64 @@ public class dbData {
         return cards;
     }
 
+    public ArrayList<MITank> getSavedDataForParticularTank(String mi_tank_survey_id) {
+        db.isOpen();
+        ArrayList<MITank> cards = new ArrayList<>();
+        Cursor cursor = null;
+        String selection = null;
+        String[] selectionArgs = null;
+
+        selection = "mi_tank_survey_id = ? ";
+        selectionArgs = new String[]{mi_tank_survey_id};
+
+
+        try {
+            cursor = db.query(DBHelper.SAVE_MI_TANK_IMAGES,
+                    new String[]{"*"}, selection,selectionArgs, null, null, null);
+            if (cursor.getCount() > 0) {
+                while (cursor.moveToNext()) {
+
+                    byte[] photo = cursor.getBlob(cursor.getColumnIndexOrThrow(AppConstant.KEY_IMAGE));
+                    byte[] decodedString = Base64.decode(photo, Base64.DEFAULT);
+                    Bitmap decodedByte = BitmapFactory.decodeByteArray(decodedString, 0, decodedString.length);
+
+                    MITank card = new MITank();
+
+                    card.setDistictCode(cursor.getString(cursor
+                            .getColumnIndexOrThrow(AppConstant.DISTRICT_CODE)));
+                    card.setBlockCode(cursor.getString(cursor
+                            .getColumnIndex(AppConstant.BLOCK_CODE)));
+                    card.setPvCode(cursor.getString(cursor
+                            .getColumnIndexOrThrow(AppConstant.PV_CODE)));
+                    card.setHabCode(cursor.getString(cursor
+                            .getColumnIndexOrThrow(AppConstant.HAB_CODE)));
+                    card.setMiTankStructureDetailId(cursor.getString(cursor
+                            .getColumnIndexOrThrow(AppConstant.MI_TANK_STRUCTURE_DETAIL_ID)));
+                    card.setMiTankStructureId(cursor.getString(cursor
+                            .getColumnIndexOrThrow(AppConstant.MI_TANK_STRUCTURE_ID)));
+                    card.setMiTankSurveyId(cursor.getString(cursor
+                            .getColumnIndexOrThrow(AppConstant.MI_TANK_SURVEY_ID)));
+                    card.setMiTankConditionId(cursor.getString(cursor
+                            .getColumnIndexOrThrow(AppConstant.MI_TANK_CONDITION_ID)));
+                    card.setLatitude(cursor.getString(cursor
+                            .getColumnIndexOrThrow(AppConstant.KEY_LATITUDE)));
+                    card.setLongitude(cursor.getString(cursor
+                            .getColumnIndexOrThrow(AppConstant.KEY_LONGITUDE)));
+                    card.setImage(decodedByte);
+
+                    cards.add(card);
+                }
+            }
+        } catch (Exception e){
+            //   Log.d(DEBUG_TAG, "Exception raised with a value of " + e);
+        } finally{
+            if (cursor != null) {
+                cursor.close();
+            }
+        }
+        return cards;
+    }
+
 
     public MITank saveLatLong(MITank saveLatLongValue) {
         ContentValues values = new ContentValues();
@@ -565,6 +623,87 @@ public class dbData {
             }
         }
         return sendPostLatLong;
+    }
+
+    public ArrayList<MITank> getSavedTrackForParticularTank(String mi_tank_survey_id) {
+
+        ArrayList<MITank> sendPostLatLong = new ArrayList<>();
+        Cursor cursor = null;
+
+        try {
+            // cursor = db.rawQuery("select * from " + DBHelper.SAVE_LAT_LONG_TABLE, null);
+            cursor = db.query(DBHelper.SAVE_TRACK_TABLE,
+                    new String[]{"*"}, "server_flag = ? and mi_tank_survey_id = ?", new String[]{"0",mi_tank_survey_id}, null, null, null);
+
+            if (cursor.getCount() > 0) {
+                while (cursor.moveToNext()) {
+                    MITank postLatLong = new MITank();
+
+                    postLatLong.setDistictCode(cursor.getString(cursor.getColumnIndexOrThrow(AppConstant.DISTRICT_CODE)));
+                    postLatLong.setBlockCode(cursor.getString(cursor.getColumnIndexOrThrow(AppConstant.BLOCK_CODE)));
+                    postLatLong.setPvCode(cursor.getString(cursor.getColumnIndexOrThrow(AppConstant.PV_CODE)));
+                    postLatLong.setHabCode(cursor.getString(cursor.getColumnIndexOrThrow(AppConstant.HAB_CODE)));
+                    postLatLong.setMiTankSurveyId(cursor.getString(cursor.getColumnIndexOrThrow(AppConstant.MI_TANK_SURVEY_ID)));
+                    postLatLong.setLatitude(cursor.getString(cursor.getColumnIndexOrThrow(AppConstant.KEY_LATITUDE)));
+                    postLatLong.setLongitude(cursor.getString(cursor.getColumnIndexOrThrow(AppConstant.KEY_LONGITUDE)));
+                    postLatLong.setPointType(cursor.getString(cursor.getColumnIndex(AppConstant.KEY_POINT_TYPE)));
+                    postLatLong.setPointSerialNo(cursor.getInt(cursor.getColumnIndex(AppConstant.KEY_POINT_SERIAL_NO)));
+
+
+                    sendPostLatLong.add(postLatLong);
+                }
+            }
+        } catch (Exception e) {
+            //   Log.d(DEBUG_TAG, "Exception raised with a value of " + e);
+        } finally {
+            if (cursor != null) {
+                cursor.close();
+            }
+        }
+        return sendPostLatLong;
+    }
+
+    public ArrayList<MITank> getPendingList() {
+
+        ArrayList<MITank> cards = new ArrayList<>();
+        Cursor cursor = null;
+
+        try {
+            cursor = db.rawQuery("select distinct b.*,c.pvname as pvname,d.habitation_name as habitation_name  from (SELECT mi_tank_survey_id FROM "+DBHelper.SAVE_MI_TANK_IMAGES+"\n" +
+                    "UNION\n" +
+                    "SELECT mi_tank_survey_id FROM "+DBHelper.SAVE_TRACK_TABLE+"\n" +
+                    ")a inner join (select * from "+DBHelper.MI_TANK_DATA+") b on a.mi_tank_survey_id = b.mi_tank_survey_id \n" +
+                    "left join (select * from "+DBHelper.VILLAGE_TABLE_NAME+") c on \n" +
+                    "b.dcode = c.dcode and b.bcode = c.bcode and b.pvcode = c.pvcode \n" +
+                    "left join (select * from "+DBHelper.HABITATION_TABLE_NAME+") d on \n" +
+                    "b.dcode = d.dcode and b.bcode = d.bcode and b.pvcode = d.pvcode  and b.habcode = d.habitation_code ",null);
+            // cursor = db.query(CardsDBHelper.TABLE_CARDS,
+            //       COLUMNS, null, null, null, null, null);
+            if (cursor.getCount() > 0) {
+                while (cursor.moveToNext()) {
+                    MITank card = new MITank();
+                    card.setDistictCode(cursor.getString(cursor.getColumnIndexOrThrow(AppConstant.DISTRICT_CODE)));
+                    card.setBlockCode(cursor.getString(cursor.getColumnIndexOrThrow(AppConstant.BLOCK_CODE)));
+                    card.setPvCode(cursor.getString(cursor.getColumnIndexOrThrow(AppConstant.PV_CODE)));
+                    card.setHabCode(cursor.getString(cursor.getColumnIndexOrThrow(AppConstant.HAB_CODE)));
+                    card.setMiTankSurveyId(cursor.getString(cursor.getColumnIndexOrThrow(AppConstant.MI_TANK_SURVEY_ID)));
+                    card.setMinorIrrigationType(cursor.getString(cursor.getColumnIndexOrThrow(AppConstant.MINOR_IRRIGATION_TYPE)));
+                    card.setNameOftheMITank(cursor.getString(cursor.getColumnIndexOrThrow(AppConstant.NAME_OF_THE_MI_TANK)));
+                    card.setLocalName(cursor.getString(cursor.getColumnIndexOrThrow(AppConstant.LOCAL_NAME)));
+                    card.setArea(cursor.getString(cursor.getColumnIndexOrThrow(AppConstant.AREA)));
+                    card.setPvName(cursor.getString(cursor.getColumnIndexOrThrow(AppConstant.PV_NAME)));
+                    card.setHabitationName(cursor.getString(cursor.getColumnIndexOrThrow(AppConstant.HABITATION_NAME)));
+                    cards.add(card);
+                }
+            }
+        } catch (Exception e){
+            //   Log.d(DEBUG_TAG, "Exception raised with a value of " + e);
+        } finally{
+            if (cursor != null) {
+                cursor.close();
+            }
+        }
+        return cards;
     }
 
     public void update_Track() {

@@ -150,118 +150,13 @@ public class HomePage extends AppCompatActivity implements Api.ServerResponseLis
         syncButtonVisibility();
     }
 
-    public void toUpload() {
-//        if(Utils.isOnline()) {
-//            new toUploadTankTask().execute();
-//            new toUploadTankTrackDataTask().execute();
-//        }
-//        else {
-//            Utils.showAlert(this,"Please Turn on Your Mobile Data to Upload");
-//        }
+    public void openPendingScreen() {
         Intent intent = new Intent(this, PendingScreen.class);
         startActivity(intent);
         overridePendingTransition(R.anim.slide_in, R.anim.slide_out);
-
     }
 
-    public class toUploadTankTask extends AsyncTask<Void, Void,
-            JSONObject> {
-        @Override
-        protected JSONObject doInBackground(Void... voids) {
-            dbData.open();
-            JSONArray track_data = new JSONArray();
-            ArrayList<MITank> tanks = dbData.getSavedData(prefManager.getDistrictCode(),prefManager.getBlockCode());
 
-            if (tanks.size() > 0) {
-                for (int i = 0; i < tanks.size(); i++) {
-                    JSONObject jsonObject = new JSONObject();
-                    try {
-                        jsonObject.put(AppConstant.PV_CODE,tanks.get(i).getPvCode());
-                        jsonObject.put(AppConstant.HAB_CODE,tanks.get(i).getHabCode());
-                        jsonObject.put(AppConstant.MI_TANK_STRUCTURE_DETAIL_ID,tanks.get(i).getMiTankStructureDetailId());
-                        jsonObject.put(AppConstant.MI_TANK_STRUCTURE_ID,tanks.get(i).getMiTankStructureId());
-                        jsonObject.put(AppConstant.MI_TANK_SURVEY_ID,tanks.get(i).getMiTankSurveyId());
-                        jsonObject.put(AppConstant.MI_TANK_CONDITION_ID,tanks.get(i).getMiTankConditionId());
-                        jsonObject.put(AppConstant.KEY_LATITUDE,tanks.get(i).getLatitude());
-                        jsonObject.put(AppConstant.KEY_LONGITUDE,tanks.get(i).getLongitude());
-
-                        Bitmap bitmap = tanks.get(i).getImage();
-                        ByteArrayOutputStream baos = new ByteArrayOutputStream();
-                        bitmap.compress(Bitmap.CompressFormat.JPEG, 90, baos);
-                        byte[] imageInByte = baos.toByteArray();
-                        String image_str = Base64.encodeToString(imageInByte, Base64.DEFAULT);
-
-                        jsonObject.put(AppConstant.KEY_IMAGE,image_str);
-
-                        track_data.put(jsonObject);
-
-                    } catch (JSONException e) {
-                        e.printStackTrace();
-                    }
-                }
-
-                dataset = new JSONObject();
-
-                try {
-                    dataset.put(AppConstant.KEY_SERVICE_ID,"mi_tank_detail_save");
-                    dataset.put(AppConstant.KEY_TRACK_DATA,track_data);
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
-            }
-
-            return dataset;
-        }
-
-        @Override
-        protected void onPostExecute(JSONObject dataset) {
-            super.onPostExecute(dataset);
-           syncData();
-        }
-    }
-
-    public class toUploadTankTrackDataTask extends AsyncTask<Void, Void,
-            JSONObject> {
-        @Override
-        protected JSONObject doInBackground(Void... params) {
-            try {
-                dbData.open();
-                ArrayList<MITank> saveLatLongLists = dbData.getSavedTrack();
-                JSONArray saveLatLongArray = new JSONArray();
-                if (saveLatLongLists.size() > 0) {
-                    for (int i = 0; i < saveLatLongLists.size(); i++) {
-                        JSONObject latLongData = new JSONObject();
-                        latLongData.put(AppConstant.PV_CODE, saveLatLongLists.get(i).getPvCode());
-                        latLongData.put(AppConstant.HAB_CODE, saveLatLongLists.get(i).getHabCode());
-                        latLongData.put(AppConstant.KEY_POINT_TYPE, saveLatLongLists.get(i).getPointType());
-                        latLongData.put(AppConstant.KEY_POINT_SERIAL_NO, String.valueOf(saveLatLongLists.get(i).getPointSerialNo()));
-                        latLongData.put(AppConstant.KEY_LATITUDE, saveLatLongLists.get(i).getLatitude());
-                        latLongData.put(AppConstant.KEY_LONGITUDE, saveLatLongLists.get(i).getLongitude());
-                        latLongData.put(AppConstant.MI_TANK_SURVEY_ID, saveLatLongLists.get(i).getMiTankSurveyId());
-
-                        saveLatLongArray.put(latLongData);
-                    }
-                }
-
-                datasetTrack = new JSONObject();
-                try {
-                    datasetTrack.put(AppConstant.KEY_SERVICE_ID, AppConstant.KEY_TANK_TRACK_SAVE);
-                    datasetTrack.put(AppConstant.KEY_TRACK_DATA, saveLatLongArray);
-
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
-            return datasetTrack;
-        }
-
-        protected void onPostExecute(JSONObject dataset) {
-            super.onPostExecute(dataset);
-            syncDataTrack();
-        }
-    }
 
 
     @Override
@@ -498,22 +393,7 @@ public class HomePage extends AppCompatActivity implements Api.ServerResponseLis
                 }
                 Log.d("TankCondition", "" + responseDecryptedBlockKey);
             }
-            if ("saveTankData".equals(urlType) && responseObj != null) {
-                String key = responseObj.getString(AppConstant.ENCODE_DATA);
-                String responseDecryptedBlockKey = Utils.decrypt(prefManager.getUserPassKey(), key);
-                JSONObject jsonObject = new JSONObject(responseDecryptedBlockKey);
-                if (jsonObject.getString("STATUS").equalsIgnoreCase("OK") && jsonObject.getString("RESPONSE").equalsIgnoreCase("OK")) {
-                    dbData.open();
-                    dbData.deleteMITankData();
-                    dbData.deleteMITankImages();
-                    dbData.deleteStructures();
-                    dataset = new JSONObject();
-                    getTankPondList();
-                    Utils.showAlert(this,"Saved");
-                    syncButtonVisibility();
-                }
-                Log.d("saved_TankData", "" + responseDecryptedBlockKey);
-            }
+
             if ("saveTrackDataList".equals(urlType) && responseObj != null) {
                 String key = responseObj.getString(AppConstant.ENCODE_DATA);
                 String responseDecryptedBlockKey = Utils.decrypt(prefManager.getUserPassKey(), key);

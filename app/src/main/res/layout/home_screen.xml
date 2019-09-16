@@ -318,7 +318,7 @@
                     android:layout_below="@+id/next"
                     android:layout_centerHorizontal="true"
                     android:layout_marginTop="@dimen/padding"
-                    android:onClick="@{()-> activity.toUpload()}"
+                    android:onClick="@{()-> activity.openPendingScreen()}"
                     android:background="@drawable/rectangle_box"
                     android:visibility="gone">
 

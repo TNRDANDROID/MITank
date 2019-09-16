@@ -47,6 +47,7 @@ public class PendingScreen extends AppCompatActivity implements Api.ServerRespon
     public static DBHelper dbHelper;
     public static SQLiteDatabase db;
     private Activity context;
+    ArrayList<MITank> pendingLists = new ArrayList<>();
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -76,8 +77,8 @@ public class PendingScreen extends AppCompatActivity implements Api.ServerRespon
         @Override
         protected ArrayList<MITank> doInBackground(Void... params) {
             dbData.open();
-            ArrayList<MITank> pendingLists = new ArrayList<>();
-//            pendingLists = dbData.getSavedPMAYDetails();
+            pendingLists = new ArrayList<>();
+            pendingLists = dbData.getPendingList();
             Log.d("pending_count", String.valueOf(pendingLists.size()));
             return pendingLists;
         }
@@ -86,7 +87,7 @@ public class PendingScreen extends AppCompatActivity implements Api.ServerRespon
         protected void onPostExecute(ArrayList<MITank> pendingLists) {
             super.onPostExecute(pendingLists);
             recyclerView.setVisibility(View.VISIBLE);
-            pendingAdapter = new PendingAdapter(PendingScreen.this, pendingLists);
+            pendingAdapter = new PendingAdapter(PendingScreen.this, pendingLists,dbData);
             recyclerView.setAdapter(pendingAdapter);
         }
     }
@@ -136,8 +137,7 @@ public class PendingScreen extends AppCompatActivity implements Api.ServerRespon
                 JSONObject jsonObject = new JSONObject(responseDecryptedBlockKey);
                 if (jsonObject.getString("STATUS").equalsIgnoreCase("OK") && jsonObject.getString("RESPONSE").equalsIgnoreCase("OK")) {
                     Utils.showAlert(this, "Uploaded");
-//                    db.delete(DBHelper.SAVE_PMAY_DETAILS, "id = ?", new String[]{prefManager.getKeyDeleteId()});
-//                    db.delete(DBHelper.SAVE_PMAY_IMAGES, "pmay_id = ? ", new String[]{prefManager.getKeyDeleteId()});
+                   db.delete(DBHelper.SAVE_TRACK_TABLE, "mi_tank_survey_id = ?", new String[]{prefManager.getKeyDeleteId()});
                     new fetchPendingtask().execute();
                     pendingAdapter.notifyDataSetChanged();
                 } else if (jsonObject.getString("STATUS").equalsIgnoreCase("OK") && jsonObject.getString("RESPONSE").equalsIgnoreCase("FAIL")) {
@@ -148,6 +148,19 @@ public class PendingScreen extends AppCompatActivity implements Api.ServerRespon
                     pendingAdapter.notifyDataSetChanged();
                 }
                 Log.d("saved_response", "" + responseDecryptedBlockKey);
+            }
+            if ("saveTankData".equals(urlType) && responseObj != null) {
+                String key = responseObj.getString(AppConstant.ENCODE_DATA);
+                String responseDecryptedBlockKey = Utils.decrypt(prefManager.getUserPassKey(), key);
+                JSONObject jsonObject = new JSONObject(responseDecryptedBlockKey);
+                if (jsonObject.getString("STATUS").equalsIgnoreCase("OK") && jsonObject.getString("RESPONSE").equalsIgnoreCase("OK")) {
+                    db.delete(DBHelper.SAVE_MI_TANK_IMAGES, "mi_tank_survey_id = ?", new String[]{prefManager.getKeyDeleteId()});
+                    new fetchPendingtask().execute();
+                    pendingAdapter.notifyDataSetChanged();
+                    Utils.showAlert(this,"Saved");
+
+                }
+                Log.d("saved_TankData", "" + responseDecryptedBlockKey);
             }
         } catch (JSONException e) {
             e.printStackTrace();
