@@ -168,7 +168,7 @@ public class HomePage extends AppCompatActivity implements Api.ServerResponseLis
 
     public void villageFilterSpinner(String filterVillage) {
         Cursor VillageList = null;
-        VillageList = db.rawQuery("SELECT * FROM " + DBHelper.VILLAGE_TABLE_NAME + " where dcode = " + prefManager.getDistrictCode() + " and bcode = '" + filterVillage + "'", null);
+        VillageList = db.rawQuery("SELECT * FROM " + DBHelper.VILLAGE_TABLE_NAME + " where dcode = " + prefManager.getDistrictCode() + " and bcode = '" + filterVillage + "'"+ " order by pvname asc", null);
 
         Village.clear();
         MITank villageListValue = new MITank();
