@@ -30,6 +30,8 @@ public class MITank {
 
     private String miTankStructureId;
     private String miTankStructureName;
+    private String nature_of_tank_id_1_active;
+    private String nature_of_tank_id_2_active;
     private String miTankSurveyId;
     private String minorIrrigationType;
     private String nameOftheMITank;
@@ -42,6 +44,8 @@ public class MITank {
     private String miTankSkillLevel;
     public String pointType;
     public Integer pointSerialNo;
+    private String miTankTypeId;
+    private String miTankTypeName;
 
     public String getMiTankStructureId() {
         return miTankStructureId;
@@ -53,6 +57,22 @@ public class MITank {
 
     public String getMiTankStructureName() {
         return miTankStructureName;
+    }
+
+    public String getNature_of_tank_id_1_active() {
+        return nature_of_tank_id_1_active;
+    }
+
+    public void setNature_of_tank_id_1_active(String nature_of_tank_id_1_active) {
+        this.nature_of_tank_id_1_active = nature_of_tank_id_1_active;
+    }
+
+    public String getNature_of_tank_id_2_active() {
+        return nature_of_tank_id_2_active;
+    }
+
+    public void setNature_of_tank_id_2_active(String nature_of_tank_id_2_active) {
+        this.nature_of_tank_id_2_active = nature_of_tank_id_2_active;
     }
 
     public void setMiTankStructureName(String miTankStructureName) {
@@ -129,6 +149,22 @@ public class MITank {
 
     public void setMiTankConditionName(String miTankConditionName) {
         this.miTankConditionName = miTankConditionName;
+    }
+
+    public String getMiTankTypeId() {
+        return miTankTypeId;
+    }
+
+    public void setMiTankTypeId(String miTankTypeId) {
+        this.miTankTypeId = miTankTypeId;
+    }
+
+    public String getMiTankTypeName() {
+        return miTankTypeName;
+    }
+
+    public void setMiTankTypeName(String miTankTypeName) {
+        this.miTankTypeName = miTankTypeName;
     }
 
     public String getMiTankSkillLevel() {

@@ -78,7 +78,7 @@ public class TanksPondsTitleScreen extends AppCompatActivity {
         protected ArrayList<MITank> doInBackground(Void... params) {
             dbData.open();
             TanksPondsTitle = new ArrayList<>();
-            TanksPondsTitle = dbData.getStructureForParticularTank(getIntent().getStringExtra(AppConstant.MI_TANK_SURVEY_ID));
+            TanksPondsTitle = dbData.getStructureForParticularTank(getIntent().getStringExtra(AppConstant.MI_TANK_SURVEY_ID),getIntent().getStringExtra(AppConstant.MINOR_IRRIGATION_TYPE));
             Log.d("TANKS_COUNT", String.valueOf(TanksPondsTitle.size()));
             tanksPondsTitleScreenBinding.tvTitleCount.setText(String.valueOf(TanksPondsTitle.size()).concat(" Items"));
             return TanksPondsTitle;

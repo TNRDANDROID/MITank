@@ -145,6 +145,9 @@ public class HomePage extends AppCompatActivity implements Api.ServerResponseLis
             getTankPondList();
             getTankPondStructureList();
             getTankCondition();
+            getTankInletStructureType();
+            getTankSluiceStructureStructureType();
+            getTankMinorIrrigationType();
         }
         syncButtonVisibility();
     }
@@ -284,6 +287,29 @@ public class HomePage extends AppCompatActivity implements Api.ServerResponseLis
         }
     }
 
+    public void getTankInletStructureType() {
+        try {
+            new ApiService(this).makeJSONObjectRequest("TankTypeInletStructure", Api.Method.POST, UrlGenerator.getTankPondListUrl(), tankInletStructureTypeJsonParams(), "not cache", this);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+    }
+    public void getTankSluiceStructureStructureType() {
+        try {
+            new ApiService(this).makeJSONObjectRequest("TankTypeSluiceStructure", Api.Method.POST, UrlGenerator.getTankPondListUrl(), tankSluiceStructureTypeJsonParams(), "not cache", this);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+    }
+    public void getTankMinorIrrigationType() {
+        try {
+            new ApiService(this).makeJSONObjectRequest("TankMinorIrrigationType", Api.Method.POST, UrlGenerator.getTankPondListUrl(), tankMinorIrrigationTypeJsonParams(), "not cache", this);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+    }
+
+
     public JSONObject tankPondListJsonParams() throws JSONException {
         String authKey = Utils.encrypt(prefManager.getUserPassKey(), getResources().getString(R.string.init_vector), Utils.tankPondListJsonParams().toString());
         JSONObject dataSet = new JSONObject();
@@ -310,6 +336,32 @@ public class HomePage extends AppCompatActivity implements Api.ServerResponseLis
         Log.d("tankCondition", "" + authKey);
         return dataSet;
     }
+
+    public JSONObject tankInletStructureTypeJsonParams() throws JSONException {
+        String authKey = Utils.encrypt(prefManager.getUserPassKey(), getResources().getString(R.string.init_vector), Utils.tankInletStructureTypeListJsonParams().toString());
+        JSONObject dataSet = new JSONObject();
+        dataSet.put(AppConstant.KEY_USER_NAME, prefManager.getUserName());
+        dataSet.put(AppConstant.DATA_CONTENT, authKey);
+        Log.d("tankInletStructureType", "" + authKey);
+        return dataSet;
+    }
+    public JSONObject tankSluiceStructureTypeJsonParams() throws JSONException {
+        String authKey = Utils.encrypt(prefManager.getUserPassKey(), getResources().getString(R.string.init_vector), Utils.tankSluiceStructureTypeListJsonParams().toString());
+        JSONObject dataSet = new JSONObject();
+        dataSet.put(AppConstant.KEY_USER_NAME, prefManager.getUserName());
+        dataSet.put(AppConstant.DATA_CONTENT, authKey);
+        Log.d("tankSluiceStructureType", "" + authKey);
+        return dataSet;
+    }
+    public JSONObject tankMinorIrrigationTypeJsonParams() throws JSONException {
+        String authKey = Utils.encrypt(prefManager.getUserPassKey(), getResources().getString(R.string.init_vector), Utils.miTankMinorIrrigationType().toString());
+        JSONObject dataSet = new JSONObject();
+        dataSet.put(AppConstant.KEY_USER_NAME, prefManager.getUserName());
+        dataSet.put(AppConstant.DATA_CONTENT, authKey);
+        Log.d("tankMinorIrrigationType", "" + authKey);
+        return dataSet;
+    }
+
 
     @Override
     public void OnMyResponse(ServerResponse serverResponse) {
@@ -359,6 +411,45 @@ public class HomePage extends AppCompatActivity implements Api.ServerResponseLis
                 Log.d("TankCondition", "" + responseDecryptedBlockKey);
             }
 
+            if ("TankTypeInletStructure".equals(urlType) && responseObj != null) {
+                String key = responseObj.getString(AppConstant.ENCODE_DATA);
+                String responseDecryptedBlockKey = Utils.decrypt(prefManager.getUserPassKey(), key);
+                JSONObject jsonObject = new JSONObject(responseDecryptedBlockKey);
+                if (jsonObject.getString("STATUS").equalsIgnoreCase("OK") && jsonObject.getString("RESPONSE").equalsIgnoreCase("OK")) {
+                    new InsertTankTypeInletStructureTask().execute(jsonObject);
+
+
+                } else if (jsonObject.getString("STATUS").equalsIgnoreCase("OK") && jsonObject.getString("RESPONSE").equalsIgnoreCase("NO_RECORD") && jsonObject.getString("MESSAGE").equalsIgnoreCase("NO_RECORD")) {
+//                    Utils.showAlert(this, "No Record Found !");
+                }
+                Log.d("TankTypeInletStructure", "" + responseDecryptedBlockKey);
+            }
+            if ("TankTypeSluiceStructure".equals(urlType) && responseObj != null) {
+                String key = responseObj.getString(AppConstant.ENCODE_DATA);
+                String responseDecryptedBlockKey = Utils.decrypt(prefManager.getUserPassKey(), key);
+                JSONObject jsonObject = new JSONObject(responseDecryptedBlockKey);
+                if (jsonObject.getString("STATUS").equalsIgnoreCase("OK") && jsonObject.getString("RESPONSE").equalsIgnoreCase("OK")) {
+                    new InsertTankTypeSluiceStructureTask().execute(jsonObject);
+
+
+                } else if (jsonObject.getString("STATUS").equalsIgnoreCase("OK") && jsonObject.getString("RESPONSE").equalsIgnoreCase("NO_RECORD") && jsonObject.getString("MESSAGE").equalsIgnoreCase("NO_RECORD")) {
+//                    Utils.showAlert(this, "No Record Found !");
+                }
+                Log.d("TankTypeSluiceStructure", "" + responseDecryptedBlockKey);
+            }
+            if ("TankMinorIrrigationType".equals(urlType) && responseObj != null) {
+                String key = responseObj.getString(AppConstant.ENCODE_DATA);
+                String responseDecryptedBlockKey = Utils.decrypt(prefManager.getUserPassKey(), key);
+                JSONObject jsonObject = new JSONObject(responseDecryptedBlockKey);
+                if (jsonObject.getString("STATUS").equalsIgnoreCase("OK") && jsonObject.getString("RESPONSE").equalsIgnoreCase("OK")) {
+                   new InsertTankMinorIrrigationTypeTask().execute(jsonObject);
+
+
+                } else if (jsonObject.getString("STATUS").equalsIgnoreCase("OK") && jsonObject.getString("RESPONSE").equalsIgnoreCase("NO_RECORD") && jsonObject.getString("MESSAGE").equalsIgnoreCase("NO_RECORD")) {
+//                    Utils.showAlert(this, "No Record Found !");
+                }
+                Log.d("TankMinorIrrigationType", "" + responseDecryptedBlockKey);
+            }
         } catch (JSONException e) {
             e.printStackTrace();
         }
@@ -436,6 +527,8 @@ public class HomePage extends AppCompatActivity implements Api.ServerResponseLis
                         try {
                             tankStructure.setMiTankStructureId(jsonArray.getJSONObject(i).getString(AppConstant.MI_TANK_STRUCTURE_ID));
                             tankStructure.setMiTankStructureName(jsonArray.getJSONObject(i).getString(AppConstant.MI_TANK_STRUCTURE_NAME));
+                            tankStructure.setNature_of_tank_id_1_active(jsonArray.getJSONObject(i).getString(AppConstant.nature_of_tank_id_1_active));
+                            tankStructure.setNature_of_tank_id_2_active(jsonArray.getJSONObject(i).getString(AppConstant.nature_of_tank_id_2_active));
 
                             dbData.insertTankStructure(tankStructure);
                         } catch (JSONException e) {
@@ -486,6 +579,108 @@ public class HomePage extends AppCompatActivity implements Api.ServerResponseLis
 
     }
 
+    public class InsertTankTypeInletStructureTask extends AsyncTask<JSONObject, Void, Void> {
+
+        @Override
+        protected Void doInBackground(JSONObject... params) {
+            dbData.deleteMITankTypeInletStructure();
+            dbData.open();
+            ArrayList<MITank> condition_Count = dbData.getTankTypeInletStructure();
+            if (condition_Count.size() <= 0) {
+                if (params.length > 0) {
+                    JSONArray jsonArray = new JSONArray();
+                    try {
+                        jsonArray = params[0].getJSONArray(AppConstant.JSON_DATA);
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                    for (int i = 0; i < jsonArray.length(); i++) {
+                        MITank tankCondition = new MITank();
+                        try {
+                            tankCondition.setMiTankTypeId(jsonArray.getJSONObject(i).getString("type_of_structure_id"));
+                            tankCondition.setMiTankTypeName(jsonArray.getJSONObject(i).getString("type_of_structure_name"));
+
+                            dbData.insertTankTypeInletStructure(tankCondition);
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+
+                    }
+                }
+
+            }
+            return null;
+        }
+
+    }
+    public class InsertTankTypeSluiceStructureTask extends AsyncTask<JSONObject, Void, Void> {
+
+        @Override
+        protected Void doInBackground(JSONObject... params) {
+            dbData.deleteMITankTypeSluiceStructure();
+            dbData.open();
+            ArrayList<MITank> condition_Count = dbData.getTankTypeSluiceStructure();
+            if (condition_Count.size() <= 0) {
+                if (params.length > 0) {
+                    JSONArray jsonArray = new JSONArray();
+                    try {
+                        jsonArray = params[0].getJSONArray(AppConstant.JSON_DATA);
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                    for (int i = 0; i < jsonArray.length(); i++) {
+                        MITank tankCondition = new MITank();
+                        try {
+                            tankCondition.setMiTankTypeId(jsonArray.getJSONObject(i).getString("type_of_sluice_id"));
+                            tankCondition.setMiTankTypeName(jsonArray.getJSONObject(i).getString("type_of_sluice_name"));
+
+                            dbData.insertTankTypeSluiceStructure(tankCondition);
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+
+                    }
+                }
+
+            }
+            return null;
+        }
+
+    }
+    public class InsertTankMinorIrrigationTypeTask extends AsyncTask<JSONObject, Void, Void> {
+
+        @Override
+        protected Void doInBackground(JSONObject... params) {
+            dbData.deleteMINOR_IRRIGATION_TYPE();
+            dbData.open();
+            ArrayList<MITank> condition_Count = dbData.getTankTypeMinorIrrigation();
+            if (condition_Count.size() <= 0) {
+                if (params.length > 0) {
+                    JSONArray jsonArray = new JSONArray();
+                    try {
+                        jsonArray = params[0].getJSONArray(AppConstant.JSON_DATA);
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                    for (int i = 0; i < jsonArray.length(); i++) {
+                        MITank tankCondition = new MITank();
+                        try {
+                            tankCondition.setMiTankTypeId(jsonArray.getJSONObject(i).getString("minor_irrigation_type_id"));
+                            tankCondition.setMiTankTypeName(jsonArray.getJSONObject(i).getString("minor_irrigation_type_name"));
+
+                            dbData.insertTankTypeMinorIrrigation(tankCondition);
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+
+                    }
+                }
+
+            }
+            return null;
+        }
+
+    }
     public void insertMiTankData(JSONArray tankdataArray) {
 
         dbData.open();
@@ -542,6 +737,7 @@ public class HomePage extends AppCompatActivity implements Api.ServerResponseLis
                         sturctureValue.setMiTankSkillLevel(jsonArray.getJSONObject(i).getString(AppConstant.MI_TANK_SKILL_LEVEL));
                         sturctureValue.setMiTankStructureName(jsonArray.getJSONObject(i).getString(AppConstant.MI_TANK_STRUCTURE_NAME));
                         sturctureValue.setImageAvailable(jsonArray.getJSONObject(i).getString(AppConstant.IMAGE_AVAILABLE));
+                        sturctureValue.setMinorIrrigationType(jsonArray.getJSONObject(i).getString(AppConstant.MINOR_IRRIGATION_TYPE));
                         dbData.insertStructure(sturctureValue);
                     } catch (JSONException e) {
                         e.printStackTrace();

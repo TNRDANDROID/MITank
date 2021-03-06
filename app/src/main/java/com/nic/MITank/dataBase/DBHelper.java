@@ -16,8 +16,11 @@ public class DBHelper extends SQLiteOpenHelper {
     public static final String MI_TANK_DATA = "mi_tank_data";
     public static final String MI_TANK_DATA_STRUCTURES = "mi_tank_data_structures";
     public static final String MI_TANK_CONDITION = "mi_tank_condition";
+    public static final String MI_TANK_TYPE_INLET_STRUCTURE = "mi_tank_type_inlet_structure";
+    public static final String MI_TANK_TYPE_SLUICE_STRUCTURE = "mi_tank_type_sluice_structure";
     public static final String SAVE_MI_TANK_IMAGES = "save_mi_tank_images";
     public static final String SAVE_TRACK_TABLE = "TrackTable";
+    public static final String MINOR_IRRIGATION_TYPE = "minor_irrigation_type";
 
 
     private Context context;
@@ -47,11 +50,23 @@ public class DBHelper extends SQLiteOpenHelper {
 
         db.execSQL("CREATE TABLE " + MI_TANK_STRUCTURE + " ("
                 + "mi_tank_structure_id  INTEGER," +
+                 "nature_of_tank_id_1_active  TEXT," +
+                 "nature_of_tank_id_2_active  TEXT," +
                 "mi_tank_structure_name TEXT)");
 
         db.execSQL("CREATE TABLE " + MI_TANK_CONDITION + " ("
                 + "mi_tank_condition_id  INTEGER," +
                 "mi_tank_condition_name TEXT)");
+
+        db.execSQL("CREATE TABLE " + MI_TANK_TYPE_INLET_STRUCTURE + " ("
+                + "mi_tank_type_id  INTEGER," +
+                "mi_tank_type_name TEXT)");
+        db.execSQL("CREATE TABLE " + MI_TANK_TYPE_SLUICE_STRUCTURE + " ("
+                + "mi_tank_type_id  INTEGER," +
+                "mi_tank_type_name TEXT)");
+        db.execSQL("CREATE TABLE " + MINOR_IRRIGATION_TYPE + " ("
+                + "mi_tank_type_id  INTEGER," +
+                "mi_tank_type_name TEXT)");
 
         db.execSQL("CREATE TABLE " + MI_TANK_DATA + " ("
                 + "dcode INTEGER," +
@@ -70,6 +85,7 @@ public class DBHelper extends SQLiteOpenHelper {
                 "mi_tank_survey_id INTEGER," +
                 "mi_tank_structure_id INTEGER," +
                 "mi_tank_structure_serial_id INTEGER," +
+                "minor_irrigation_type INTEGER," +
                 "mi_tank_condition_id INTEGER," +
                 "mi_tank_condition_name TEXT," +
                 "mi_tank_sill_level TEXT," +
@@ -82,6 +98,7 @@ public class DBHelper extends SQLiteOpenHelper {
                 "pvcode INTEGER," +
                 "habcode INTEGER," +
                 "mi_tank_structure_detail_id INTEGER,"+
+                "mi_tank_structure_serial_id INTEGER,"+
                 "mi_tank_survey_id INTEGER,"+
                 "mi_tank_structure_id INTEGER,"+
                 "mi_tank_condition_id INTEGER,"+
@@ -113,7 +130,10 @@ public class DBHelper extends SQLiteOpenHelper {
             db.execSQL("DROP TABLE IF EXISTS " + MI_TANK_DATA);
             db.execSQL("DROP TABLE IF EXISTS " + MI_TANK_DATA_STRUCTURES);
             db.execSQL("DROP TABLE IF EXISTS " + MI_TANK_CONDITION);
+            db.execSQL("DROP TABLE IF EXISTS " + MI_TANK_TYPE_INLET_STRUCTURE);
+            db.execSQL("DROP TABLE IF EXISTS " + MI_TANK_TYPE_SLUICE_STRUCTURE);
             db.execSQL("DROP TABLE IF EXISTS " + SAVE_TRACK_TABLE);
+            db.execSQL("DROP TABLE IF EXISTS " + MINOR_IRRIGATION_TYPE);
             onCreate(db);
         }
     }

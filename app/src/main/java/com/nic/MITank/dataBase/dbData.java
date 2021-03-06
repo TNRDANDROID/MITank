@@ -145,6 +145,8 @@ public class dbData {
         ContentValues values = new ContentValues();
         values.put(AppConstant.MI_TANK_STRUCTURE_ID, miTank.getMiTankStructureId());
         values.put(AppConstant.MI_TANK_STRUCTURE_NAME, miTank.getMiTankStructureName());
+        values.put(AppConstant.nature_of_tank_id_1_active, miTank.getNature_of_tank_id_1_active());
+        values.put(AppConstant.nature_of_tank_id_2_active, miTank.getNature_of_tank_id_2_active());
 
         long id = db.insert(DBHelper.MI_TANK_STRUCTURE,null,values);
         Log.d("Insert_id_TANK_STRUCT", String.valueOf(id));
@@ -167,6 +169,10 @@ public class dbData {
                             .getColumnIndexOrThrow(AppConstant.MI_TANK_STRUCTURE_ID)));
                     card.setMiTankStructureName(cursor.getString(cursor
                             .getColumnIndexOrThrow(AppConstant.MI_TANK_STRUCTURE_NAME)));
+                    card.setNature_of_tank_id_1_active(cursor.getString(cursor
+                            .getColumnIndexOrThrow(AppConstant.nature_of_tank_id_1_active)));
+                    card.setNature_of_tank_id_2_active(cursor.getString(cursor
+                            .getColumnIndexOrThrow(AppConstant.nature_of_tank_id_2_active)));
 
                     cards.add(card);
                 }
@@ -181,15 +187,26 @@ public class dbData {
         return cards;
     }
 
-    public ArrayList<MITank > getStructureForParticularTank(String mi_tank_survey_id) {
+    public ArrayList<MITank > getStructureForParticularTank(String mi_tank_survey_id,String mi_minor_irrigation_type) {
 
         ArrayList<MITank > cards = new ArrayList<>();
         Cursor cursor = null;
+        String sql = "SELECT * FROM " + DBHelper.MI_TANK_STRUCTURE + " WHERE "+ AppConstant.nature_of_tank_id_1_active + " = ?";
+        String sql1 = "SELECT * FROM " + DBHelper.MI_TANK_STRUCTURE + " WHERE "+ AppConstant.nature_of_tank_id_2_active+ " = ? ";
 
         try {
-            cursor = db.query(DBHelper.MI_TANK_STRUCTURE,
+           /* cursor = db.query(DBHelper.MI_TANK_STRUCTURE,
                     new String[]{"*"}, null, null, null, null, null);
-            cursor = db.rawQuery("select a.mi_tank_structure_id as mi_tank_structure_id,b.mi_tank_structure_name as mi_tank_structure_name from (select distinct mi_tank_structure_id from " + DBHelper.MI_TANK_DATA_STRUCTURES + " where mi_tank_survey_id = " + mi_tank_survey_id + ")a left join (select * from " + DBHelper.MI_TANK_STRUCTURE + ") b on a.mi_tank_structure_id = b.mi_tank_structure_id", null);
+*/
+           if (mi_minor_irrigation_type.equals("1")){
+                //cursor = db.rawQuery("select a.mi_tank_structure_id as mi_tank_structure_id,b.mi_tank_structure_name as mi_tank_structure_name from (select distinct mi_tank_structure_id from " + DBHelper.MI_TANK_DATA_STRUCTURES + " where mi_tank_survey_id = " + mi_tank_survey_id + ")a left join (select * from " + DBHelper.MI_TANK_STRUCTURE + ") b on a.mi_tank_structure_id = b.mi_tank_structure_id", null);
+                cursor=db.rawQuery(sql,new String[]{"Y"});
+
+            }
+           else{
+                //cursor = db.rawQuery("select a.mi_tank_structure_id as mi_tank_structure_id,b.mi_tank_structure_name as mi_tank_structure_name from (select distinct mi_tank_structure_id from " + DBHelper.MI_TANK_DATA_STRUCTURES + " where mi_tank_survey_id = " + mi_tank_survey_id + ")a left join (select * from " + DBHelper.MI_TANK_STRUCTURE + ") b on a.mi_tank_structure_id = b.mi_tank_structure_id", null);
+               cursor=db.rawQuery(sql1,new String[]{"Y"});
+            }
             if (cursor.getCount() > 0) {
                 while (cursor.moveToNext()) {
                     MITank  card = new MITank ();
@@ -203,6 +220,7 @@ public class dbData {
             }
         } catch (Exception e){
             //   Log.d(DEBUG_TAG, "Exception raised with a value of " + e);
+            e.printStackTrace();
         } finally{
             if (cursor != null) {
                 cursor.close();
@@ -292,6 +310,8 @@ public class dbData {
         values.put(AppConstant.MI_TANK_SKILL_LEVEL,miTank.getMiTankSkillLevel());
         values.put(AppConstant.MI_TANK_STRUCTURE_NAME,miTank.getMiTankStructureName());
         values.put(AppConstant.IMAGE_AVAILABLE, miTank.getImageAvailable());
+        values.put(AppConstant.MINOR_IRRIGATION_TYPE, miTank.getMinorIrrigationType());
+
 
         long id = db.insert(DBHelper.MI_TANK_DATA_STRUCTURES, null, values);
         Log.d("Insert_id_structures", String.valueOf(id));
@@ -327,6 +347,7 @@ public class dbData {
                     card.setMiTankSkillLevel(cursor.getString(cursor.getColumnIndexOrThrow(AppConstant.MI_TANK_SKILL_LEVEL)));
                     card.setMiTankStructureName(cursor.getString(cursor.getColumnIndexOrThrow(AppConstant.MI_TANK_STRUCTURE_NAME)));
                     card.setImageAvailable(cursor.getString(cursor.getColumnIndexOrThrow(AppConstant.IMAGE_AVAILABLE)));
+                    card.setMinorIrrigationType(cursor.getString(cursor.getColumnIndexOrThrow(AppConstant.MINOR_IRRIGATION_TYPE)));
 
                     cards.add(card);
                 }
@@ -382,15 +403,136 @@ public class dbData {
         return cards;
     }
 
-    public ArrayList<MITank> selectImage(String dcode,String bcode, String pvcode,String habcode,String mi_tank_structure_detail_id) {
+    public MITank insertTankTypeInletStructure(MITank miTank) {
+
+        ContentValues values = new ContentValues();
+        values.put(AppConstant.MI_TANK_type_ID, miTank.getMiTankTypeId());
+        values.put(AppConstant.MI_TANK_TYPE_NAME, miTank.getMiTankTypeName());
+
+        long id = db.insert(DBHelper.MI_TANK_TYPE_INLET_STRUCTURE,null,values);
+        Log.d("Insert_id_Inlet_", String.valueOf(id));
+
+        return miTank;
+    }
+    public MITank insertTankTypeSluiceStructure(MITank miTank) {
+
+        ContentValues values = new ContentValues();
+        values.put(AppConstant.MI_TANK_type_ID, miTank.getMiTankTypeId());
+        values.put(AppConstant.MI_TANK_TYPE_NAME, miTank.getMiTankTypeName());
+
+        long id = db.insert(DBHelper.MI_TANK_TYPE_SLUICE_STRUCTURE,null,values);
+        Log.d("Insert_id_Sluice", String.valueOf(id));
+
+        return miTank;
+    }
+    public MITank insertTankTypeMinorIrrigation(MITank miTank) {
+
+        ContentValues values = new ContentValues();
+        values.put(AppConstant.MI_TANK_type_ID, miTank.getMiTankTypeId());
+        values.put(AppConstant.MI_TANK_TYPE_NAME, miTank.getMiTankTypeName());
+
+        long id = db.insert(DBHelper.MINOR_IRRIGATION_TYPE,null,values);
+        Log.d("Insert_id_Minor_Irri", String.valueOf(id));
+
+        return miTank;
+    }
+
+
+    public ArrayList<MITank > getTankTypeInletStructure() {
+
+        ArrayList<MITank > cards = new ArrayList<>();
+        Cursor cursor = null;
+
+        try {
+            cursor = db.query(DBHelper.MI_TANK_TYPE_INLET_STRUCTURE,
+                    new String[]{"*"}, null, null, null, null, null);
+            if (cursor.getCount() > 0) {
+                while (cursor.moveToNext()) {
+                    MITank  card = new MITank ();
+                    card.setMiTankConditionId(cursor.getString(cursor
+                            .getColumnIndexOrThrow(AppConstant.MI_TANK_type_ID)));
+                    card.setMiTankConditionName(cursor.getString(cursor
+                            .getColumnIndexOrThrow(AppConstant.MI_TANK_TYPE_NAME)));
+
+                    cards.add(card);
+                }
+            }
+        } catch (Exception e){
+            //   Log.d(DEBUG_TAG, "Exception raised with a value of " + e);
+        } finally{
+            if (cursor != null) {
+                cursor.close();
+            }
+        }
+        return cards;
+    }
+    public ArrayList<MITank > getTankTypeSluiceStructure() {
+
+        ArrayList<MITank > cards = new ArrayList<>();
+        Cursor cursor = null;
+
+        try {
+            cursor = db.query(DBHelper.MI_TANK_TYPE_SLUICE_STRUCTURE,
+                    new String[]{"*"}, null, null, null, null, null);
+            if (cursor.getCount() > 0) {
+                while (cursor.moveToNext()) {
+                    MITank  card = new MITank ();
+                    card.setMiTankConditionId(cursor.getString(cursor
+                            .getColumnIndexOrThrow(AppConstant.MI_TANK_type_ID)));
+                    card.setMiTankConditionName(cursor.getString(cursor
+                            .getColumnIndexOrThrow(AppConstant.MI_TANK_TYPE_NAME)));
+
+                    cards.add(card);
+                }
+            }
+        } catch (Exception e){
+            //   Log.d(DEBUG_TAG, "Exception raised with a value of " + e);
+        } finally{
+            if (cursor != null) {
+                cursor.close();
+            }
+        }
+        return cards;
+    }
+    public ArrayList<MITank > getTankTypeMinorIrrigation() {
+
+        ArrayList<MITank > cards = new ArrayList<>();
+        Cursor cursor = null;
+
+        try {
+            cursor = db.query(DBHelper.MINOR_IRRIGATION_TYPE,
+                    new String[]{"*"}, null, null, null, null, null);
+            if (cursor.getCount() > 0) {
+                while (cursor.moveToNext()) {
+                    MITank  card = new MITank ();
+                    card.setMiTankConditionId(cursor.getString(cursor
+                            .getColumnIndexOrThrow(AppConstant.MI_TANK_type_ID)));
+                    card.setMiTankConditionName(cursor.getString(cursor
+                            .getColumnIndexOrThrow(AppConstant.MI_TANK_TYPE_NAME)));
+
+                    cards.add(card);
+                }
+            }
+        } catch (Exception e){
+            //   Log.d(DEBUG_TAG, "Exception raised with a value of " + e);
+        } finally{
+            if (cursor != null) {
+                cursor.close();
+            }
+        }
+        return cards;
+    }
+
+     public ArrayList<MITank> selectImage(String dcode,String bcode, String pvcode,String habcode
+            ,String mi_tank_structure_detail_id,String mi_tank_structure_serial_id) {
         db.isOpen();
         ArrayList<MITank> cards = new ArrayList<>();
         Cursor cursor = null;
         String selection = null;
         String[] selectionArgs = null;
 
-        selection = "dcode = ? and bcode = ? and pvcode = ? and habcode = ? and mi_tank_structure_detail_id = ? ";
-        selectionArgs = new String[]{dcode,bcode,pvcode,habcode,mi_tank_structure_detail_id};
+        selection = "dcode = ? and bcode = ? and pvcode = ? and habcode = ? and mi_tank_structure_detail_id = ?  and mi_tank_structure_serial_id = ? ";
+        selectionArgs = new String[]{dcode,bcode,pvcode,habcode,mi_tank_structure_detail_id,mi_tank_structure_serial_id};
 
 
         try {
@@ -441,7 +583,6 @@ public class dbData {
         }
         return cards;
     }
-
     public ArrayList<MITank> getSavedData(String dcode,String bcode) {
         db.isOpen();
         ArrayList<MITank> cards = new ArrayList<>();
@@ -737,6 +878,15 @@ public class dbData {
     public void deleteMITankCondition() {
         db.execSQL("delete from " + DBHelper.MI_TANK_CONDITION);
     }
+    public void deleteMITankTypeInletStructure() {
+        db.execSQL("delete from " + DBHelper.MI_TANK_TYPE_INLET_STRUCTURE);
+    }
+    public void deleteMITankTypeSluiceStructure() {
+        db.execSQL("delete from " + DBHelper.MI_TANK_TYPE_SLUICE_STRUCTURE);
+    }
+    public void deleteMINOR_IRRIGATION_TYPE() {
+        db.execSQL("delete from " + DBHelper.MINOR_IRRIGATION_TYPE);
+    }
 
     public void deleteMITankImages() {
         db.execSQL("delete from " + DBHelper.SAVE_MI_TANK_IMAGES);
@@ -757,6 +907,9 @@ public class dbData {
         deleteMITankCondition();
         deleteMITankImages();
         deleteSaveTrackTable();
+        deleteMITankTypeInletStructure();
+        deleteMITankTypeSluiceStructure();
+        deleteMINOR_IRRIGATION_TYPE();
     }
 
 

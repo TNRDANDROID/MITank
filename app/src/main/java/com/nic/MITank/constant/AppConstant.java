@@ -15,6 +15,8 @@ public class AppConstant {
     public static String KEY_MI_TANK_DATA = "mi_tank_data";
     public static String KEY_MI_TANK_STRUCTURE = "mi_tank_structure";
     public static String KEY_MI_TANK_CONDITION = "mi_tank_condition";
+    public static String KEY_MI_TANK_TYPE_INLET_STRUCTURE = "mi_tank_type_inlet_structure";
+    public static String KEY_MI_TANK_TYPE_SLUICE_STRUCTURE = "mi_tank_type_sluice_structure";
 
 
     public static String USER_LOGIN_KEY = "user_login_key";
@@ -58,6 +60,8 @@ public class AppConstant {
 
     public static String MI_TANK_STRUCTURE_ID = "mi_tank_structure_id";
     public static String MI_TANK_STRUCTURE_NAME = "mi_tank_structure_name";
+    public static String nature_of_tank_id_1_active = "nature_of_tank_id_1_active";
+    public static String nature_of_tank_id_2_active = "nature_of_tank_id_2_active";
 
     /********** MI TANK DATA TABLE ***********/
 
@@ -83,6 +87,11 @@ public class AppConstant {
     /*********** Track Data***********/
 
     public static String KEY_POINT_TYPE = "point_type";
+
+
+    /************TankType*******************/
+    public static String MI_TANK_type_ID = "mi_tank_type_id";
+    public static String MI_TANK_TYPE_NAME = "mi_tank_type_name";
 
 
 }

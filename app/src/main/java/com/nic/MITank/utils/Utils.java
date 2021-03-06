@@ -515,4 +515,25 @@ public class Utils {
         Log.d("object", "" + dataSet);
         return dataSet;
     }
+
+    public static JSONObject tankInletStructureTypeListJsonParams() throws JSONException {
+        JSONObject dataSet = new JSONObject();
+        dataSet.put(AppConstant.KEY_SERVICE_ID, "mi_type_of_inlet_structure");
+        Log.d("object", "" + dataSet);
+        return dataSet;
+    }
+    public static JSONObject tankSluiceStructureTypeListJsonParams() throws JSONException {
+        JSONObject dataSet = new JSONObject();
+        dataSet.put(AppConstant.KEY_SERVICE_ID, "mi_type_of_sluice");
+        Log.d("object", "" + dataSet);
+        return dataSet;
+    }
+    public static JSONObject miTankMinorIrrigationType() throws JSONException {
+        JSONObject dataSet = new JSONObject();
+        dataSet.put(AppConstant.KEY_SERVICE_ID, "mi_minor_irrigation_type");
+        Log.d("object", "" + dataSet);
+        return dataSet;
+    }
+
+
 }
