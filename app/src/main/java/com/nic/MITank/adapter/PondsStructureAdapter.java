@@ -78,16 +78,20 @@ public class PondsStructureAdapter extends RecyclerView.Adapter<PondsStructureAd
         String pvcode = prefManager.getPvCode();
         String habcode = prefManager.getHabCode();
         String mi_tank_structure_detail_id = Structure.get(position).getMiTankStructureDetailId();
+        String mi_tank_structure_serial_id = Structure.get(position).getMiTankStructureSerialId();
         String image_available = Structure.get(position).getImageAvailable();
 
 
-        ArrayList<MITank> imageOffline = dbData.selectImage(dcode,bcode,pvcode,habcode,mi_tank_structure_detail_id);
+        ArrayList<MITank> imageOffline = dbData.selectImage(dcode,bcode,pvcode,habcode,mi_tank_structure_detail_id,mi_tank_structure_serial_id);
 
         if(imageOffline.size() < 1) {
             holder.tanksPondsListAdapterBinding.viewOfflineImages.setVisibility(View.GONE);
+            holder.tanksPondsListAdapterBinding.takePhoto.setText("Take Photo");
         }
         else {
             holder.tanksPondsListAdapterBinding.viewOfflineImages.setVisibility(View.VISIBLE);
+            holder.tanksPondsListAdapterBinding.takePhoto.setText("Change Photo");
+
         }
 
         if(image_available.equalsIgnoreCase("Y")) {
@@ -130,6 +134,8 @@ public class PondsStructureAdapter extends RecyclerView.Adapter<PondsStructureAd
     public void openCamera(int position) {
         Activity activity = (Activity) context;
         Intent intent = new Intent(context, CameraScreen.class);
+        intent.putExtra("KEY","");
+        intent.putExtra(AppConstant.MI_TANK_STRUCTURE_SERIAL_ID,Structure.get(position).getMiTankStructureSerialId());
         intent.putExtra(AppConstant.MI_TANK_STRUCTURE_DETAIL_ID,Structure.get(position).getMiTankStructureDetailId());
         intent.putExtra(AppConstant.MI_TANK_SURVEY_ID,Structure.get(position).getMiTankSurveyId());
         intent.putExtra(AppConstant.MI_TANK_STRUCTURE_ID,Structure.get(position).getMiTankStructureId());
@@ -141,6 +147,7 @@ public class PondsStructureAdapter extends RecyclerView.Adapter<PondsStructureAd
         Activity activity = (Activity) context;
         Intent intent = new Intent(context, FullImageActivity.class);
         intent.putExtra("ONOFFTYPE",type);
+        intent.putExtra(AppConstant.MI_TANK_STRUCTURE_SERIAL_ID,Structure.get(position).getMiTankStructureSerialId());
         intent.putExtra(AppConstant.MI_TANK_STRUCTURE_DETAIL_ID,Structure.get(position).getMiTankStructureDetailId());
         intent.putExtra(AppConstant.MI_TANK_SURVEY_ID,Structure.get(position).getMiTankSurveyId());
         activity.startActivity(intent);

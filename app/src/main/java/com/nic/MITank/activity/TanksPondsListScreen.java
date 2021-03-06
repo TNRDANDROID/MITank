@@ -9,6 +9,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.util.TypedValue;
 import android.view.View;
+import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
@@ -106,5 +107,24 @@ public class TanksPondsListScreen extends AppCompatActivity {
         startActivity(intent);
         overridePendingTransition(R.anim.slide_enter, R.anim.slide_exit);
     }
-
+    public void openCamera(int position) {
+        Intent intent = new Intent(this, CameraScreen.class);
+        intent.putExtra("KEY","TanksPondsListAdapter");
+        intent.putExtra(AppConstant.MI_TANK_STRUCTURE_SERIAL_ID,"");
+        intent.putExtra(AppConstant.MI_TANK_STRUCTURE_DETAIL_ID,tankDataList.get(position).getMiTankStructureDetailId());
+        intent.putExtra(AppConstant.MI_TANK_SURVEY_ID,tankDataList.get(position).getMiTankSurveyId());
+        intent.putExtra(AppConstant.MI_TANK_STRUCTURE_ID,tankDataList.get(position).getMiTankStructureId());
+        startActivityForResult(intent,1);
+        overridePendingTransition(R.anim.slide_in, R.anim.slide_out);
+    }
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        // if the result is capturing Image
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == 1) {
+            new fetchtankDatatask().execute();
+        }  else {
+                // failed to record video
+            }
+        }
 }

@@ -83,7 +83,7 @@ public class CameraScreen extends AppCompatActivity implements View.OnClickListe
 
 
     private List<View> viewArrayList = new ArrayList<>();
-
+    private List<MITank> TypeList = new ArrayList<>();
 
     public static DBHelper dbHelper;
     public static SQLiteDatabase db;
@@ -103,7 +103,9 @@ public class CameraScreen extends AppCompatActivity implements View.OnClickListe
         } catch (Exception e) {
             e.printStackTrace();
         }
-
+        if(getIntent().getStringExtra("KEY").equals("TanksPondsListAdapter")){
+            cameraScreenBinding.selectionLayout.setVisibility(View.GONE);
+        }
 
         intializeUI();
         loadConditionSpinnervalue();
@@ -376,21 +378,61 @@ public class CameraScreen extends AppCompatActivity implements View.OnClickListe
 
     @Override
     public void onBackPressed() {
+        if(getIntent().getStringExtra("KEY").equals("TanksPondsListAdapter")){
+            setResult(RESULT_OK);
+            super.onBackPressed();
+            overridePendingTransition(R.anim.slide_enter, R.anim.slide_exit);
+        }else {
         super.onBackPressed();
+            setResult(Activity.RESULT_CANCELED);
         overridePendingTransition(R.anim.slide_enter, R.anim.slide_exit);
-    }
+    }}
 
     public void onBackPress() {
+        if(getIntent().getStringExtra("KEY").equals("TanksPondsListAdapter")){
+            setResult(RESULT_OK);
+            super.onBackPressed();
+            overridePendingTransition(R.anim.slide_enter, R.anim.slide_exit);
+        }else {
         super.onBackPressed();
         setResult(Activity.RESULT_CANCELED);
         overridePendingTransition(R.anim.slide_enter, R.anim.slide_exit);
-    }
+    }}
 
     public void checkSave() {
-        if (!"Select Condition".equalsIgnoreCase(ConditionList.get(cameraScreenBinding.condition.getSelectedItemPosition()).getMiTankConditionName())) {
+        if(getIntent().getStringExtra("KEY").equals("TanksPondsListAdapter")){
             saveImage();
-        } else {
-            Utils.showAlert(this, "Select Condition!");
+        }
+        else {
+            /*if (!"Select Condition".equalsIgnoreCase(ConditionList.get(cameraScreenBinding.condition.getSelectedItemPosition()).getMiTankConditionName())) {
+                saveImage();
+            } else {
+                Utils.showAlert(this, "Select Condition!");
+            }*/
+            if (!"Select Condition".equalsIgnoreCase(ConditionList.get(cameraScreenBinding.condition.getSelectedItemPosition()).getMiTankConditionName())) {
+                if(typeVisibility()){
+                    if (!"Select Type".equalsIgnoreCase(TypeList.get(cameraScreenBinding.type.getSelectedItemPosition()).getMiTankTypeName())) {
+                        saveImage();
+                    }
+                    else {
+                        Utils.showAlert(this, "Select Type!");
+                    }
+                }
+                else {
+                    saveImage();
+                }
+            } else {
+                Utils.showAlert(this, "Select Condition!");
+            }
+        }
+
+    }
+    public boolean typeVisibility(){
+        if(cameraScreenBinding.typeSpinnerLayout.getVisibility()==View.VISIBLE){
+            return true;
+        }
+        else {
+            return false;
         }
     }
     public void saveImage() {
@@ -399,6 +441,7 @@ public class CameraScreen extends AppCompatActivity implements View.OnClickListe
         String mi_tank_structure_detail_id = getIntent().getStringExtra(AppConstant.MI_TANK_STRUCTURE_DETAIL_ID);
         String mi_tank_survey_id = getIntent().getStringExtra(AppConstant.MI_TANK_SURVEY_ID);
         String mi_tank_structure_id = getIntent().getStringExtra(AppConstant.MI_TANK_STRUCTURE_ID);
+        String mi_tank_structure_serial_id = getIntent().getStringExtra(AppConstant.MI_TANK_STRUCTURE_SERIAL_ID);
         String dcode = prefManager.getDistrictCode();
         String bcode = prefManager.getBlockCode();
         String pvcode = prefManager.getPvCode();
@@ -421,6 +464,7 @@ public class CameraScreen extends AppCompatActivity implements View.OnClickListe
             values.put(AppConstant.HAB_CODE, habcode);
             values.put(AppConstant.MI_TANK_STRUCTURE_DETAIL_ID, mi_tank_structure_detail_id);
             values.put(AppConstant.MI_TANK_STRUCTURE_ID, mi_tank_structure_id);
+            values.put(AppConstant.MI_TANK_STRUCTURE_SERIAL_ID, mi_tank_structure_serial_id);
             values.put(AppConstant.MI_TANK_SURVEY_ID, mi_tank_survey_id);
             values.put(AppConstant.MI_TANK_CONDITION_ID,ConditionList.get(cameraScreenBinding.condition.getSelectedItemPosition()).getMiTankConditionId() );
             values.put(AppConstant.MI_TANK_CONDITION_NAME,ConditionList.get(cameraScreenBinding.condition.getSelectedItemPosition()).getMiTankConditionName() );
@@ -430,10 +474,10 @@ public class CameraScreen extends AppCompatActivity implements View.OnClickListe
            // values.put(AppConstant.KEY_CREATED_DATE,sdf.format(new Date()));
 
 
-                whereClause = "dcode = ? and bcode = ? and pvcode = ? and habcode = ? and mi_tank_structure_detail_id = ?";
-                whereArgs = new String[]{dcode,bcode,pvcode,habcode,mi_tank_structure_detail_id};
+                whereClause = "dcode = ? and bcode = ? and pvcode = ? and habcode = ? and mi_tank_structure_detail_id = ? and mi_tank_structure_serial_id = ?";
+                whereArgs = new String[]{dcode,bcode,pvcode,habcode,mi_tank_structure_detail_id,mi_tank_structure_serial_id};
                 dbData.open();
-                ArrayList<MITank> imageOffline = dbData.selectImage(dcode,bcode,pvcode,habcode,mi_tank_structure_detail_id);
+                ArrayList<MITank> imageOffline = dbData.selectImage(dcode,bcode,pvcode,habcode,mi_tank_structure_detail_id,mi_tank_structure_serial_id);
 
                 if(imageOffline.size() < 1) {
                     id = db.insert(DBHelper.SAVE_MI_TANK_IMAGES, null, values);

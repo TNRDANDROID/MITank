@@ -30,6 +30,7 @@
                 android:id="@+id/pmay_layout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:paddingBottom="@dimen/_12sdp"
 
                 android:orientation="horizontal">
 
@@ -229,11 +230,12 @@
                             android:layout_below="@+id/activity_name_layout">
 
                             <TextView
-                                android:id="@+id/delete"
+                                android:id="@+id/takePhoto"
                                 android:layout_width="wrap_content"
                                 android:layout_height="40dp"
                                 android:layout_centerInParent="true"
-                                android:layout_marginRight="@dimen/_50sdp"
+                                android:drawablePadding="10dp"
+                                android:drawableRight="@drawable/ic_camera"
                                 android:gravity="center"
                                 android:text="Take Photo"
                                 android:textAlignment="center"
@@ -243,6 +245,7 @@
                             <ImageButton
                                 android:id="@+id/dummy1"
                                 android:layout_width="20dp"
+                                android:visibility="gone"
                                 android:layout_height="20dp"
                                 android:layout_alignParentEnd="true"
                                 android:layout_centerInParent="true"
@@ -278,7 +281,9 @@
                                 android:layout_alignParentStart="true"
                                 android:layout_centerInParent="true"
                                 android:layout_gravity="center"
-                                android:padding="@dimen/_12sdp"
+                                android:paddingTop="@dimen/_12sdp"
+                                android:paddingLeft="@dimen/_12sdp"
+                                android:paddingRight="@dimen/_12sdp"
                                 android:text="View Offline Images"
                                 android:textColor="#000080"
                                 android:textSize="16sp"
@@ -292,7 +297,9 @@
                                 android:layout_alignParentEnd="true"
                                 android:layout_centerInParent="true"
                                 android:layout_gravity="center"
-                                android:padding="@dimen/_12sdp"
+                                android:paddingTop="@dimen/_12sdp"
+                                android:paddingLeft="@dimen/_12sdp"
+                                android:paddingRight="@dimen/_12sdp"
                                 android:text="View Online Images"
                                 android:textColor="#000080"
                                 android:textSize="16sp" />

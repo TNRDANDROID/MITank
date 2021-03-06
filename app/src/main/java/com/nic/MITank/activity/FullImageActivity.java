@@ -80,10 +80,11 @@ public class FullImageActivity extends AppCompatActivity implements View.OnClick
         protected ArrayList<MITank> doInBackground(Void... params) {
 
             final String mi_tank_structure_detail_id = getIntent().getStringExtra(AppConstant.MI_TANK_STRUCTURE_DETAIL_ID);
+            final String mi_tank_structure_serial_id = getIntent().getStringExtra(AppConstant.MI_TANK_STRUCTURE_SERIAL_ID);
 
             dbData.open();
             activityImage = new ArrayList<>();
-            activityImage = dbData.selectImage(prefManager.getDistrictCode(),prefManager.getBlockCode(),prefManager.getPvCode(),prefManager.getHabCode(),mi_tank_structure_detail_id);
+            activityImage = dbData.selectImage(prefManager.getDistrictCode(),prefManager.getBlockCode(),prefManager.getPvCode(),prefManager.getHabCode(),mi_tank_structure_detail_id,mi_tank_structure_serial_id);
 
 
             Log.d("IMAGE_COUNT", String.valueOf(activityImage.size()));

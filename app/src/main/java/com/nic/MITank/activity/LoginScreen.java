@@ -107,6 +107,8 @@ public class LoginScreen extends AppCompatActivity implements View.OnClickListen
             e.printStackTrace();
         }
         setPType = 1;
+        loginScreenBinding.userName.setText("maedemo");
+        loginScreenBinding.password.setText("crd123#$");
     }
 
     public void showPassword() {

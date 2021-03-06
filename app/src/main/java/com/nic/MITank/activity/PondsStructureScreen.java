@@ -1,12 +1,27 @@
 package com.nic.MITank.activity;
 
 import android.app.Activity;
+import android.content.ContentValues;
+import android.content.Context;
 import android.content.Intent;
+import android.database.Cursor;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.Gravity;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.view.WindowManager;
+import android.widget.AdapterView;
+import android.widget.Button;
+import android.widget.ImageView;
+import android.widget.RelativeLayout;
+import android.widget.Spinner;
+import android.widget.TextView;
 
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.databinding.DataBindingUtil;
 import androidx.recyclerview.widget.DefaultItemAnimator;
@@ -14,16 +29,26 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.nic.MITank.R;
+import com.nic.MITank.adapter.CommonAdapter;
 import com.nic.MITank.adapter.PondsStructureAdapter;
 import com.nic.MITank.adapter.TanksPondsListAdapter;
 import com.nic.MITank.constant.AppConstant;
+import com.nic.MITank.dataBase.DBHelper;
 import com.nic.MITank.dataBase.dbData;
 import com.nic.MITank.databinding.PondsStructureScreenBinding;
 import com.nic.MITank.databinding.TanksPondsListScreenBinding;
 import com.nic.MITank.model.MITank;
 import com.nic.MITank.session.PrefManager;
+import com.nic.MITank.utils.Utils;
+
+import org.json.JSONArray;
+import org.json.JSONException;
 
 import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+
+import static com.nic.MITank.activity.HomePage.db;
 
 public class PondsStructureScreen extends AppCompatActivity {
 
@@ -34,6 +59,10 @@ public class PondsStructureScreen extends AppCompatActivity {
     public dbData dbData = new dbData(this);
     private PrefManager prefManager;
     String miTankStructureId;
+    private Context context;
+    private AlertDialog alert;
+    private List<MITank> ConditionList = new ArrayList<>();
+    String Tittle="";
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -41,8 +70,10 @@ public class PondsStructureScreen extends AppCompatActivity {
         pondsStructureScreenBinding = DataBindingUtil.setContentView(this, R.layout.ponds_structure_screen);
         pondsStructureScreenBinding.setActivity(this);
         pondsStructureScreenBinding.toolbarTitle.setText(getIntent().getStringExtra("Title"));
+        Tittle=getIntent().getStringExtra("Title");
         setSupportActionBar(pondsStructureScreenBinding.toolbar);
         prefManager = new PrefManager(this);
+        context=this;
 
         tankStructureList = new ArrayList<>();
         pondsStructureAdapter = new PondsStructureAdapter(this,tankStructureList,dbData);
@@ -69,6 +100,200 @@ public class PondsStructureScreen extends AppCompatActivity {
             super.onPostExecute(structureList);
             pondsStructureAdapter = new PondsStructureAdapter(PondsStructureScreen.this,tankStructureList,dbData);
             pondsStructureScreenBinding.recyclerView.setAdapter(pondsStructureAdapter);
+            pondsStructureAdapter.notifyDataSetChanged();
+        }
+    }
+
+    public void addStructureView(){
+        int id=0;
+        String name = "",fullName=" ",surveryId = "",structureId="",structureDetailsId = "";
+        if(tankStructureList.size() > 0){
+            MITank miTank = tankStructureList.get(tankStructureList.size() - 1);
+             id= Integer.parseInt(miTank.getMiTankStructureSerialId());
+            name= miTank.getMiTankStructureName();
+            surveryId= miTank.getMiTankSurveyId();
+            structureId= miTank.getMiTankStructureId();
+            structureDetailsId="";
+        }else if(tankStructureList.size() > 0 && tankStructureList.size() == 1){
+            MITank miTank = tankStructureList.get(tankStructureList.size());
+             id= Integer.parseInt(miTank.getMiTankStructureSerialId());
+            name= miTank.getMiTankStructureName();
+            surveryId= miTank.getMiTankSurveyId();
+            structureId= miTank.getMiTankStructureId();
+            structureDetailsId="";
+        }else {
+            id= 0;
+            name= Tittle;
+            surveryId= prefManager.getMiTankSurveyId();
+            structureId= getIntent().getStringExtra(AppConstant.MI_TANK_STRUCTURE_ID);
+            structureDetailsId="";
+        }
+
+        try {
+            //We need to get the instance of the LayoutInflater, use the context of this activity
+            final LayoutInflater inflater = (LayoutInflater) context
+                    .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+            //Inflate the view from a predefined XML layout
+            final View view = inflater.inflate(R.layout.pop_up_add_structure, null);
+            TextView header,structure_name;
+            ImageView close;
+            RelativeLayout camera_activity;
+            Button submit;
+            final Spinner condition;
+
+            camera_activity = (RelativeLayout) view.findViewById(R.id.camera_activity);
+            header = (TextView) view.findViewById(R.id.header);
+            condition = (Spinner) view.findViewById(R.id.condition);
+            structure_name = (TextView) view.findViewById(R.id.structure_name);
+            submit = (Button) view.findViewById(R.id.btnBuy);
+            close = (ImageView) view.findViewById(R.id.close);
+            close.setImageDrawable(context.getResources().getDrawable(R.drawable.ic_close));
+            loadConditionSpinnervalue();
+            condition.setAdapter(new CommonAdapter(this, ConditionList, "ConditionList"));
+            fullName=name+" "+String.valueOf(id+1);
+            structure_name.setText(fullName);
+
+            final String finalSurveryId = surveryId;
+            final String finalStructureId = structureId;
+            final String finalStructureDetailsId = structureDetailsId;
+
+            final String finalFullName = name;
+            final String idVal = String.valueOf(id+1);
+
+            camera_activity.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    openCamera(idVal,finalSurveryId, finalStructureId, finalStructureDetailsId);
+                }
+            });
+
+            submit.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    if (!"Select Condition".equalsIgnoreCase(ConditionList.get(condition.getSelectedItemPosition()).getMiTankConditionName())) {
+                        if(getSaveTradeImageTable(idVal,finalSurveryId) == 1){
+                            insertStructure(finalFullName,ConditionList.get(condition.getSelectedItemPosition()).getMiTankConditionName()
+                                    ,ConditionList.get(condition.getSelectedItemPosition()).getMiTankConditionId(),idVal);
+                        }else {
+                            Utils.showAlert(PondsStructureScreen.this,"Take Photo! ");
+                        }
+                    }else {
+                        Utils.showAlert(PondsStructureScreen.this,"Please Select Condition");
+                    }
+
+                }
+            });
+            
+            close.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    alert.dismiss();
+                }
+            });
+
+
+            androidx.appcompat.app.AlertDialog.Builder dialogBuilder = new androidx.appcompat.app.AlertDialog.Builder(context);
+            dialogBuilder.setView(view);
+            alert = dialogBuilder.create();
+            WindowManager.LayoutParams lp = new WindowManager.LayoutParams();
+            lp.copyFrom(alert.getWindow().getAttributes());
+            lp.width = ViewGroup.LayoutParams.WRAP_CONTENT;
+            lp.height = ViewGroup.LayoutParams.WRAP_CONTENT;
+            lp.gravity = Gravity.CENTER;
+            lp.windowAnimations = R.style.DialogAnimation;
+            alert.getWindow().setAttributes(lp);
+            alert.show();
+            alert.setCanceledOnTouchOutside(true);
+            alert.setCancelable(true);
+            alert.getWindow().setBackgroundDrawableResource(android.R.color.transparent);
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+    }
+
+    public int getSaveTradeImageTable(String mi_tank_structure_serial_id , String mi_tank_survey_id){
+        String image="";String lat="";String lan="";
+
+        String sql = "SELECT * FROM " + DBHelper.SAVE_MI_TANK_IMAGES + " WHERE "+
+              " mi_tank_structure_serial_id ="+mi_tank_structure_serial_id;
+        Cursor cursor = db.rawQuery(sql, null);
+        Log.d("cursor_count", String.valueOf(cursor.getCount()));
+
+        if (cursor.getCount() > 0) {
+            if (cursor.moveToFirst()) {
+                do {
+                    image = cursor.getString(cursor.getColumnIndexOrThrow(AppConstant.KEY_IMAGE));
+                    lat = cursor.getString(cursor.getColumnIndexOrThrow(AppConstant.KEY_LATITUDE));
+                    lan = cursor.getString(cursor.getColumnIndexOrThrow(AppConstant.KEY_LONGITUDE));
+                    Log.d("lat", "" + lat);
+                    Log.d("image", "" + image);
+                } while (cursor.moveToNext());
+            }
+        }
+        if(image.getBytes().length>0) {
+            return 1;
+        }
+
+        else {
+            return 0;
+        }
+    }
+
+
+    public void openCamera(String serialId,String surveryId, String structureId, String structureDetailsId) {
+        Intent intent = new Intent(this, CameraScreen.class);
+        intent.putExtra("KEY","PondsStructureScreen");
+        intent.putExtra(AppConstant.MI_TANK_STRUCTURE_SERIAL_ID,serialId);
+        intent.putExtra(AppConstant.MI_TANK_STRUCTURE_DETAIL_ID,structureDetailsId);
+        intent.putExtra(AppConstant.MI_TANK_SURVEY_ID,surveryId);
+        intent.putExtra(AppConstant.MI_TANK_STRUCTURE_ID,structureId);
+        startActivityForResult(intent,1);
+        overridePendingTransition(R.anim.slide_in, R.anim.slide_out);
+    }
+
+    public void insertStructure(String name,String condion,String condionid,String serialid) {
+
+        ContentValues values = new ContentValues();
+        values.put(AppConstant.MI_TANK_STRUCTURE_DETAIL_ID,"");
+        values.put(AppConstant.MI_TANK_SURVEY_ID,prefManager.getMiTankSurveyId());
+        values.put(AppConstant.MI_TANK_STRUCTURE_ID,getIntent().getStringExtra(AppConstant.MI_TANK_STRUCTURE_ID));
+        values.put(AppConstant.MI_TANK_STRUCTURE_SERIAL_ID,serialid);
+        values.put(AppConstant.MI_TANK_CONDITION_ID,condionid);
+        values.put(AppConstant.MI_TANK_CONDITION_NAME,condion);
+        values.put(AppConstant.MI_TANK_SKILL_LEVEL,"");
+        values.put(AppConstant.MI_TANK_STRUCTURE_NAME,name);
+        values.put(AppConstant.IMAGE_AVAILABLE, "");
+
+        long id = db.insert(DBHelper.MI_TANK_DATA_STRUCTURES, null, values);
+        Log.d("Insert_id_structures", String.valueOf(id));
+        alert.dismiss();
+        new fetchStructuretask().execute();
+    }
+
+    public void loadConditionSpinnervalue() {
+        Cursor conditionCursor = null;
+        conditionCursor = db.rawQuery("SELECT * FROM " + DBHelper.MI_TANK_CONDITION, null);
+
+        ConditionList.clear();
+        MITank conditionListValue = new MITank();
+        conditionListValue.setMiTankConditionName("Select Condition");
+        ConditionList.add(conditionListValue);
+        if (conditionCursor.getCount() > 0) {
+            if (conditionCursor.moveToFirst()) {
+                do {
+                    MITank conditionList = new MITank();
+                    String miTankConditionId = conditionCursor.getString(conditionCursor.getColumnIndexOrThrow(AppConstant.MI_TANK_CONDITION_ID));
+                    String miTankConditionName = conditionCursor.getString(conditionCursor.getColumnIndexOrThrow(AppConstant.MI_TANK_CONDITION_NAME));
+
+                    conditionList.setMiTankConditionId(miTankConditionId);
+                    conditionList.setMiTankConditionName(miTankConditionName);
+
+                    ConditionList.add(conditionList);
+                    Log.d("conditonsize", "" + ConditionList.size());
+                } while (conditionCursor.moveToNext());
+            }
         }
     }
 
