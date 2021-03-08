@@ -847,6 +847,58 @@ public class dbData {
         return cards;
     }
 
+    public ArrayList<MITank> getCenterImageData(String mi_tank_survey_id ){
+        db.isOpen();
+        ArrayList<MITank> cards = new ArrayList<>();
+        Cursor cursor = null;
+        String selection = null;
+        String[] selectionArgs = null;
+
+        selection = "mi_tank_survey_id = ? ";
+        selectionArgs = new String[]{mi_tank_survey_id};
+
+
+        try {
+            cursor = db.query(DBHelper.SAVE_MI_TANK_CENTER_IMAGES,
+                    new String[]{"*"}, selection,selectionArgs, null, null, null);
+            if (cursor.getCount() > 0) {
+                while (cursor.moveToNext()) {
+
+                    byte[] photo = cursor.getBlob(cursor.getColumnIndexOrThrow(AppConstant.KEY_IMAGE));
+                    byte[] decodedString = Base64.decode(photo, Base64.DEFAULT);
+                    Bitmap decodedByte = BitmapFactory.decodeByteArray(decodedString, 0, decodedString.length);
+
+                    MITank card = new MITank();
+
+                    card.setDistictCode(cursor.getString(cursor
+                            .getColumnIndexOrThrow(AppConstant.DISTRICT_CODE)));
+                    card.setBlockCode(cursor.getString(cursor
+                            .getColumnIndex(AppConstant.BLOCK_CODE)));
+                    card.setPvCode(cursor.getString(cursor
+                            .getColumnIndexOrThrow(AppConstant.PV_CODE)));
+                    card.setHabCode(cursor.getString(cursor
+                            .getColumnIndexOrThrow(AppConstant.HAB_CODE)));
+                                        card.setMiTankSurveyId(cursor.getString(cursor
+                            .getColumnIndexOrThrow(AppConstant.MI_TANK_SURVEY_ID)));
+                                        card.setLatitude(cursor.getString(cursor
+                            .getColumnIndexOrThrow(AppConstant.KEY_LATITUDE)));
+                    card.setLongitude(cursor.getString(cursor
+                            .getColumnIndexOrThrow(AppConstant.KEY_LONGITUDE)));
+                    card.setImage(decodedByte);
+
+                    cards.add(card);
+                }
+            }
+        } catch (Exception e){
+            //   Log.d(DEBUG_TAG, "Exception raised with a value of " + e);
+        } finally{
+            if (cursor != null) {
+                cursor.close();
+            }
+        }
+        return cards;
+    }
+
     public void update_Track() {
         String whereClause = "server_flag = server_flag";
         Log.d("Update id is ", "id");

@@ -59,6 +59,8 @@ public class CommonAdapter extends BaseAdapter {
             tv_type.setText(miTank.getHabitationName());
         } else if (type.equalsIgnoreCase("ConditionList")) {
             tv_type.setText(miTank.getMiTankConditionName());
+        }else if (type.equalsIgnoreCase("TypeList")) {
+            tv_type.setText(miTank.getMiTankTypeName());
         }
         return view;
     }

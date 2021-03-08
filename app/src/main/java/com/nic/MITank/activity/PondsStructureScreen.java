@@ -15,7 +15,9 @@ import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.widget.AdapterView;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
@@ -63,6 +65,9 @@ public class PondsStructureScreen extends AppCompatActivity {
     private AlertDialog alert;
     private List<MITank> ConditionList = new ArrayList<>();
     String Tittle="";
+    private List<MITank> InletTypeList = new ArrayList<>();
+    private List<MITank> SluiceTypeList = new ArrayList<>();
+
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -140,6 +145,9 @@ public class PondsStructureScreen extends AppCompatActivity {
             RelativeLayout camera_activity;
             Button submit;
             final Spinner condition;
+            final Spinner type;
+            LinearLayout condition_layout,type_layout,sill_level_layout;
+            EditText sill_level_value_taxt;
 
             camera_activity = (RelativeLayout) view.findViewById(R.id.camera_activity);
             header = (TextView) view.findViewById(R.id.header);
@@ -147,6 +155,43 @@ public class PondsStructureScreen extends AppCompatActivity {
             structure_name = (TextView) view.findViewById(R.id.structure_name);
             submit = (Button) view.findViewById(R.id.btnBuy);
             close = (ImageView) view.findViewById(R.id.close);
+            condition_layout = (LinearLayout) view.findViewById(R.id.condition_layout);
+            type_layout = (LinearLayout) view.findViewById(R.id.sec_type_layout);
+            sill_level_layout = (LinearLayout) view.findViewById(R.id.sill_level_layout);
+            sill_level_value_taxt = (EditText) view.findViewById(R.id.sill_level_text);
+            type=(Spinner) view.findViewById(R.id.type);
+
+            if(Tittle.equals("Inlet channels")){
+                loadInletTypeSpinnerValue();
+                type.setAdapter(new CommonAdapter(this, InletTypeList, "TypeList"));
+                   sill_level_layout.setVisibility(View.GONE);
+                   type_layout.setVisibility(View.VISIBLE);
+                   condition_layout.setVisibility(View.VISIBLE);
+            }
+            else if(Tittle.equals("Surplus Weirs / Outlet structure")){
+                sill_level_layout.setVisibility(View.GONE);
+                type_layout.setVisibility(View.GONE);
+                condition_layout.setVisibility(View.VISIBLE);
+            }
+            else if(Tittle.equals("Bathing Ghat")){
+                sill_level_layout.setVisibility(View.GONE);
+                type_layout.setVisibility(View.GONE);
+                condition_layout.setVisibility(View.VISIBLE);
+            }
+            else if(Tittle.equals("Ramp structures")){
+                sill_level_layout.setVisibility(View.GONE);
+                type_layout.setVisibility(View.GONE);
+                condition_layout.setVisibility(View.VISIBLE);
+            }
+            else if(Tittle.equals("Sluices")){
+                loadSluiceTypeSpinnerValue();
+                type.setAdapter(new CommonAdapter(this, SluiceTypeList, "TypeList"));
+                sill_level_layout.setVisibility(View.VISIBLE);
+                type_layout.setVisibility(View.VISIBLE);
+                condition_layout.setVisibility(View.VISIBLE);
+            }
+
+
             close.setImageDrawable(context.getResources().getDrawable(R.drawable.ic_close));
             loadConditionSpinnervalue();
             condition.setAdapter(new CommonAdapter(this, ConditionList, "ConditionList"));
@@ -245,6 +290,7 @@ public class PondsStructureScreen extends AppCompatActivity {
     public void openCamera(String serialId,String surveryId, String structureId, String structureDetailsId) {
         Intent intent = new Intent(this, CameraScreen.class);
         intent.putExtra("KEY","PondsStructureScreen");
+        intent.putExtra("Title",Tittle);
         intent.putExtra(AppConstant.MI_TANK_STRUCTURE_SERIAL_ID,serialId);
         intent.putExtra(AppConstant.MI_TANK_STRUCTURE_DETAIL_ID,structureDetailsId);
         intent.putExtra(AppConstant.MI_TANK_SURVEY_ID,surveryId);
@@ -296,6 +342,57 @@ public class PondsStructureScreen extends AppCompatActivity {
             }
         }
     }
+    public void loadInletTypeSpinnerValue() {
+        Cursor conditionCursor = null;
+        conditionCursor = db.rawQuery("SELECT * FROM " + DBHelper.MI_TANK_TYPE_INLET_STRUCTURE, null);
+
+        InletTypeList.clear();
+        MITank conditionListValue = new MITank();
+        conditionListValue.setMiTankTypeName("Select Type");
+        InletTypeList.add(conditionListValue);
+        if (conditionCursor.getCount() > 0) {
+            if (conditionCursor.moveToFirst()) {
+                do {
+                    MITank conditionList = new MITank();
+                    String miTankTypeId = conditionCursor.getString(conditionCursor.getColumnIndexOrThrow(AppConstant.MI_TANK_type_ID));
+                    String miTankTypeName = conditionCursor.getString(conditionCursor.getColumnIndexOrThrow(AppConstant.MI_TANK_TYPE_NAME));
+
+                    conditionList.setMiTankTypeId(miTankTypeId);
+                    conditionList.setMiTankTypeName(miTankTypeName);
+
+                    InletTypeList.add(conditionList);
+                    Log.d("conditonsize", "" + InletTypeList.size());
+                } while (conditionCursor.moveToNext());
+            }
+        }
+
+    }
+    public void loadSluiceTypeSpinnerValue() {
+        Cursor conditionCursor = null;
+        conditionCursor = db.rawQuery("SELECT * FROM " + DBHelper.MI_TANK_TYPE_SLUICE_STRUCTURE, null);
+
+        SluiceTypeList.clear();
+        MITank conditionListValue = new MITank();
+        conditionListValue.setMiTankTypeName("Select Type");
+        SluiceTypeList.add(conditionListValue);
+        if (conditionCursor.getCount() > 0) {
+            if (conditionCursor.moveToFirst()) {
+                do {
+                    MITank conditionList = new MITank();
+                    String miTankTypeId = conditionCursor.getString(conditionCursor.getColumnIndexOrThrow(AppConstant.MI_TANK_type_ID));
+                    String miTankTypeName = conditionCursor.getString(conditionCursor.getColumnIndexOrThrow(AppConstant.MI_TANK_TYPE_NAME));
+
+                    conditionList.setMiTankTypeId(miTankTypeId);
+                    conditionList.setMiTankTypeName(miTankTypeName);
+
+                    SluiceTypeList.add(conditionList);
+                    Log.d("conditonsize", "" + SluiceTypeList.size());
+                } while (conditionCursor.moveToNext());
+            }
+        }
+
+    }
+
 
     public void onBackPress() {
         super.onBackPressed();

@@ -46,6 +46,15 @@ public class MITank {
     public Integer pointSerialNo;
     private String miTankTypeId;
     private String miTankTypeName;
+    private String center_image;
+
+    public String getCenter_image() {
+        return center_image;
+    }
+
+    public void setCenter_image(String center_image) {
+        this.center_image = center_image;
+    }
 
     public String getMiTankStructureId() {
         return miTankStructureId;

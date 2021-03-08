@@ -83,12 +83,14 @@ public class CameraScreen extends AppCompatActivity implements View.OnClickListe
 
 
     private List<View> viewArrayList = new ArrayList<>();
-    private List<MITank> TypeList = new ArrayList<>();
+    private List<MITank> InletTypeList = new ArrayList<>();
+    private List<MITank> SluiceTypeList = new ArrayList<>();
 
     public static DBHelper dbHelper;
     public static SQLiteDatabase db;
     private com.nic.MITank.dataBase.dbData dbData = new dbData(this);
     private List<MITank> ConditionList = new ArrayList<>();
+    String Title="";
 
 
 
@@ -105,6 +107,42 @@ public class CameraScreen extends AppCompatActivity implements View.OnClickListe
         }
         if(getIntent().getStringExtra("KEY").equals("TanksPondsListAdapter")){
             cameraScreenBinding.selectionLayout.setVisibility(View.GONE);
+        }
+        else {
+            Title=getIntent().getStringExtra("Title");
+        }
+
+        if(!Title.equals("")){
+            if(Title.equals("Inlet channels")){
+                loadInletTypeSpinnerValue();
+                cameraScreenBinding.type.setAdapter(new CommonAdapter(this, InletTypeList, "TypeList"));
+                cameraScreenBinding.sillLevelLayout.setVisibility(View.GONE);
+                cameraScreenBinding.typeSpinnerLayout.setVisibility(View.VISIBLE);
+                cameraScreenBinding.conditionLayout.setVisibility(View.VISIBLE);
+            }
+            else if(Title.equals("Surplus Weirs / Outlet structure")){
+                cameraScreenBinding.sillLevelLayout.setVisibility(View.GONE);
+                cameraScreenBinding.typeSpinnerLayout.setVisibility(View.GONE);
+                cameraScreenBinding.conditionLayout.setVisibility(View.VISIBLE);
+            }
+            else if(Title.equals("Bathing Ghat")){
+                cameraScreenBinding.sillLevelLayout.setVisibility(View.GONE);
+                cameraScreenBinding.typeSpinnerLayout.setVisibility(View.GONE);
+                cameraScreenBinding.conditionLayout.setVisibility(View.VISIBLE);
+            }
+            else if(Title.equals("Ramp structures")){
+                cameraScreenBinding.sillLevelLayout.setVisibility(View.GONE);
+                cameraScreenBinding.typeSpinnerLayout.setVisibility(View.GONE);
+                cameraScreenBinding.conditionLayout.setVisibility(View.VISIBLE);
+            }
+            else if(Title.equals("Sluices")){
+                loadSluiceTypeSpinnerValue();
+                cameraScreenBinding.type.setAdapter(new CommonAdapter(this, SluiceTypeList, "TypeList"));
+                cameraScreenBinding.sillLevelLayout.setVisibility(View.VISIBLE);
+                cameraScreenBinding.typeSpinnerLayout.setVisibility(View.VISIBLE);
+                cameraScreenBinding.conditionLayout.setVisibility(View.VISIBLE);
+            }
+
         }
 
         intializeUI();
@@ -143,6 +181,58 @@ public class CameraScreen extends AppCompatActivity implements View.OnClickListe
         }
         cameraScreenBinding.condition.setAdapter(new CommonAdapter(this, ConditionList, "ConditionList"));
     }
+
+    public void loadInletTypeSpinnerValue() {
+        Cursor conditionCursor = null;
+        conditionCursor = db.rawQuery("SELECT * FROM " + DBHelper.MI_TANK_TYPE_INLET_STRUCTURE, null);
+
+        InletTypeList.clear();
+        MITank conditionListValue = new MITank();
+        conditionListValue.setMiTankTypeName("Select Type");
+        InletTypeList.add(conditionListValue);
+        if (conditionCursor.getCount() > 0) {
+            if (conditionCursor.moveToFirst()) {
+                do {
+                    MITank conditionList = new MITank();
+                    String miTankTypeId = conditionCursor.getString(conditionCursor.getColumnIndexOrThrow(AppConstant.MI_TANK_type_ID));
+                    String miTankTypeName = conditionCursor.getString(conditionCursor.getColumnIndexOrThrow(AppConstant.MI_TANK_TYPE_NAME));
+
+                    conditionList.setMiTankTypeId(miTankTypeId);
+                    conditionList.setMiTankTypeName(miTankTypeName);
+
+                    InletTypeList.add(conditionList);
+                    Log.d("conditonsize", "" + InletTypeList.size());
+                } while (conditionCursor.moveToNext());
+            }
+        }
+        cameraScreenBinding.type.setAdapter(new CommonAdapter(this, InletTypeList, "TypeList"));
+    }
+    public void loadSluiceTypeSpinnerValue() {
+        Cursor conditionCursor = null;
+        conditionCursor = db.rawQuery("SELECT * FROM " + DBHelper.MI_TANK_TYPE_SLUICE_STRUCTURE, null);
+
+        SluiceTypeList.clear();
+        MITank conditionListValue = new MITank();
+        conditionListValue.setMiTankTypeName("Select Type");
+        SluiceTypeList.add(conditionListValue);
+        if (conditionCursor.getCount() > 0) {
+            if (conditionCursor.moveToFirst()) {
+                do {
+                    MITank conditionList = new MITank();
+                    String miTankTypeId = conditionCursor.getString(conditionCursor.getColumnIndexOrThrow(AppConstant.MI_TANK_type_ID));
+                    String miTankTypeName = conditionCursor.getString(conditionCursor.getColumnIndexOrThrow(AppConstant.MI_TANK_TYPE_NAME));
+
+                    conditionList.setMiTankTypeId(miTankTypeId);
+                    conditionList.setMiTankTypeName(miTankTypeName);
+
+                    SluiceTypeList.add(conditionList);
+                    Log.d("conditonsize", "" + SluiceTypeList.size());
+                } while (conditionCursor.moveToNext());
+            }
+        }
+        cameraScreenBinding.type.setAdapter(new CommonAdapter(this, SluiceTypeList, "TypeList"));
+    }
+
 
     @Override
     public void onClick(View v) {
@@ -401,7 +491,8 @@ public class CameraScreen extends AppCompatActivity implements View.OnClickListe
 
     public void checkSave() {
         if(getIntent().getStringExtra("KEY").equals("TanksPondsListAdapter")){
-            saveImage();
+            //saveImage();
+            saveCentrePointImage();
         }
         else {
             /*if (!"Select Condition".equalsIgnoreCase(ConditionList.get(cameraScreenBinding.condition.getSelectedItemPosition()).getMiTankConditionName())) {
@@ -411,12 +502,7 @@ public class CameraScreen extends AppCompatActivity implements View.OnClickListe
             }*/
             if (!"Select Condition".equalsIgnoreCase(ConditionList.get(cameraScreenBinding.condition.getSelectedItemPosition()).getMiTankConditionName())) {
                 if(typeVisibility()){
-                    if (!"Select Type".equalsIgnoreCase(TypeList.get(cameraScreenBinding.type.getSelectedItemPosition()).getMiTankTypeName())) {
-                        saveImage();
-                    }
-                    else {
-                        Utils.showAlert(this, "Select Type!");
-                    }
+                    saveImage();
                 }
                 else {
                     saveImage();
@@ -428,12 +514,32 @@ public class CameraScreen extends AppCompatActivity implements View.OnClickListe
 
     }
     public boolean typeVisibility(){
-        if(cameraScreenBinding.typeSpinnerLayout.getVisibility()==View.VISIBLE){
-            return true;
-        }
-        else {
-            return false;
-        }
+
+            if (cameraScreenBinding.typeSpinnerLayout.getVisibility() == View.VISIBLE) {
+                if(Title.equals("Sluices")) {
+                    if (!"Select Type".equalsIgnoreCase(SluiceTypeList.get(cameraScreenBinding.type.getSelectedItemPosition()).getMiTankTypeName())) {
+                        return true;
+                    }
+                    else {
+                        Utils.showAlert(this, "Select Type!");
+                        return false;
+                    }
+                }
+                else {
+                    if (!"Select Type".equalsIgnoreCase(InletTypeList.get(cameraScreenBinding.type.getSelectedItemPosition()).getMiTankTypeName())) {
+                        return true;
+                    }
+                    else {
+                        Utils.showAlert(this, "Select Type!");
+                        return false;
+
+                    }
+
+                }
+            } else {
+                return false;
+            }
+
     }
     public void saveImage() {
         dbData.open();
@@ -497,6 +603,62 @@ public class CameraScreen extends AppCompatActivity implements View.OnClickListe
             //e.printStackTrace();
         }
     }
+
+    public void saveCentrePointImage() {
+        dbData.open();
+        long id = 0; String whereClause = "";String[] whereArgs = null;
+        String mi_tank_survey_id = getIntent().getStringExtra(AppConstant.MI_TANK_SURVEY_ID);
+        String dcode = prefManager.getDistrictCode();
+        String bcode = prefManager.getBlockCode();
+        String pvcode = prefManager.getPvCode();
+        String habcode = prefManager.getHabCode();
+
+        ImageView imageView = (ImageView) findViewById(R.id.image_view);
+        byte[] imageInByte = new byte[0];
+        String image_str = "";
+        try {
+            Bitmap bitmap = ((BitmapDrawable) imageView.getDrawable()).getBitmap();
+            ByteArrayOutputStream baos = new ByteArrayOutputStream();
+            bitmap.compress(Bitmap.CompressFormat.JPEG, 90, baos);
+            imageInByte = baos.toByteArray();
+            image_str = Base64.encodeToString(imageInByte, Base64.DEFAULT);
+
+            ContentValues values = new ContentValues();
+            values.put(AppConstant.DISTRICT_CODE, dcode);
+            values.put(AppConstant.BLOCK_CODE, bcode);
+            values.put(AppConstant.PV_CODE, pvcode);
+            values.put(AppConstant.HAB_CODE, habcode);
+            values.put(AppConstant.MI_TANK_SURVEY_ID, mi_tank_survey_id);
+            values.put(AppConstant.KEY_LATITUDE, offlatTextValue.toString());
+            values.put(AppConstant.KEY_LONGITUDE, offlongTextValue.toString());
+            values.put(AppConstant.KEY_IMAGE,image_str.trim());
+            // values.put(AppConstant.KEY_CREATED_DATE,sdf.format(new Date()));
+            dbData.open();
+            ArrayList<MITank> imageOffline = dbData.getCenterImageData(mi_tank_survey_id);
+            if(imageOffline.size() < 1) {
+                id = db.insert(DBHelper.SAVE_MI_TANK_CENTER_IMAGES, null, values);
+                if(id > 0){
+                    Toasty.success(this, "Inserted Success!", Toast.LENGTH_LONG, true).show();
+                    onBackPressed();
+                }
+            }
+            else {
+                id= db.update(DBHelper.SAVE_MI_TANK_CENTER_IMAGES, values, "mi_tank_survey_id  = ? ", new String[]{mi_tank_survey_id});
+                if(id > 0){
+                    Toasty.success(this, "Updated Success!", Toast.LENGTH_LONG, true).show();
+                    onBackPressed();
+                }
+            }
+
+
+
+
+        } catch (Exception e) {
+            Utils.showAlert(CameraScreen.this, "Please Capture Photo");
+            //e.printStackTrace();
+        }
+    }
+
 
 
 }

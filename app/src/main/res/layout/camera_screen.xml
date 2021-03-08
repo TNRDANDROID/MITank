@@ -59,13 +59,13 @@
 
         <LinearLayout
             android:id="@+id/selection_layout"
-            android:orientation="horizontal"
-            android:weightSum="2"
+            android:orientation="vertical"
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
             <RelativeLayout
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
+                android:id="@+id/condition_layout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
                 android:layout_weight="1">
         <TextView
             android:id="@+id/alert_severity_title"
@@ -116,9 +116,9 @@
             </RelativeLayout>
             <RelativeLayout
                 android:id="@+id/type_spinner_layout"
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:layout_weight="1">
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="2">
                 <TextView
                     android:id="@+id/alert_severity_title1"
                     style="@style/font_circular_bold"
@@ -166,6 +166,94 @@
 
                 </RelativeLayout>
             </RelativeLayout>
+            <LinearLayout
+                android:background="@drawable/rectangle_box"
+                android:layout_marginTop="@dimen/padding"
+                android:layout_marginRight="@dimen/margin_left_20dp"
+                android:layout_marginLeft="@dimen/_15sdp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:id="@+id/sill_level_layout">
+                <LinearLayout
+
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:weightSum="4">
+
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_weight="1"
+                        android:gravity="center_vertical"
+                        android:orientation="vertical">
+
+                        <TextView
+                            android:gravity="center_horizontal"
+                            style="@string/font_circular_book"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:text="Sill Level"
+                            android:textColor="#000"
+                            android:textSize="18sp" />
+
+                    </LinearLayout>
+
+
+                    <LinearLayout
+                        android:layout_weight="0.5"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:gravity="center_horizontal"
+                        android:orientation="vertical">
+
+                        <TextView
+
+                            style="@string/font_circular_book"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:padding="10dp"
+                            android:text=":"
+                            android:textColor="#000"
+                            android:textSize="18sp" />
+
+                    </LinearLayout>
+
+
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="2.5"
+                        android:gravity="center"
+                        android:orientation="vertical">
+
+                        <RelativeLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="@dimen/header"
+                            android:orientation="vertical"
+                            android:visibility="visible">
+
+                            <EditText
+                                android:background="@null"
+                                android:hint="Enter Sill Level"
+                                android:inputType="number"
+                                android:id="@+id/sill_level_text"
+                                style="@style/font_normal"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_alignParentStart="true"
+                                android:layout_centerInParent="true"
+                                android:layout_marginLeft="0dp"
+                                android:textColor="@android:color/black"
+                                android:textSize="@dimen/_15sdp"
+                                />
+
+
+                        </RelativeLayout>
+                    </LinearLayout>
+                </LinearLayout>
+            </LinearLayout>
 
 
         </LinearLayout>

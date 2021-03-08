@@ -135,6 +135,7 @@ public class PondsStructureAdapter extends RecyclerView.Adapter<PondsStructureAd
         Activity activity = (Activity) context;
         Intent intent = new Intent(context, CameraScreen.class);
         intent.putExtra("KEY","");
+        intent.putExtra("Title",Structure.get(position).getMiTankStructureName());
         intent.putExtra(AppConstant.MI_TANK_STRUCTURE_SERIAL_ID,Structure.get(position).getMiTankStructureSerialId());
         intent.putExtra(AppConstant.MI_TANK_STRUCTURE_DETAIL_ID,Structure.get(position).getMiTankStructureDetailId());
         intent.putExtra(AppConstant.MI_TANK_SURVEY_ID,Structure.get(position).getMiTankSurveyId());

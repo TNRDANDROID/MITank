@@ -58,17 +58,25 @@
             android:paddingTop="10dp"
             android:paddingBottom="5dp"
             android:background="@drawable/background_with_bottom_corners">
+
+            <LinearLayout
+                android:layout_marginLeft="5dp"
+                android:layout_marginRight="5dp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/structure_name_layout"
+                android:orientation="vertical">
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-
-                android:orientation="horizontal">
+                android:orientation="horizontal"
+                android:weightSum="4">
 
                 <LinearLayout
-                    android:layout_width="wrap_content"
+                    android:layout_width="0dp"
                     android:layout_height="match_parent"
-                    android:layout_weight="0.5"
-                    android:gravity="center"
+                    android:layout_weight="1"
+                    android:gravity="center_vertical"
                     android:orientation="vertical">
 
                     <TextView
@@ -76,9 +84,8 @@
                         style="@string/font_circular_book"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:padding="5dp"
                         android:text="Structure"
-                        android:textAlignment="viewEnd"
+                        android:gravity="center_horizontal"
                         android:textColor="#000"
                         android:textSize="18sp" />
 
@@ -87,7 +94,8 @@
 
 
                 <LinearLayout
-                    android:layout_width="wrap_content"
+                    android:layout_weight="0.5"
+                    android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:gravity="center_horizontal"
                     android:orientation="vertical">
@@ -96,7 +104,6 @@
 
                         style="@string/font_circular_book"
                         android:layout_width="wrap_content"
-
                         android:layout_height="wrap_content"
                         android:padding="10dp"
                         android:text=":"
@@ -109,7 +116,7 @@
                 <LinearLayout
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_weight="8"
+                    android:layout_weight="2.5"
                     android:gravity="center"
                     android:orientation="vertical">
 
@@ -129,23 +136,26 @@
                 android:layout_width="match_parent"
                 android:layout_height="1.5dp"
                 android:layout_gravity="bottom"
-                android:layout_marginLeft="15dp"
-                android:layout_marginRight="15dp"
                 android:background="@drawable/background" />
-
-
+            </LinearLayout>
             <LinearLayout
-                android:id="@+id/sec_layout"
+                android:layout_marginLeft="5dp"
+                android:layout_marginRight="5dp"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-
-                android:orientation="horizontal">
+                android:id="@+id/condition_layout"
+                android:orientation="vertical">
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:weightSum="4">
 
                 <LinearLayout
-                    android:layout_width="wrap_content"
+                    android:layout_width="0dp"
                     android:layout_height="match_parent"
-                    android:layout_weight="0.5"
-                    android:gravity="center"
+                    android:layout_weight="1"
+                    android:gravity="center_vertical"
                     android:orientation="vertical">
 
                     <TextView
@@ -153,9 +163,8 @@
                         style="@string/font_circular_book"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:padding="5dp"
                         android:text="Condition"
-                        android:textAlignment="viewEnd"
+                        android:gravity="center_horizontal"
                         android:textColor="#000"
                         android:textSize="18sp" />
 
@@ -163,7 +172,8 @@
 
 
                 <LinearLayout
-                    android:layout_width="wrap_content"
+                    android:layout_weight="0.5"
+                    android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:gravity="center_horizontal"
                     android:orientation="vertical">
@@ -185,7 +195,7 @@
                 <LinearLayout
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_weight="8"
+                    android:layout_weight="2.5"
                     android:gravity="center"
                     android:orientation="vertical">
 
@@ -223,9 +233,198 @@
                 android:layout_width="match_parent"
                 android:layout_height="1.5dp"
                 android:layout_gravity="bottom"
-                android:layout_marginLeft="15dp"
-                android:layout_marginRight="15dp"
                 android:background="@drawable/background" />
+            </LinearLayout>
+            <LinearLayout
+                android:layout_marginLeft="5dp"
+                android:layout_marginRight="5dp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/sec_type_layout"
+                android:orientation="vertical">
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:weightSum="4">
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:gravity="center_vertical"
+                    android:orientation="vertical">
+
+                    <TextView
+
+                        style="@string/font_circular_book"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Type"
+                        android:gravity="center"
+                        android:textColor="#000"
+                        android:textSize="18sp" />
+
+                </LinearLayout>
+
+
+                <LinearLayout
+                    android:layout_weight="0.5"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:gravity="center_horizontal"
+                    android:orientation="vertical">
+
+                    <TextView
+
+                        style="@string/font_circular_book"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:padding="10dp"
+                        android:text=":"
+                        android:textColor="#000"
+                        android:textSize="18sp" />
+
+                </LinearLayout>
+
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="2.5"
+                    android:gravity="center"
+                    android:orientation="vertical">
+
+                    <RelativeLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="@dimen/header"
+                        android:orientation="vertical"
+                        android:visibility="visible">
+
+                        <TextView
+                            style="@style/font_normal"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_alignParentStart="true"
+                            android:layout_centerInParent="true"
+                            android:layout_marginLeft="0dp"
+                            android:textColor="@android:color/black"
+                            android:textSize="@dimen/_15sdp"
+                            android:visibility="gone" />
+
+                        <Spinner
+                            android:id="@+id/type"
+                            android:layout_width="fill_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_alignParentEnd="true"
+                            android:layout_centerInParent="true"
+                            android:layout_marginLeft="10dp"
+                            android:layout_marginRight="10dp"
+                            android:gravity="center" />
+
+                    </RelativeLayout>
+                </LinearLayout>
+            </LinearLayout>
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1.5dp"
+                android:layout_gravity="bottom"
+
+                android:background="@drawable/background" />
+            </LinearLayout>
+            <LinearLayout
+                android:layout_marginLeft="5dp"
+                android:layout_marginRight="5dp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:id="@+id/sill_level_layout">
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:weightSum="4">
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:gravity="center_vertical"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:gravity="center_horizontal"
+                        style="@string/font_circular_book"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Sill Level"
+                        android:textColor="#000"
+                        android:textSize="18sp" />
+
+                </LinearLayout>
+
+
+                <LinearLayout
+                    android:layout_weight="0.5"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:gravity="center_horizontal"
+                    android:orientation="vertical">
+
+                    <TextView
+
+                        style="@string/font_circular_book"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:padding="10dp"
+                        android:text=":"
+                        android:textColor="#000"
+                        android:textSize="18sp" />
+
+                </LinearLayout>
+
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="2.5"
+                    android:gravity="center"
+                    android:orientation="vertical">
+
+                    <RelativeLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="@dimen/header"
+                        android:orientation="vertical"
+                        android:visibility="visible">
+
+                        <EditText
+                            android:background="@null"
+                            android:hint="Enter Sill Level"
+                            android:inputType="number"
+                            android:id="@+id/sill_level_text"
+                            style="@style/font_normal"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_alignParentStart="true"
+                            android:layout_centerInParent="true"
+                            android:layout_marginLeft="0dp"
+                            android:textColor="@android:color/black"
+                            android:textSize="@dimen/_15sdp"
+                            />
+
+
+                    </RelativeLayout>
+                </LinearLayout>
+            </LinearLayout>
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1.5dp"
+                android:layout_gravity="bottom"
+
+                android:background="@drawable/background" />
+            </LinearLayout>
+
+
             <RelativeLayout
                 android:id="@+id/camera_activity"
                 android:layout_width="match_parent"

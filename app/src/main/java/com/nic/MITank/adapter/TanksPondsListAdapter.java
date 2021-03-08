@@ -129,7 +129,7 @@ public class TanksPondsListAdapter extends RecyclerView.Adapter<TanksPondsListAd
     public int getSaveTradeImageTable(int position){
         String image="";String lat="";String lan="";
 
-        String sql = "SELECT * FROM " + DBHelper.SAVE_MI_TANK_IMAGES + " WHERE mi_tank_survey_id = "+
+        String sql = "SELECT * FROM " + DBHelper.SAVE_MI_TANK_CENTER_IMAGES + " WHERE mi_tank_survey_id = "+
                 miTankData.get(position).getMiTankSurveyId();
 /*
         String sql = "SELECT * FROM " + DBHelper.SAVE_MI_TANK_IMAGES + " WHERE mi_tank_survey_id = "+
