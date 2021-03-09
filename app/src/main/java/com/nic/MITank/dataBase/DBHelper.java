@@ -89,6 +89,8 @@ public class DBHelper extends SQLiteOpenHelper {
                 "minor_irrigation_type INTEGER," +
                 "mi_tank_condition_id INTEGER," +
                 "mi_tank_condition_name TEXT," +
+                "mi_tank_type_id INTEGER," +
+                "mi_tank_type_name TEXT," +
                 "mi_tank_sill_level TEXT," +
                 "image_available TEXT," +
                 "mi_tank_structure_name TEXT)");

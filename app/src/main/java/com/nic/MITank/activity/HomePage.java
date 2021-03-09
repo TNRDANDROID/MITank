@@ -734,6 +734,8 @@ public class HomePage extends AppCompatActivity implements Api.ServerResponseLis
                         sturctureValue.setMiTankStructureSerialId(jsonArray.getJSONObject(i).getString(AppConstant.MI_TANK_STRUCTURE_SERIAL_ID));
                         sturctureValue.setMiTankConditionId(jsonArray.getJSONObject(i).getString(AppConstant.MI_TANK_CONDITION_ID));
                         sturctureValue.setMiTankConditionName(jsonArray.getJSONObject(i).getString(AppConstant.MI_TANK_CONDITION_NAME));
+                         sturctureValue.setMiTankTypeId(""/*jsonArray.getJSONObject(i).getString(AppConstant.MI_TANK_CONDITION_ID)*/);
+                        sturctureValue.setMiTankTypeName(""/*jsonArray.getJSONObject(i).getString(AppConstant.MI_TANK_CONDITION_NAME)*/);
                         sturctureValue.setMiTankSkillLevel(jsonArray.getJSONObject(i).getString(AppConstant.MI_TANK_SKILL_LEVEL));
                         sturctureValue.setMiTankStructureName(jsonArray.getJSONObject(i).getString(AppConstant.MI_TANK_STRUCTURE_NAME));
                         sturctureValue.setImageAvailable(jsonArray.getJSONObject(i).getString(AppConstant.IMAGE_AVAILABLE));

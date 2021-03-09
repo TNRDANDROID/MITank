@@ -65,6 +65,7 @@ import es.dmoral.toasty.Toasty;
 
 import static android.Manifest.permission.ACCESS_FINE_LOCATION;
 import static android.Manifest.permission.CAMERA;
+import static com.nic.MITank.activity.HomePage.db;
 
 public class CameraScreen extends AppCompatActivity implements View.OnClickListener, Api.ServerResponseListener {
 
@@ -107,6 +108,9 @@ public class CameraScreen extends AppCompatActivity implements View.OnClickListe
         }
         if(getIntent().getStringExtra("KEY").equals("TanksPondsListAdapter")){
             cameraScreenBinding.selectionLayout.setVisibility(View.GONE);
+        }else if(getIntent().getStringExtra("KEY").equals("PondsStructureScreen")){
+            cameraScreenBinding.selectionLayout.setVisibility(View.GONE);
+            Title=getIntent().getStringExtra("Title");
         }
         else {
             Title=getIntent().getStringExtra("Title");
@@ -493,6 +497,8 @@ public class CameraScreen extends AppCompatActivity implements View.OnClickListe
         if(getIntent().getStringExtra("KEY").equals("TanksPondsListAdapter")){
             //saveImage();
             saveCentrePointImage();
+        }else  if(getIntent().getStringExtra("KEY").equals("PondsStructureScreen")){
+            saveImageFromAddPopUp();
         }
         else {
             /*if (!"Select Condition".equalsIgnoreCase(ConditionList.get(cameraScreenBinding.condition.getSelectedItemPosition()).getMiTankConditionName())) {
@@ -602,6 +608,95 @@ public class CameraScreen extends AppCompatActivity implements View.OnClickListe
             Utils.showAlert(CameraScreen.this, "Please Capture Photo");
             //e.printStackTrace();
         }
+    }
+    public void saveImageFromAddPopUp() {
+        dbData.open();
+        long id = 0; String whereClause = "";String[] whereArgs = null;
+        String structureName = getIntent().getStringExtra(AppConstant.MI_TANK_STRUCTURE_NAME);
+        String conditionId = getIntent().getStringExtra(AppConstant.MI_TANK_CONDITION_ID);
+        String conditionName = getIntent().getStringExtra(AppConstant.MI_TANK_CONDITION_NAME);
+        String typeId = getIntent().getStringExtra(AppConstant.MI_TANK_type_ID);
+        String typeName = getIntent().getStringExtra(AppConstant.MI_TANK_TYPE_NAME);
+        String sill_level_value = getIntent().getStringExtra(AppConstant.MI_TANK_TYPE_NAME);
+        String mi_tank_structure_detail_id = getIntent().getStringExtra(AppConstant.MI_TANK_STRUCTURE_DETAIL_ID);
+        String mi_tank_survey_id = getIntent().getStringExtra(AppConstant.MI_TANK_SURVEY_ID);
+        String mi_tank_structure_id = getIntent().getStringExtra(AppConstant.MI_TANK_STRUCTURE_ID);
+        String mi_tank_structure_serial_id = getIntent().getStringExtra(AppConstant.MI_TANK_STRUCTURE_SERIAL_ID);
+        String dcode = prefManager.getDistrictCode();
+        String bcode = prefManager.getBlockCode();
+        String pvcode = prefManager.getPvCode();
+        String habcode = prefManager.getHabCode();
+
+        ImageView imageView = (ImageView) findViewById(R.id.image_view);
+        byte[] imageInByte = new byte[0];
+        String image_str = "";
+        try {
+            Bitmap bitmap = ((BitmapDrawable) imageView.getDrawable()).getBitmap();
+            ByteArrayOutputStream baos = new ByteArrayOutputStream();
+            bitmap.compress(Bitmap.CompressFormat.JPEG, 90, baos);
+            imageInByte = baos.toByteArray();
+            image_str = Base64.encodeToString(imageInByte, Base64.DEFAULT);
+
+            ContentValues values = new ContentValues();
+            values.put(AppConstant.DISTRICT_CODE, dcode);
+            values.put(AppConstant.BLOCK_CODE, bcode);
+            values.put(AppConstant.PV_CODE, pvcode);
+            values.put(AppConstant.HAB_CODE, habcode);
+            values.put(AppConstant.MI_TANK_STRUCTURE_DETAIL_ID, mi_tank_structure_detail_id);
+            values.put(AppConstant.MI_TANK_STRUCTURE_ID, mi_tank_structure_id);
+            values.put(AppConstant.MI_TANK_STRUCTURE_SERIAL_ID, mi_tank_structure_serial_id);
+            values.put(AppConstant.MI_TANK_SURVEY_ID, mi_tank_survey_id);
+            values.put(AppConstant.MI_TANK_CONDITION_ID,conditionId);
+            values.put(AppConstant.MI_TANK_CONDITION_NAME,conditionName );
+            values.put(AppConstant.KEY_LATITUDE, offlatTextValue.toString());
+            values.put(AppConstant.KEY_LONGITUDE, offlongTextValue.toString());
+            values.put(AppConstant.KEY_IMAGE,image_str.trim());
+           // values.put(AppConstant.KEY_CREATED_DATE,sdf.format(new Date()));
+            insertStructure(structureName,conditionId,conditionName,mi_tank_structure_serial_id,mi_tank_structure_id,
+                    typeId,typeName,sill_level_value);
+
+                whereClause = "dcode = ? and bcode = ? and pvcode = ? and habcode = ? and mi_tank_structure_detail_id = ? and mi_tank_structure_serial_id = ?";
+                whereArgs = new String[]{dcode,bcode,pvcode,habcode,mi_tank_structure_detail_id,mi_tank_structure_serial_id};
+                dbData.open();
+                 ArrayList<MITank> imageOffline = dbData.selectImage(dcode,bcode,pvcode,habcode,mi_tank_structure_detail_id,mi_tank_structure_serial_id);
+
+                if(imageOffline.size() < 1) {
+                    id = db.insert(DBHelper.SAVE_MI_TANK_IMAGES, null, values);
+                }
+                else {
+                    id = db.update(DBHelper.SAVE_MI_TANK_IMAGES, values, whereClause, whereArgs);
+                }
+
+            if(id > 0){
+                Toasty.success(this, "Success!", Toast.LENGTH_LONG, true).show();
+                onBackPressed();
+            }
+            Log.d("insIdsaveImageLatLong", String.valueOf(id));
+
+        } catch (Exception e) {
+            Utils.showAlert(CameraScreen.this, "Please Capture Photo");
+            //e.printStackTrace();
+        }
+    }
+    public void insertStructure(String name,String condionid,String condionname,String serialid,String mi_tank_structure_id
+            ,String  typeId,String typeName,String sill_level_value) {
+
+        ContentValues values = new ContentValues();
+        values.put(AppConstant.MI_TANK_STRUCTURE_DETAIL_ID,"");
+        values.put(AppConstant.MI_TANK_SURVEY_ID,prefManager.getMiTankSurveyId());
+        values.put(AppConstant.MI_TANK_STRUCTURE_ID,mi_tank_structure_id);
+        values.put(AppConstant.MI_TANK_STRUCTURE_SERIAL_ID,serialid);
+        values.put(AppConstant.MI_TANK_CONDITION_ID,condionid);
+        values.put(AppConstant.MI_TANK_CONDITION_NAME,condionname);
+        values.put(AppConstant.MI_TANK_type_ID,typeId);
+        values.put(AppConstant.MI_TANK_TYPE_NAME,typeName);
+        values.put(AppConstant.MI_TANK_SKILL_LEVEL,sill_level_value);
+        values.put(AppConstant.MI_TANK_STRUCTURE_NAME,name);
+        values.put(AppConstant.IMAGE_AVAILABLE, "");
+
+        long id = db.insert(DBHelper.MI_TANK_DATA_STRUCTURES, null, values);
+        Log.d("Insert_id_structures", String.valueOf(id));
+
     }
 
     public void saveCentrePointImage() {

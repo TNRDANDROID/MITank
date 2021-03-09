@@ -67,7 +67,9 @@ public class PondsStructureScreen extends AppCompatActivity {
     String Tittle="";
     private List<MITank> InletTypeList = new ArrayList<>();
     private List<MITank> SluiceTypeList = new ArrayList<>();
-
+    Spinner condition;
+    Spinner type;
+    LinearLayout condition_layout,type_layout,sill_level_layout;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -144,10 +146,7 @@ public class PondsStructureScreen extends AppCompatActivity {
             ImageView close;
             RelativeLayout camera_activity;
             Button submit;
-            final Spinner condition;
-            final Spinner type;
-            LinearLayout condition_layout,type_layout,sill_level_layout;
-            EditText sill_level_value_taxt;
+            final EditText sill_level_value_taxt;
 
             camera_activity = (RelativeLayout) view.findViewById(R.id.camera_activity);
             header = (TextView) view.findViewById(R.id.header);
@@ -160,7 +159,7 @@ public class PondsStructureScreen extends AppCompatActivity {
             sill_level_layout = (LinearLayout) view.findViewById(R.id.sill_level_layout);
             sill_level_value_taxt = (EditText) view.findViewById(R.id.sill_level_text);
             type=(Spinner) view.findViewById(R.id.type);
-
+            submit.setVisibility(View.GONE);
             if(Tittle.equals("Inlet channels")){
                 loadInletTypeSpinnerValue();
                 type.setAdapter(new CommonAdapter(this, InletTypeList, "TypeList"));
@@ -208,7 +207,44 @@ public class PondsStructureScreen extends AppCompatActivity {
             camera_activity.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    openCamera(idVal,finalSurveryId, finalStructureId, finalStructureDetailsId);
+                    if(Tittle.equals("Inlet channels")){
+                        openCamera(finalFullName,idVal,finalSurveryId, finalStructureId, finalStructureDetailsId,
+                                ConditionList.get(condition.getSelectedItemPosition()).getMiTankConditionName()
+                                ,ConditionList.get(condition.getSelectedItemPosition()).getMiTankConditionId(),
+                                InletTypeList.get(condition.getSelectedItemPosition()).getMiTankTypeName()
+                                ,InletTypeList.get(condition.getSelectedItemPosition()).getMiTankTypeId(),"");
+
+                    }
+                    else if(Tittle.equals("Surplus Weirs / Outlet structure")){
+                        openCamera(finalFullName,idVal,finalSurveryId, finalStructureId, finalStructureDetailsId,
+                                ConditionList.get(condition.getSelectedItemPosition()).getMiTankConditionName()
+                                ,ConditionList.get(condition.getSelectedItemPosition()).getMiTankConditionId(),
+                                "","","");
+
+                    }
+                    else if(Tittle.equals("Bathing Ghat")){
+                        openCamera(finalFullName,idVal,finalSurveryId, finalStructureId, finalStructureDetailsId,
+                                ConditionList.get(condition.getSelectedItemPosition()).getMiTankConditionName()
+                                ,ConditionList.get(condition.getSelectedItemPosition()).getMiTankConditionId(),
+                                "","","");
+
+                    }
+                    else if(Tittle.equals("Ramp structures")){
+                        openCamera(finalFullName,idVal,finalSurveryId, finalStructureId, finalStructureDetailsId,
+                                ConditionList.get(condition.getSelectedItemPosition()).getMiTankConditionName()
+                                ,ConditionList.get(condition.getSelectedItemPosition()).getMiTankConditionId(),
+                                "","","");
+
+                    }
+                    else if(Tittle.equals("Sluices")){
+                        openCamera(finalFullName,idVal,finalSurveryId, finalStructureId, finalStructureDetailsId,
+                                ConditionList.get(condition.getSelectedItemPosition()).getMiTankConditionName()
+                                ,ConditionList.get(condition.getSelectedItemPosition()).getMiTankConditionId(),
+                                SluiceTypeList.get(condition.getSelectedItemPosition()).getMiTankTypeName()
+                                ,SluiceTypeList.get(condition.getSelectedItemPosition()).getMiTankTypeId(),sill_level_value_taxt.getText().toString());
+
+                    }
+
                 }
             });
 
@@ -285,18 +321,62 @@ public class PondsStructureScreen extends AppCompatActivity {
             return 0;
         }
     }
+    public boolean typeVisibility(){
+
+        if (type_layout.getVisibility() == View.VISIBLE) {
+            if(Tittle.equals("Sluices")) {
+                if (!"Select Type".equalsIgnoreCase(SluiceTypeList.get(type.getSelectedItemPosition()).getMiTankTypeName())) {
+                    return true;
+                }
+                else {
+                    Utils.showAlert(this, "Select Type!");
+                    return false;
+                }
+            }
+            else {
+                if (!"Select Type".equalsIgnoreCase(InletTypeList.get(type.getSelectedItemPosition()).getMiTankTypeName())) {
+                    return true;
+                }
+                else {
+                    Utils.showAlert(this, "Select Type!");
+                    return false;
+
+                }
+
+            }
+        } else {
+            return true;
+        }
+
+    }
 
 
-    public void openCamera(String serialId,String surveryId, String structureId, String structureDetailsId) {
-        Intent intent = new Intent(this, CameraScreen.class);
-        intent.putExtra("KEY","PondsStructureScreen");
-        intent.putExtra("Title",Tittle);
-        intent.putExtra(AppConstant.MI_TANK_STRUCTURE_SERIAL_ID,serialId);
-        intent.putExtra(AppConstant.MI_TANK_STRUCTURE_DETAIL_ID,structureDetailsId);
-        intent.putExtra(AppConstant.MI_TANK_SURVEY_ID,surveryId);
-        intent.putExtra(AppConstant.MI_TANK_STRUCTURE_ID,structureId);
-        startActivityForResult(intent,1);
-        overridePendingTransition(R.anim.slide_in, R.anim.slide_out);
+    public void openCamera(String structureName,String serialId,String surveryId, String structureId, String structureDetailsId
+            , String conditionName, String conditionId, String typeName, String typeId, String sill_level_value) {
+
+        if (!"Select Condition".equalsIgnoreCase(ConditionList.get(condition.getSelectedItemPosition()).getMiTankConditionName())) {
+            if(typeVisibility()){
+                Intent intent = new Intent(this, CameraScreen.class);
+                intent.putExtra("KEY","PondsStructureScreen");
+                intent.putExtra("Title",Tittle);
+                intent.putExtra(AppConstant.MI_TANK_STRUCTURE_NAME,structureName);
+                intent.putExtra(AppConstant.MI_TANK_STRUCTURE_SERIAL_ID,serialId);
+                intent.putExtra(AppConstant.MI_TANK_STRUCTURE_DETAIL_ID,structureDetailsId);
+                intent.putExtra(AppConstant.MI_TANK_SURVEY_ID,surveryId);
+                intent.putExtra(AppConstant.MI_TANK_STRUCTURE_ID,structureId);
+                intent.putExtra(AppConstant.MI_TANK_CONDITION_ID,conditionId);
+                intent.putExtra(AppConstant.MI_TANK_CONDITION_NAME,conditionName);
+                intent.putExtra(AppConstant.MI_TANK_type_ID,typeId);
+                intent.putExtra(AppConstant.MI_TANK_TYPE_NAME,typeName);
+                intent.putExtra(AppConstant.MI_TANK_SKILL_LEVEL,sill_level_value);
+                startActivityForResult(intent,1);
+                overridePendingTransition(R.anim.slide_in, R.anim.slide_out);
+            }
+        } else {
+            Utils.showAlert(this, "Select Condition!");
+        }
+
+
     }
 
     public void insertStructure(String name,String condion,String condionid,String serialid) {
@@ -419,6 +499,17 @@ public class PondsStructureScreen extends AppCompatActivity {
         super.onResume();
         pondsStructureAdapter.notifyDataSetChanged();
         pondsStructureScreenBinding.recyclerView.setAdapter(pondsStructureAdapter);
+    }
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        // if the result is capturing Image
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == 1) {
+            alert.dismiss();
+            new fetchStructuretask().execute();
+        }  else {
+            // failed to record video
+        }
     }
 
 }
