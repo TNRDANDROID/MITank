@@ -477,6 +477,27 @@
                             android:textColor="@android:color/white"
                             android:textSize="18sp" />
                     </RelativeLayout>
+                    <RelativeLayout
+                        android:visibility="gone"
+                        android:id="@+id/sync_centre_image_layout"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+
+                        android:background="@drawable/gradient">
+
+                        <TextView
+                            android:id="@+id/sync_centre_info"
+                            style="@string/font_circular_book"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_centerInParent="true"
+                            android:padding="7dp"
+                            android:text="Sync Centre Image"
+                            android:textStyle="bold"
+                            android:textAlignment="viewEnd"
+                            android:textColor="@android:color/white"
+                            android:textSize="18sp" />
+                    </RelativeLayout>
 
 
 

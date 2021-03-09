@@ -78,7 +78,104 @@
             android:layout_height="wrap_content"
             android:orientation="vertical">
 
+            <RelativeLayout
+                android:background="@color/colorPrimary"
+                android:id="@+id/tab_layout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+                <RelativeLayout
+                    android:id="@+id/filter_rl"
+                    android:layout_width="match_parent"
+                    android:layout_height="40dp">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:orientation="horizontal"
+                        android:weightSum="3">
+                        <RelativeLayout
+                            android:id="@+id/center_data_rl"
+                            android:layout_width="0dp"
+                            android:layout_height="match_parent"
+                            android:layout_weight="1"
+                            android:gravity="bottom"
+                            android:orientation="vertical">
+
+                            <TextView
+                                android:textAlignment="center"
+                                android:textStyle="bold"
+                                android:textSize="13sp"
+                                android:id="@+id/tv_1"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:text="CenterData"
+                                android:textColor="@color/white"></TextView>
+                            <View
+                                android:id="@+id/v_1"
+                                android:layout_below="@+id/tv_1"
+                                android:layout_width="wrap_content"
+                                android:layout_height="1.5dp"
+                                android:background="@color/white"></View>
+                        </RelativeLayout>
+                        <RelativeLayout
+                            android:id="@+id/structure_data_rl"
+                            android:layout_width="0dp"
+                            android:layout_height="match_parent"
+                            android:layout_weight="1"
+                            android:gravity="bottom"
+                            android:orientation="vertical">
+                            <TextView
+                                android:textAlignment="center"
+                                android:textStyle="bold"
+                                android:id="@+id/tv_2"
+                                android:textSize="13sp"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:text="StructureData"
+                                android:textColor="@color/white"></TextView>
+                            <View
+                                android:visibility="gone"
+                                android:id="@+id/v_2"
+                                android:layout_below="@+id/tv_2"
+                                android:layout_width="wrap_content"
+                                android:layout_height="1.5dp"
+                                android:background="@color/white"></View>
+
+                        </RelativeLayout>
+                        <RelativeLayout
+                            android:id="@+id/track_data_rl"
+                            android:layout_width="0dp"
+                            android:layout_height="match_parent"
+                            android:layout_weight="1"
+                            android:gravity="bottom"
+                            android:orientation="vertical">
+                            <TextView
+                                android:textAlignment="center"
+                                android:textStyle="bold"
+                                android:textSize="13sp"
+                                android:id="@+id/tv_3"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:text="TrackData"
+                                android:textColor="@color/white"></TextView>
+                            <View
+                                android:visibility="gone"
+                                android:id="@+id/v_3"
+                                android:layout_below="@+id/tv_3"
+                                android:layout_width="wrap_content"
+                                android:layout_height="1.5dp"
+                                android:background="@color/white"></View>
+
+                        </RelativeLayout>
+                    </LinearLayout>
+
+
+                </RelativeLayout>
+
+            </RelativeLayout>
+
             <androidx.recyclerview.widget.RecyclerView
+                android:layout_below="@+id/tab_layout"
                 android:id="@+id/pending_list"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -86,6 +183,23 @@
                 android:layout_marginTop="@dimen/_5sdp">
 
             </androidx.recyclerview.widget.RecyclerView>
+
+        <RelativeLayout
+            android:layout_centerInParent="true"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/no_data_found_layout">
+
+            <ImageView
+                android:layout_width="250dp"
+                android:layout_height="150dp"
+                android:src="@drawable/no_data_ic"
+                android:id="@+id/no_data_img"
+                android:scaleType="centerCrop">
+
+            </ImageView>
+
+        </RelativeLayout>
         </RelativeLayout>
     </androidx.core.widget.NestedScrollView>
 

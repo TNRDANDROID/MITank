@@ -18,6 +18,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.android.volley.VolleyError;
 import com.nic.MITank.R;
+import com.nic.MITank.adapter.NewPendingScreenAdapter;
 import com.nic.MITank.adapter.PendingAdapter;
 import com.nic.MITank.api.Api;
 import com.nic.MITank.api.ApiService;
@@ -38,10 +39,11 @@ import java.util.ArrayList;
 
 import es.dmoral.toasty.Toasty;
 
-public class PendingScreen extends AppCompatActivity implements Api.ServerResponseListener {
+public class PendingScreen extends AppCompatActivity implements Api.ServerResponseListener, View.OnClickListener {
     public PendingScreenBinding pendingScreenBinding;
     private RecyclerView recyclerView;
     private PendingAdapter pendingAdapter;
+    private NewPendingScreenAdapter newPendingAdapter;
     private PrefManager prefManager;
     public com.nic.MITank.dataBase.dbData dbData = new dbData(this);
     public static DBHelper dbHelper;
@@ -69,7 +71,41 @@ public class PendingScreen extends AppCompatActivity implements Api.ServerRespon
 
         recyclerView.setItemAnimator(new DefaultItemAnimator());
         recyclerView.setNestedScrollingEnabled(false);
-        new fetchPendingtask().execute();
+        pendingScreenBinding.centerDataRl.setOnClickListener(this);
+        pendingScreenBinding.structureDataRl.setOnClickListener(this);
+        pendingScreenBinding.trackDataRl.setOnClickListener(this);
+        //new fetchPendingtask().execute();
+   //     new fetchStructureDataTask().execute();
+        new fetchCenterImagesDataTask().execute();
+        pendingScreenBinding.v1.setVisibility(View.VISIBLE);
+        pendingScreenBinding.v2.setVisibility(View.GONE);
+        pendingScreenBinding.v3.setVisibility(View.GONE);
+     //   new fetchTrackDataTask().execute();
+    }
+
+    @Override
+    public void onClick(View v) {
+        switch (v.getId()){
+            case R.id.center_data_rl:
+                new fetchCenterImagesDataTask().execute();
+                pendingScreenBinding.v1.setVisibility(View.VISIBLE);
+                pendingScreenBinding.v2.setVisibility(View.GONE);
+                pendingScreenBinding.v3.setVisibility(View.GONE);
+                break;
+            case R.id.structure_data_rl:
+                new fetchStructureDataTask().execute();
+                pendingScreenBinding.v1.setVisibility(View.GONE);
+                pendingScreenBinding.v2.setVisibility(View.VISIBLE);
+                pendingScreenBinding.v3.setVisibility(View.GONE);
+                break;
+            case R.id.track_data_rl:
+                new fetchTrackDataTask().execute();
+                pendingScreenBinding.v1.setVisibility(View.GONE);
+                pendingScreenBinding.v2.setVisibility(View.GONE);
+                pendingScreenBinding.v3.setVisibility(View.VISIBLE);
+                break;
+
+        }
     }
 
 
@@ -125,6 +161,22 @@ public class PendingScreen extends AppCompatActivity implements Api.ServerRespon
         Log.d("saveTrackDataList", "" + authKey);
         return dataSet;
     }
+    public JSONObject syncCentreImageData(JSONObject saveCentreImageDataSet) {
+        String authKey = Utils.encrypt(prefManager.getUserPassKey(), getResources().getString(R.string.init_vector), saveCentreImageDataSet.toString());
+        JSONObject dataSet = new JSONObject();
+        try {
+            dataSet.put(AppConstant.KEY_USER_NAME, prefManager.getUserName());
+            dataSet.put(AppConstant.DATA_CONTENT, authKey);
+
+            new ApiService(this).makeJSONObjectRequest("saveCentreImageDataList", Api.Method.POST, UrlGenerator.getTankPondListUrl(), dataSet, "not cache", this);
+
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+        Log.d("saveCentreImageDataList", "" + authKey);
+        return dataSet;
+    }
 
     @Override
     public void OnMyResponse(ServerResponse serverResponse) {
@@ -164,6 +216,20 @@ public class PendingScreen extends AppCompatActivity implements Api.ServerRespon
                 }
                 Log.d("saved_TankData", "" + responseDecryptedBlockKey);
             }
+            if ("saveCentreImageDataList".equals(urlType) && responseObj != null) {
+                String key = responseObj.getString(AppConstant.ENCODE_DATA);
+                String responseDecryptedBlockKey = Utils.decrypt(prefManager.getUserPassKey(), key);
+                JSONObject jsonObject = new JSONObject(responseDecryptedBlockKey);
+                if (jsonObject.getString("STATUS").equalsIgnoreCase("OK") && jsonObject.getString("RESPONSE").equalsIgnoreCase("OK")) {
+                    db.delete(DBHelper.SAVE_MI_TANK_CENTER_IMAGES, "mi_tank_survey_id = ?", new String[]{prefManager.getKeyDeleteId()});
+                    new fetchPendingtask().execute();
+                    pendingAdapter.notifyDataSetChanged();
+                    HomePage.getInstance().getTankPondList();
+                    Utils.showAlert(this,"Your CentreImage data is synchronized to the server!");
+
+                }
+                Log.d("saved_TankData", "" + responseDecryptedBlockKey);
+            }
         } catch (JSONException e) {
             e.printStackTrace();
         }
@@ -195,4 +261,84 @@ public class PendingScreen extends AppCompatActivity implements Api.ServerRespon
         setResult(Activity.RESULT_CANCELED);
         overridePendingTransition(R.anim.slide_enter, R.anim.slide_exit);
     }
+
+    public class fetchCenterImagesDataTask extends AsyncTask<Void, Void,
+            ArrayList<MITank>> {
+        @Override
+        protected ArrayList<MITank> doInBackground(Void... params) {
+            dbData.open();
+            pendingLists = new ArrayList<>();
+            pendingLists = dbData.getAllCenterImageData(prefManager.getDistrictCode(),prefManager.getBlockCode());
+            Log.d("center_img_count", String.valueOf(pendingLists.size()));
+            return pendingLists;
+        }
+
+        @Override
+        protected void onPostExecute(ArrayList<MITank> pendingLists) {
+            super.onPostExecute(pendingLists);
+            if(pendingLists.size()>0) {
+                recyclerView.setVisibility(View.VISIBLE);
+                pendingScreenBinding.noDataFoundLayout.setVisibility(View.GONE);
+                newPendingAdapter = new NewPendingScreenAdapter(PendingScreen.this, pendingLists, dbData, "CentreImage");
+                recyclerView.setAdapter(newPendingAdapter);
+            }
+            else {
+                recyclerView.setVisibility(View.GONE);
+                pendingScreenBinding.noDataFoundLayout.setVisibility(View.VISIBLE);
+            }
+        }
+    }
+    public class fetchStructureDataTask extends AsyncTask<Void, Void,
+            ArrayList<MITank>> {
+        @Override
+        protected ArrayList<MITank> doInBackground(Void... params) {
+            dbData.open();
+            pendingLists = new ArrayList<>();
+            pendingLists = dbData.getAllSavedDataStructure(prefManager.getDistrictCode(),prefManager.getBlockCode());
+            Log.d("structure_data_count", String.valueOf(pendingLists.size()));
+            return pendingLists;
+        }
+
+        @Override
+        protected void onPostExecute(ArrayList<MITank> pendingLists) {
+            super.onPostExecute(pendingLists);
+            if(pendingLists.size()>0) {
+                recyclerView.setVisibility(View.VISIBLE);
+                pendingScreenBinding.noDataFoundLayout.setVisibility(View.GONE);
+                newPendingAdapter = new NewPendingScreenAdapter(PendingScreen.this, pendingLists, dbData, "StructureData");
+                recyclerView.setAdapter(newPendingAdapter);
+            }
+            else {
+                recyclerView.setVisibility(View.GONE);
+                pendingScreenBinding.noDataFoundLayout.setVisibility(View.VISIBLE);
+            }
+        }
+    }
+    public class fetchTrackDataTask extends AsyncTask<Void, Void,
+            ArrayList<MITank>> {
+        @Override
+        protected ArrayList<MITank> doInBackground(Void... params) {
+            dbData.open();
+            pendingLists = new ArrayList<>();
+            pendingLists = dbData.getAllSavedTrack(prefManager.getDistrictCode(),prefManager.getBlockCode());
+            Log.d("track_data_count", String.valueOf(pendingLists.size()));
+            return pendingLists;
+        }
+
+        @Override
+        protected void onPostExecute(ArrayList<MITank> pendingLists) {
+            if(pendingLists.size()>0) {
+                super.onPostExecute(pendingLists);
+                recyclerView.setVisibility(View.VISIBLE);
+                pendingScreenBinding.noDataFoundLayout.setVisibility(View.GONE);
+                newPendingAdapter = new NewPendingScreenAdapter(PendingScreen.this, pendingLists, dbData, "TrackData");
+                recyclerView.setAdapter(newPendingAdapter);
+            }
+            else {
+                recyclerView.setVisibility(View.GONE);
+                pendingScreenBinding.noDataFoundLayout.setVisibility(View.VISIBLE);
+            }
+        }
+    }
+
 }

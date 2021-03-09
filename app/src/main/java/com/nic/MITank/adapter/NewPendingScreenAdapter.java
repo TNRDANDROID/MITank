@@ -1,6 +1,6 @@
 package com.nic.MITank.adapter;
 
-import android.app.Activity;
+import android.content.Context;
 import android.graphics.Bitmap;
 import android.os.AsyncTask;
 import android.util.Base64;
@@ -9,6 +9,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
+import androidx.core.content.ContextCompat;
 import androidx.databinding.DataBindingUtil;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -16,10 +17,10 @@ import com.nic.MITank.R;
 import com.nic.MITank.activity.PendingScreen;
 import com.nic.MITank.constant.AppConstant;
 import com.nic.MITank.dataBase.dbData;
+import com.nic.MITank.databinding.NewPendingAdapterBinding;
 import com.nic.MITank.databinding.PendingAdapterBinding;
 import com.nic.MITank.model.MITank;
 import com.nic.MITank.session.PrefManager;
-import com.nic.MITank.utils.Utils;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -29,44 +30,43 @@ import java.io.ByteArrayOutputStream;
 import java.util.ArrayList;
 import java.util.List;
 
-
-public class PendingAdapter extends RecyclerView.Adapter<PendingAdapter.MyViewHolder> {
-
-    private static Activity context;
+public class NewPendingScreenAdapter extends RecyclerView.Adapter<NewPendingScreenAdapter.MyViewHolder>{
     private PrefManager prefManager;
     private List<MITank> pendingListValues;
-    static JSONObject datasetStructure = new JSONObject();
-    private final dbData dbData;
-    JSONObject datasetTrack = new JSONObject();
+    JSONObject dataSetStructure = new JSONObject();
+    JSONObject dataSetTrack = new JSONObject();
     JSONObject dataSetCentreImage = new JSONObject();
+    private dbData dbData;
+    String type;
+
 
     private LayoutInflater layoutInflater;
+    Context context;
 
-    public PendingAdapter(Activity context, List<MITank> pendingListValues, dbData dbData) {
-
-        this.context = context;
-        prefManager = new PrefManager(context);
-
+    public NewPendingScreenAdapter(Context context, List<MITank> pendingListValues,dbData dbData,String type) {
         this.pendingListValues = pendingListValues;
-        this.dbData = dbData;
+        this.context=context;
+        this.dbData=dbData;
+        this.type=type;
     }
 
+    @NonNull
     @Override
-    public PendingAdapter.MyViewHolder onCreateViewHolder(ViewGroup viewGroup, int viewType) {
+    public NewPendingScreenAdapter.MyViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         if (layoutInflater == null) {
-            layoutInflater = LayoutInflater.from(viewGroup.getContext());
+            layoutInflater = LayoutInflater.from(parent.getContext());
         }
-        PendingAdapterBinding pendingAdapterBinding =
-                DataBindingUtil.inflate(layoutInflater, R.layout.pending_adapter, viewGroup, false);
-        return new PendingAdapter.MyViewHolder(pendingAdapterBinding);
+        NewPendingAdapterBinding pendingAdapterBinding =
+                DataBindingUtil.inflate(layoutInflater, R.layout.new_pending_adapter, parent, false);
+        return new NewPendingScreenAdapter.MyViewHolder(pendingAdapterBinding);
+
 
     }
-
 
     public class MyViewHolder extends RecyclerView.ViewHolder {
-        private PendingAdapterBinding pendingAdapterBinding;
+        public NewPendingAdapterBinding pendingAdapterBinding;
 
-        public MyViewHolder(PendingAdapterBinding Binding) {
+        public MyViewHolder(NewPendingAdapterBinding Binding) {
             super(Binding.getRoot());
             pendingAdapterBinding = Binding;
         }
@@ -74,7 +74,7 @@ public class PendingAdapter extends RecyclerView.Adapter<PendingAdapter.MyViewHo
     }
 
     @Override
-    public void onBindViewHolder(@NonNull final MyViewHolder holder, final int position) {
+    public void onBindViewHolder(@NonNull NewPendingScreenAdapter.MyViewHolder holder, int position) {
         holder.pendingAdapterBinding.habitationName.setText(pendingListValues.get(position).getHabitationName());
         holder.pendingAdapterBinding.villageName.setText(pendingListValues.get(position).getPvName());
         holder.pendingAdapterBinding.localName.setText(pendingListValues.get(position).getLocalName());
@@ -82,67 +82,22 @@ public class PendingAdapter extends RecyclerView.Adapter<PendingAdapter.MyViewHo
         holder.pendingAdapterBinding.nameOfTankPond.setText(pendingListValues.get(position).getNameOftheMITank());
         final String mi_tank_survey_id = pendingListValues.get(position).getMiTankSurveyId();
         dbData.open();
-        ArrayList<MITank> tanksStructure = dbData.getSavedDataForParticularTank(mi_tank_survey_id);
-        if (tanksStructure.size() > 0 ){
-            holder.pendingAdapterBinding.syncStructureLayout.setVisibility(View.VISIBLE);
-        }else {
-            holder.pendingAdapterBinding.syncStructureLayout.setVisibility(View.GONE);
+        if(type.equals("StructureData")) {
+            holder.pendingAdapterBinding.syncTrackInfo.setText("SyncStructureData");
         }
-        ArrayList<MITank> tanksCentreData = dbData.getCenterImageData(mi_tank_survey_id);
-        if (tanksCentreData.size() > 0 ){
-            holder.pendingAdapterBinding.syncCentreImageLayout.setVisibility(View.VISIBLE);
-        }else {
-            holder.pendingAdapterBinding.syncCentreImageLayout.setVisibility(View.GONE);
+        else if (type.equals("TrackData")) {
+            holder.pendingAdapterBinding.syncTrackInfo.setText("SyncTrackData");
         }
-        ArrayList<MITank> tanksTrack = dbData.getSavedTrackForParticularTank(mi_tank_survey_id);
-        if (tanksTrack.size() > 0 ){
-            holder.pendingAdapterBinding.syncTrackLayout.setVisibility(View.VISIBLE);
-        }else {
-            holder.pendingAdapterBinding.syncTrackLayout.setVisibility(View.GONE);
+        else {
+            holder.pendingAdapterBinding.syncTrackInfo.setText("SyncCentreImageData");
         }
 
-        holder.pendingAdapterBinding.syncTrackLayout.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (Utils.isOnline()) {
-                    new toUploadTankTrackDataTask().execute(mi_tank_survey_id);
-                    prefManager.setKeyDeleteId(mi_tank_survey_id);
-                 //   prefManager.setKeyClickedPosition(String.valueOf(position));
-                } else {
-                    Utils.showAlert(context, "Turn On Mobile Data To Synchronize!");
-                }
 
-            }
-        });
+    }
 
-        holder.pendingAdapterBinding.syncCentreImageLayout.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (Utils.isOnline()) {
-                    new toUploadTankCentreImageTask().execute(mi_tank_survey_id);
-                    prefManager.setKeyDeleteId(mi_tank_survey_id);
-                    //   prefManager.setKeyClickedPosition(String.valueOf(position));
-                } else {
-                    Utils.showAlert(context, "Turn On Mobile Data To Synchronize!");
-                }
-
-            }
-        });
-
-        holder.pendingAdapterBinding.syncStructureLayout.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (Utils.isOnline()) {
-                    new toUploadTankStructureTask().execute(mi_tank_survey_id);
-                    prefManager.setKeyDeleteId(mi_tank_survey_id);
-                    //   prefManager.setKeyClickedPosition(String.valueOf(position));
-                } else {
-                    Utils.showAlert(context, "Turn On Mobile Data To Synchronize!");
-                }
-
-            }
-        });
-
+    @Override
+    public int getItemCount() {
+        return pendingListValues.size();
     }
 
     public class toUploadTankTrackDataTask extends AsyncTask<String, Void,
@@ -168,10 +123,10 @@ public class PendingAdapter extends RecyclerView.Adapter<PendingAdapter.MyViewHo
                     }
                 }
 
-                datasetTrack = new JSONObject();
+                dataSetTrack = new JSONObject();
                 try {
-                    datasetTrack.put(AppConstant.KEY_SERVICE_ID, AppConstant.KEY_TANK_TRACK_SAVE);
-                    datasetTrack.put(AppConstant.KEY_TRACK_DATA, saveLatLongArray);
+                    dataSetTrack.put(AppConstant.KEY_SERVICE_ID, AppConstant.KEY_TANK_TRACK_SAVE);
+                    dataSetTrack.put(AppConstant.KEY_TRACK_DATA, saveLatLongArray);
 
                 } catch (JSONException e) {
                     e.printStackTrace();
@@ -179,7 +134,7 @@ public class PendingAdapter extends RecyclerView.Adapter<PendingAdapter.MyViewHo
             } catch (JSONException e) {
                 e.printStackTrace();
             }
-            return datasetTrack;
+            return dataSetTrack;
         }
 
         protected void onPostExecute(JSONObject dataset) {
@@ -226,17 +181,17 @@ public class PendingAdapter extends RecyclerView.Adapter<PendingAdapter.MyViewHo
                     }
                 }
 
-                datasetStructure = new JSONObject();
+                dataSetStructure = new JSONObject();
 
                 try {
-                    datasetStructure.put(AppConstant.KEY_SERVICE_ID,"mi_tank_detail_save");
-                    datasetStructure.put(AppConstant.KEY_TRACK_DATA,track_data);
+                    dataSetStructure.put(AppConstant.KEY_SERVICE_ID,"mi_tank_detail_save");
+                    dataSetStructure.put(AppConstant.KEY_TRACK_DATA,track_data);
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
             }
 
-            return datasetStructure;
+            return dataSetStructure;
         }
 
         @Override
@@ -244,12 +199,6 @@ public class PendingAdapter extends RecyclerView.Adapter<PendingAdapter.MyViewHo
             super.onPostExecute(dataset);
             ((PendingScreen)context).syncStructureData(dataset);
         }
-    }
-
-
-    @Override
-    public int getItemCount() {
-        return pendingListValues.size();
     }
 
     public class toUploadTankCentreImageTask extends AsyncTask<String, Void,
@@ -288,7 +237,7 @@ public class PendingAdapter extends RecyclerView.Adapter<PendingAdapter.MyViewHo
                 dataSetCentreImage = new JSONObject();
 
                 try {
-                    dataSetCentreImage.put(AppConstant.KEY_SERVICE_ID,"mi_tank_detail_save");
+                    dataSetCentreImage.put(AppConstant.KEY_SERVICE_ID,"center_point_update");
                     dataSetCentreImage.put(AppConstant.KEY_TRACK_DATA,track_data);
                 } catch (JSONException e) {
                     e.printStackTrace();
@@ -304,7 +253,5 @@ public class PendingAdapter extends RecyclerView.Adapter<PendingAdapter.MyViewHo
             ((PendingScreen)context).syncCentreImageData(dataset);
         }
     }
-
-
 
 }

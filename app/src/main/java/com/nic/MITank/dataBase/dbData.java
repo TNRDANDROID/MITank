@@ -311,6 +311,9 @@ public class dbData {
         values.put(AppConstant.MI_TANK_STRUCTURE_NAME,miTank.getMiTankStructureName());
         values.put(AppConstant.IMAGE_AVAILABLE, miTank.getImageAvailable());
         values.put(AppConstant.MINOR_IRRIGATION_TYPE, miTank.getMinorIrrigationType());
+        values.put(AppConstant.MI_TANK_type_ID,miTank.getMiTankTypeId());
+        values.put(AppConstant.MI_TANK_TYPE_NAME,miTank.getMiTankTypeName());
+
 
 
         long id = db.insert(DBHelper.MI_TANK_DATA_STRUCTURES, null, values);
@@ -712,18 +715,32 @@ public class dbData {
         values.put(AppConstant.KEY_POINT_TYPE, pointtype);
         values.put(AppConstant.KEY_LATITUDE, saveLatLongValue.getLatitude());
         values.put(AppConstant.KEY_LONGITUDE, saveLatLongValue.getLongitude());
-        long id = db.insert(DBHelper.SAVE_TRACK_TABLE, null, values);
-        if (id > 0) {
-            if (pointtype.equalsIgnoreCase("1")) {
-                Toasty.success(context, "Start Point Inserted", Toast.LENGTH_SHORT, true).show();
-            } else if (pointtype.equalsIgnoreCase("2")) {
-                Toasty.success(context, "Middle Point Inserted", Toast.LENGTH_SHORT, true).show();
-            } else if (pointtype.equalsIgnoreCase("3")) {
-                Toasty.success(context, "End Point Inserted", Toast.LENGTH_SHORT, true).show();
-            }
+        if(getSavedTrackForParticularTank(saveLatLongValue.getMiTankSurveyId()).size()<1) {
+            long id = db.insert(DBHelper.SAVE_TRACK_TABLE, null, values);
+            if (id > 0) {
+                if (pointtype.equalsIgnoreCase("1")) {
+                    Toasty.success(context, "Start Point Inserted", Toast.LENGTH_SHORT, true).show();
+                } else if (pointtype.equalsIgnoreCase("2")) {
+                    Toasty.success(context, "Middle Point Inserted", Toast.LENGTH_SHORT, true).show();
+                } else if (pointtype.equalsIgnoreCase("3")) {
+                    Toasty.success(context, "End Point Inserted", Toast.LENGTH_SHORT, true).show();
+                }
 
+            }
         }
-        Log.d("Inserted_id_saveLatLong", String.valueOf(id));
+        else {
+           long id= db.update(DBHelper.SAVE_TRACK_TABLE, values, "mi_tank_survey_id  = ? ", new String[]{saveLatLongValue.getMiTankSurveyId()});
+            if(id > 0){
+                if (pointtype.equalsIgnoreCase("1")) {
+                    Toasty.success(context, "Start Point Updated", Toast.LENGTH_SHORT, true).show();
+                } else if (pointtype.equalsIgnoreCase("2")) {
+                    Toasty.success(context, "Middle Point Updated", Toast.LENGTH_SHORT, true).show();
+                } else if (pointtype.equalsIgnoreCase("3")) {
+                    Toasty.success(context, "End Point Updated", Toast.LENGTH_SHORT, true).show();
+                }
+            }
+        }
+        /*Log.d("Inserted_id_saveLatLong", String.valueOf(id));*/
 
         return saveLatLongValue;
     }
@@ -885,6 +902,81 @@ public class dbData {
                     card.setLongitude(cursor.getString(cursor
                             .getColumnIndexOrThrow(AppConstant.KEY_LONGITUDE)));
                     card.setImage(decodedByte);
+                    cards.add(card);
+                }
+            }
+        } catch (Exception e){
+            //   Log.d(DEBUG_TAG, "Exception raised with a value of " + e);
+        } finally{
+            if (cursor != null) {
+                cursor.close();
+            }
+        }
+        return cards;
+    }
+    public ArrayList<MITank> getAllCenterImageData(String dcode,String bcode ){
+        db.isOpen();
+        ArrayList<MITank> cards = new ArrayList<>();
+        Cursor cursor = null;
+        String selection = null;
+        String[] selectionArgs = null;
+
+        selection = "dcode = ? and bcode = ? ";
+        selectionArgs = new String[]{dcode,bcode};
+        String sqlQuery="SELECT * FROM\n" +
+                "(SELECT * FROM save_mi_tank_center_images)a\n" +
+                "LEFT JOIN\n" +
+                "(SELECT dcode,bcode,pvcode,pvname FROM villageTable)b\n" +
+                "ON a.dcode=b.dcode and a.bcode=b.bcode AND a.pvcode=b.pvcode\n" +
+                "LEFT JOIN\n" +
+                "(SELECT dcode,bcode,pvcode,habitation_code,habitation_name FROM habitaionTable)c\n" +
+                "ON a.dcode=c.dcode and a.bcode=c.bcode AND a.pvcode=c.pvcode AND a.habcode=c.habitation_code\n" +
+                "LEFT JOIN\n" +
+                "(SELECT dcode,bcode,pvcode,habcode,mi_tank_survey_id,name_of_the_mi_tank,local_name,area FROM mi_tank_data)d\n" +
+                "ON a.dcode=d.dcode and a.bcode=d.bcode AND a.pvcode=d.pvcode AND a.habcode=d.habcode AND a.mi_tank_survey_id=d.mi_tank_survey_id";
+
+
+        try {
+            /*cursor = db.rawQuery("select distinct b.*,c.pvname as pvname,d.habitation_name as habitation_name  from (SELECT mi_tank_survey_id FROM "+DBHelper.SAVE_MI_TANK_CENTER_IMAGES+"\n" +
+                    "UNION\n" +
+                    "SELECT * FROM "+DBHelper.MI_TANK_DATA+"\n" +
+                    "left join (select * from "+DBHelper.VILLAGE_TABLE_NAME+") c on \n" +
+                    "b.dcode = c.dcode and b.bcode = c.bcode and b.pvcode = c.pvcode \n" +
+                    "left join (select * from "+DBHelper.HABITATION_TABLE_NAME+") d on \n" +
+                    "b.dcode = d.dcode and b.bcode = d.bcode and b.pvcode = d.pvcode  and b.habcode = d.habitation_code)",null);
+*/
+            cursor=db.rawQuery(sqlQuery,null);
+            if (cursor.getCount() > 0) {
+                while (cursor.moveToNext()) {
+
+                    byte[] photo = cursor.getBlob(cursor.getColumnIndexOrThrow(AppConstant.KEY_IMAGE));
+                    byte[] decodedString = Base64.decode(photo, Base64.DEFAULT);
+                    Bitmap decodedByte = BitmapFactory.decodeByteArray(decodedString, 0, decodedString.length);
+
+                    MITank card = new MITank();
+
+                    card.setDistictCode(cursor.getString(cursor
+                            .getColumnIndexOrThrow(AppConstant.DISTRICT_CODE)));
+                    card.setBlockCode(cursor.getString(cursor
+                            .getColumnIndex(AppConstant.BLOCK_CODE)));
+                    card.setPvCode(cursor.getString(cursor
+                            .getColumnIndexOrThrow(AppConstant.PV_CODE)));
+                    card.setHabCode(cursor.getString(cursor
+                            .getColumnIndexOrThrow(AppConstant.HAB_CODE)));
+                                        card.setMiTankSurveyId(cursor.getString(cursor
+                            .getColumnIndexOrThrow(AppConstant.MI_TANK_SURVEY_ID)));
+                                        card.setLatitude(cursor.getString(cursor
+                            .getColumnIndexOrThrow(AppConstant.KEY_LATITUDE)));
+                    card.setLongitude(cursor.getString(cursor
+                            .getColumnIndexOrThrow(AppConstant.KEY_LONGITUDE)));
+                    card.setImage(decodedByte);
+                    card.setNameOftheMITank(cursor.getString(cursor.getColumnIndexOrThrow(AppConstant.NAME_OF_THE_MI_TANK)));
+                    card.setLocalName(cursor.getString(cursor.getColumnIndexOrThrow(AppConstant.LOCAL_NAME)));
+                    card.setArea(cursor.getString(cursor.getColumnIndexOrThrow(AppConstant.AREA)));
+                    card.setPvName(cursor.getString(cursor.getColumnIndexOrThrow(AppConstant.PV_NAME)));
+                    card.setHabitationName(cursor.getString(cursor.getColumnIndexOrThrow(AppConstant.HABITATION_NAME)));
+
+
 
                     cards.add(card);
                 }
@@ -898,6 +990,144 @@ public class dbData {
         }
         return cards;
     }
+    public ArrayList<MITank> getAllSavedTrack(String dcode,String bcode) {
+
+        db.isOpen();
+        ArrayList<MITank> cards = new ArrayList<>();
+        Cursor cursor = null;
+        String selection = null;
+        String[] selectionArgs = null;
+
+        selection = "dcode = ? and bcode = ? ";
+        selectionArgs = new String[]{dcode,bcode};
+        String sqlQuery="SELECT * FROM\n" +
+                "(SELECT dcode,bcode,pvcode,habcode,mi_tank_survey_id,server_flag,point_sl_no,point_type,latitude,longitude FROM TrackTable)a\n" +
+                "LEFT JOIN\n" +
+                "(SELECT dcode,bcode,pvcode,pvname FROM villageTable)b\n" +
+                "ON a.dcode=b.dcode and a.bcode=b.bcode AND a.pvcode=b.pvcode\n" +
+                "LEFT JOIN\n" +
+                "(SELECT dcode,bcode,pvcode,habitation_code,habitation_name FROM habitaionTable)c\n" +
+                "ON a.dcode=c.dcode and a.bcode=c.bcode AND a.pvcode=c.pvcode AND a.habcode=c.habitation_code\n" +
+                "LEFT JOIN\n" +
+                "(SELECT dcode,bcode,pvcode,habcode,mi_tank_survey_id,name_of_the_mi_tank,local_name,area FROM mi_tank_data)d\n" +
+                "ON a.dcode=d.dcode and a.bcode=d.bcode AND a.pvcode=d.pvcode AND a.habcode=d.habcode AND a.mi_tank_survey_id=d.mi_tank_survey_id";
+
+
+        try {
+            /*cursor = db.query(DBHelper.SAVE_TRACK_TABLE,
+                    new String[]{"*"}, selection,selectionArgs, null, null, null);
+*/
+            cursor=db.rawQuery(sqlQuery,null);
+            if (cursor.getCount() > 0) {
+                while (cursor.moveToNext()) {
+                    MITank postLatLong = new MITank();
+
+                    postLatLong.setDistictCode(cursor.getString(cursor.getColumnIndexOrThrow(AppConstant.DISTRICT_CODE)));
+                    postLatLong.setBlockCode(cursor.getString(cursor.getColumnIndexOrThrow(AppConstant.BLOCK_CODE)));
+                    postLatLong.setPvCode(cursor.getString(cursor.getColumnIndexOrThrow(AppConstant.PV_CODE)));
+                    postLatLong.setHabCode(cursor.getString(cursor.getColumnIndexOrThrow(AppConstant.HAB_CODE)));
+                    postLatLong.setMiTankSurveyId(cursor.getString(cursor.getColumnIndexOrThrow(AppConstant.MI_TANK_SURVEY_ID)));
+                    postLatLong.setLatitude(cursor.getString(cursor.getColumnIndexOrThrow(AppConstant.KEY_LATITUDE)));
+                    postLatLong.setLongitude(cursor.getString(cursor.getColumnIndexOrThrow(AppConstant.KEY_LONGITUDE)));
+                    postLatLong.setPointType(cursor.getString(cursor.getColumnIndex(AppConstant.KEY_POINT_TYPE)));
+                    postLatLong.setPointSerialNo(cursor.getInt(cursor.getColumnIndex(AppConstant.KEY_POINT_SERIAL_NO)));
+                    postLatLong.setNameOftheMITank(cursor.getString(cursor.getColumnIndexOrThrow(AppConstant.NAME_OF_THE_MI_TANK)));
+                    postLatLong.setLocalName(cursor.getString(cursor.getColumnIndexOrThrow(AppConstant.LOCAL_NAME)));
+                    postLatLong.setArea(cursor.getString(cursor.getColumnIndexOrThrow(AppConstant.AREA)));
+                    postLatLong.setPvName(cursor.getString(cursor.getColumnIndexOrThrow(AppConstant.PV_NAME)));
+                    postLatLong.setHabitationName(cursor.getString(cursor.getColumnIndexOrThrow(AppConstant.HABITATION_NAME)));
+
+
+                    cards.add(postLatLong);
+                }
+            }
+        } catch (Exception e) {
+            //   Log.d(DEBUG_TAG, "Exception raised with a value of " + e);
+        } finally {
+            if (cursor != null) {
+                cursor.close();
+            }
+        }
+        return cards;
+    }
+    public ArrayList<MITank> getAllSavedDataStructure(String dcode,String bcode) {
+        db.isOpen();
+        ArrayList<MITank> cards = new ArrayList<>();
+        Cursor cursor = null;
+        String selection = null;
+        String[] selectionArgs = null;
+
+/*
+        selection = "mi_tank_survey_id = ? ";
+        selectionArgs = new String[]{mi_tank_survey_id};
+*/
+        String sqlQuery="SELECT * FROM\n" +
+                "(SELECT dcode,bcode,pvcode,habcode,mi_tank_structure_detail_id,mi_tank_structure_serial_id,mi_tank_structure_id,mi_tank_condition_name,mi_tank_condition_id,mi_tank_survey_id,image,latitude,longitude FROM save_mi_tank_images)a\n" +
+                "LEFT JOIN\n" +
+                "(SELECT dcode,bcode,pvcode,pvname FROM villageTable)b\n" +
+                "ON a.dcode=b.dcode and a.bcode=b.bcode AND a.pvcode=b.pvcode\n" +
+                "LEFT JOIN\n" +
+                "(SELECT dcode,bcode,pvcode,habitation_code,habitation_name FROM habitaionTable)c\n" +
+                "ON a.dcode=c.dcode and a.bcode=c.bcode AND a.pvcode=c.pvcode AND a.habcode=c.habitation_code\n" +
+                "LEFT JOIN\n" +
+                "(SELECT dcode,bcode,pvcode,habcode,mi_tank_survey_id,name_of_the_mi_tank,local_name,area FROM mi_tank_data)d\n" +
+                "ON a.dcode=d.dcode and a.bcode=d.bcode AND a.pvcode=d.pvcode AND a.habcode=d.habcode AND a.mi_tank_survey_id=d.mi_tank_survey_id";
+
+
+        try {
+           /* cursor = db.query(DBHelper.SAVE_MI_TANK_IMAGES,
+                    new String[]{"*"}, selection,selectionArgs, null, null, null);*/
+           cursor=db.rawQuery(sqlQuery,null);
+            if (cursor.getCount() > 0) {
+                while (cursor.moveToNext()) {
+
+                    byte[] photo = cursor.getBlob(cursor.getColumnIndexOrThrow(AppConstant.KEY_IMAGE));
+                    byte[] decodedString = Base64.decode(photo, Base64.DEFAULT);
+                    Bitmap decodedByte = BitmapFactory.decodeByteArray(decodedString, 0, decodedString.length);
+
+                    MITank card = new MITank();
+
+                    card.setDistictCode(cursor.getString(cursor
+                            .getColumnIndexOrThrow(AppConstant.DISTRICT_CODE)));
+                    card.setBlockCode(cursor.getString(cursor
+                            .getColumnIndex(AppConstant.BLOCK_CODE)));
+                    card.setPvCode(cursor.getString(cursor
+                            .getColumnIndexOrThrow(AppConstant.PV_CODE)));
+                    card.setHabCode(cursor.getString(cursor
+                            .getColumnIndexOrThrow(AppConstant.HAB_CODE)));
+                    card.setMiTankStructureDetailId(cursor.getString(cursor
+                            .getColumnIndexOrThrow(AppConstant.MI_TANK_STRUCTURE_DETAIL_ID)));
+                    card.setMiTankStructureId(cursor.getString(cursor
+                            .getColumnIndexOrThrow(AppConstant.MI_TANK_STRUCTURE_ID)));
+                    card.setMiTankSurveyId(cursor.getString(cursor
+                            .getColumnIndexOrThrow(AppConstant.MI_TANK_SURVEY_ID)));
+                    card.setMiTankConditionId(cursor.getString(cursor
+                            .getColumnIndexOrThrow(AppConstant.MI_TANK_CONDITION_ID)));
+                    card.setLatitude(cursor.getString(cursor
+                            .getColumnIndexOrThrow(AppConstant.KEY_LATITUDE)));
+                    card.setLongitude(cursor.getString(cursor
+                            .getColumnIndexOrThrow(AppConstant.KEY_LONGITUDE)));
+                    card.setImage(decodedByte);
+                    card.setNameOftheMITank(cursor.getString(cursor.getColumnIndexOrThrow(AppConstant.NAME_OF_THE_MI_TANK)));
+                    card.setLocalName(cursor.getString(cursor.getColumnIndexOrThrow(AppConstant.LOCAL_NAME)));
+                    card.setArea(cursor.getString(cursor.getColumnIndexOrThrow(AppConstant.AREA)));
+                    card.setPvName(cursor.getString(cursor.getColumnIndexOrThrow(AppConstant.PV_NAME)));
+                    card.setHabitationName(cursor.getString(cursor.getColumnIndexOrThrow(AppConstant.HABITATION_NAME)));
+
+                    cards.add(card);
+                }
+            }
+        } catch (Exception e){
+            //   Log.d(DEBUG_TAG, "Exception raised with a value of " + e);
+        } finally{
+            if (cursor != null) {
+                cursor.close();
+            }
+        }
+        return cards;
+    }
+
+
 
     public void update_Track() {
         String whereClause = "server_flag = server_flag";
