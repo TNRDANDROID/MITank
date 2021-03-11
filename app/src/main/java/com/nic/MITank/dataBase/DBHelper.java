@@ -78,6 +78,9 @@ public class DBHelper extends SQLiteOpenHelper {
                 "minor_irrigation_type INTEGER," +
                 "name_of_the_mi_tank TEXT," +
                 "local_name TEXT," +
+                "center_point_latitude TEXT," +
+                "center_point_longitude TEXT," +
+                "center_point_captured TEXT," +
                 "area TEXT)");
 
 
@@ -106,6 +109,9 @@ public class DBHelper extends SQLiteOpenHelper {
                 "mi_tank_structure_id INTEGER,"+
                 "mi_tank_condition_id INTEGER,"+
                 "mi_tank_condition_name TEXT," +
+                "mi_tank_type_id INTEGER," +
+                "mi_tank_type_name TEXT," +
+                "mi_tank_sill_level TEXT," +
                 "image BLOB," +
                 "latitude TEXT," +
                 "longitude TEXT)");

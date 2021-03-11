@@ -47,6 +47,7 @@ public class FullImageActivity extends AppCompatActivity implements View.OnClick
     private static ArrayList<MITank> activityImage = new ArrayList<>();
     private com.nic.MITank.dataBase.dbData dbData = new dbData(this);
     String onofftype;
+    String screen;
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -54,6 +55,7 @@ public class FullImageActivity extends AppCompatActivity implements View.OnClick
         fullImageRecyclerBinding.setActivity(this);
         prefManager = new PrefManager(this);
         onofftype = getIntent().getStringExtra("ONOFFTYPE");
+        screen=getIntent().getStringExtra("KEY");
 
         RecyclerView.LayoutManager mLayoutManager = new GridLayoutManager(getApplicationContext(),2);
         fullImageRecyclerBinding.imagePreviewRecyclerview.setLayoutManager(mLayoutManager);
@@ -81,11 +83,17 @@ public class FullImageActivity extends AppCompatActivity implements View.OnClick
 
             final String mi_tank_structure_detail_id = getIntent().getStringExtra(AppConstant.MI_TANK_STRUCTURE_DETAIL_ID);
             final String mi_tank_structure_serial_id = getIntent().getStringExtra(AppConstant.MI_TANK_STRUCTURE_SERIAL_ID);
+            final String mi_tank_structure_id=getIntent().getStringExtra(AppConstant.MI_TANK_STRUCTURE_ID);
+            final String mi_tank_survey_id=getIntent().getStringExtra(AppConstant.MI_TANK_SURVEY_ID);
 
             dbData.open();
             activityImage = new ArrayList<>();
-            activityImage = dbData.selectImage(prefManager.getDistrictCode(),prefManager.getBlockCode(),prefManager.getPvCode(),prefManager.getHabCode(),mi_tank_structure_detail_id,mi_tank_structure_serial_id);
-
+            if(screen.equals("PondStructureAdapter")) {
+                activityImage = dbData.selectImage(prefManager.getDistrictCode(), prefManager.getBlockCode(), prefManager.getPvCode(), prefManager.getHabCode(), mi_tank_structure_detail_id, mi_tank_structure_serial_id, mi_tank_structure_id, mi_tank_survey_id);
+            }
+            else {
+                activityImage=dbData.getCenterImageData(mi_tank_survey_id);
+            }
 
             Log.d("IMAGE_COUNT", String.valueOf(activityImage.size()));
             return activityImage;
@@ -142,11 +150,17 @@ public class FullImageActivity extends AppCompatActivity implements View.OnClick
 
     public JSONObject ImagesListJsonParams() throws JSONException {
         JSONObject dataSet = new JSONObject();
-        dataSet.put(AppConstant.KEY_SERVICE_ID, AppConstant.MI_TANK_DATA_IMAGE);
+        if (screen.equals("PondStructureAdapter")){
+            dataSet.put(AppConstant.KEY_SERVICE_ID, AppConstant.MI_TANK_DATA_IMAGE);
+            dataSet.put(AppConstant.MI_TANK_STRUCTURE_DETAIL_ID, getIntent().getStringExtra(AppConstant.MI_TANK_STRUCTURE_DETAIL_ID));
+        }
+        else {
+            dataSet.put(AppConstant.KEY_SERVICE_ID, "mi_tank_center_image");
+        }
         dataSet.put(AppConstant.PV_CODE, prefManager.getPvCode());
         dataSet.put(AppConstant.HAB_CODE, prefManager.getHabCode());
         dataSet.put(AppConstant.MI_TANK_SURVEY_ID, getIntent().getStringExtra(AppConstant.MI_TANK_SURVEY_ID));
-        dataSet.put(AppConstant.MI_TANK_STRUCTURE_DETAIL_ID, getIntent().getStringExtra(AppConstant.MI_TANK_STRUCTURE_DETAIL_ID));
+
         Log.d("utils_imageDataset", "" + dataSet);
         return dataSet;
     }
@@ -163,6 +177,9 @@ public class FullImageActivity extends AppCompatActivity implements View.OnClick
                 JSONObject jsonObject = new JSONObject(responseDecryptedBlockKey);
                 if (jsonObject.getString("STATUS").equalsIgnoreCase("OK") && jsonObject.getString("RESPONSE").equalsIgnoreCase("OK")) {
                     generateImageArrayList(jsonObject.getJSONArray(AppConstant.JSON_DATA));
+                }
+                else {
+
                 }
                 Log.d("resp_OnlineImage", "" + responseDecryptedBlockKey);
             }
@@ -182,7 +199,13 @@ public class FullImageActivity extends AppCompatActivity implements View.OnClick
                     Bitmap decodedByte = BitmapFactory.decodeByteArray(decodedString, 0, decodedString.length);
 
                     imageOnline.setImage(decodedByte);
+                    if(screen.equals("PondStructureAdapter")){
                     imageOnline.setMiTankConditionName(jsonArray.getJSONObject(i).getString(AppConstant.MI_TANK_CONDITION_NAME));
+
+                    }
+                    else {
+                        imageOnline.setMiTankConditionName("");
+                    }
 
                     activityImage.add(imageOnline);
                 } catch (JSONException e) {

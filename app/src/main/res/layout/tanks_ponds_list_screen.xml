@@ -107,6 +107,10 @@
                     android:textStyle="bold"
                     android:layout_centerInParent="true"
                     android:visibility="gone" />
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/centre_image_id"></ImageView>
 
 
             </RelativeLayout>

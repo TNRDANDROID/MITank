@@ -19,10 +19,14 @@ import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.android.volley.VolleyError;
 import com.google.android.material.appbar.AppBarLayout;
 import com.nic.MITank.R;
 import com.nic.MITank.adapter.TanksPondsListAdapter;
 import com.nic.MITank.adapter.TanksPondsTitleAdapter;
+import com.nic.MITank.api.Api;
+import com.nic.MITank.api.ApiService;
+import com.nic.MITank.api.ServerResponse;
 import com.nic.MITank.constant.AppConstant;
 import com.nic.MITank.databinding.TanksPondsListScreenBinding;
 import com.nic.MITank.databinding.TanksPondsTitleScreenBinding;
@@ -32,9 +36,13 @@ import java.util.ArrayList;
 import java.util.List;
 import com.nic.MITank.dataBase.dbData;
 import com.nic.MITank.session.PrefManager;
+import com.nic.MITank.utils.UrlGenerator;
 import com.nic.MITank.utils.Utils;
 
-public class TanksPondsListScreen extends AppCompatActivity {
+import org.json.JSONException;
+import org.json.JSONObject;
+
+public class TanksPondsListScreen extends AppCompatActivity implements Api.ServerResponseListener {
 
     public TanksPondsListScreenBinding tanksPondsListScreenBinding;
     boolean ExpandedActionBar = true;
@@ -43,6 +51,7 @@ public class TanksPondsListScreen extends AppCompatActivity {
     public dbData dbData = new dbData(this);
     private PrefManager prefManager;
     String checkboxvalue;
+    int centerImagePosition;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -61,6 +70,28 @@ public class TanksPondsListScreen extends AppCompatActivity {
         tanksPondsListScreenBinding.recyclerView.setAdapter(tanksPondsListAdapter);
         checkboxvalue = getIntent().getStringExtra(AppConstant.CHECK_BOX_CLICKED);
         new fetchtankDatatask().execute();
+    }
+
+    @Override
+    public void OnMyResponse(ServerResponse serverResponse) {
+        try {
+            String urlType = serverResponse.getApi();
+            JSONObject responseObj = serverResponse.getJsonResponse();
+
+            if ("GetCenterImage".equals(urlType) && responseObj != null) {
+
+
+            }
+
+        }catch (JSONException e){
+
+        }
+
+            }
+
+    @Override
+    public void OnError(VolleyError volleyError) {
+
     }
 
     public class fetchtankDatatask extends AsyncTask<Void, Void,
@@ -127,4 +158,35 @@ public class TanksPondsListScreen extends AppCompatActivity {
                 // failed to record video
             }
         }
+
+    public void getCenterImage(int ImagePosition) {
+        centerImagePosition=ImagePosition;
+        try {
+            new ApiService(this).makeJSONObjectRequest("GetCenterImage", Api.Method.POST, UrlGenerator.getTankPondListUrl(), encryptImageJsonParams(), "not cache", this);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public JSONObject encryptImageJsonParams() throws JSONException {
+        String authKey = Utils.encrypt(prefManager.getUserPassKey(), getResources().getString(R.string.init_vector), getCenterImageJsonParams().toString());
+        JSONObject dataSet = new JSONObject();
+        dataSet.put(AppConstant.KEY_USER_NAME, prefManager.getUserName());
+        dataSet.put(AppConstant.DATA_CONTENT, authKey);
+        Log.d("tankInletStructureType", "" + authKey);
+        return dataSet;
+    }
+
+    public  JSONObject getCenterImageJsonParams() throws JSONException {
+        JSONObject dataSet = new JSONObject();
+        dataSet.put(AppConstant.KEY_SERVICE_ID, "m_tank_center_image");
+        dataSet.put("mi_tank_survey_id", tankDataList.get(centerImagePosition).getMiTankSurveyId());
+        dataSet.put("pvcode", tankDataList.get(centerImagePosition).getPvCode());
+        dataSet.put("habcode", tankDataList.get(centerImagePosition).getHabCode());
+        Log.d("object", "" + dataSet);
+        return dataSet;
+    }
+
+
+
 }

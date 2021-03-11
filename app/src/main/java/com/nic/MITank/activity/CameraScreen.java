@@ -524,7 +524,13 @@ public class CameraScreen extends AppCompatActivity implements View.OnClickListe
             if (cameraScreenBinding.typeSpinnerLayout.getVisibility() == View.VISIBLE) {
                 if(Title.equals("Sluices")) {
                     if (!"Select Type".equalsIgnoreCase(SluiceTypeList.get(cameraScreenBinding.type.getSelectedItemPosition()).getMiTankTypeName())) {
-                        return true;
+                        if(!cameraScreenBinding.sillLevelText.getText().toString().equals("")) {
+                            return true;
+                        }
+                        else {
+                            Utils.showAlert(this, "Enter Sill Level!");
+                            return false;
+                        }
                     }
                     else {
                         Utils.showAlert(this, "Select Type!");
@@ -558,6 +564,29 @@ public class CameraScreen extends AppCompatActivity implements View.OnClickListe
         String bcode = prefManager.getBlockCode();
         String pvcode = prefManager.getPvCode();
         String habcode = prefManager.getHabCode();
+        String typeId="";
+        String typeName="";
+        String sill_level="";
+        String conditionId=ConditionList.get(cameraScreenBinding.condition.getSelectedItemPosition()).getMiTankConditionId() ;
+        String conditionName=ConditionList.get(cameraScreenBinding.condition.getSelectedItemPosition()).getMiTankConditionName();
+        String structureName=getIntent().getStringExtra("Title");
+        if(typeVisibility()) {
+            if (Title.equals("Inlet channels")) {
+                typeId=InletTypeList.get(cameraScreenBinding.type.getSelectedItemPosition()).getMiTankTypeId();
+                typeName=InletTypeList.get(cameraScreenBinding.type.getSelectedItemPosition()).getMiTankTypeName();
+                sill_level="";
+            }
+            else {
+                typeId=SluiceTypeList.get(cameraScreenBinding.type.getSelectedItemPosition()).getMiTankTypeId();
+                typeName=SluiceTypeList.get(cameraScreenBinding.type.getSelectedItemPosition()).getMiTankTypeId();
+                sill_level=cameraScreenBinding.sillLevelText.getText().toString();
+            }
+        }
+        else {
+            typeId="";
+            typeName="";
+            sill_level="";
+        }
 
         ImageView imageView = (ImageView) findViewById(R.id.image_view);
         byte[] imageInByte = new byte[0];
@@ -578,18 +607,23 @@ public class CameraScreen extends AppCompatActivity implements View.OnClickListe
             values.put(AppConstant.MI_TANK_STRUCTURE_ID, mi_tank_structure_id);
             values.put(AppConstant.MI_TANK_STRUCTURE_SERIAL_ID, mi_tank_structure_serial_id);
             values.put(AppConstant.MI_TANK_SURVEY_ID, mi_tank_survey_id);
-            values.put(AppConstant.MI_TANK_CONDITION_ID,ConditionList.get(cameraScreenBinding.condition.getSelectedItemPosition()).getMiTankConditionId() );
-            values.put(AppConstant.MI_TANK_CONDITION_NAME,ConditionList.get(cameraScreenBinding.condition.getSelectedItemPosition()).getMiTankConditionName() );
+            values.put(AppConstant.MI_TANK_CONDITION_ID,conditionId);
+            values.put(AppConstant.MI_TANK_CONDITION_NAME,conditionName );
+            values.put(AppConstant.MI_TANK_SKILL_LEVEL,sill_level);
+            values.put(AppConstant.MI_TANK_type_ID, typeId);
+            values.put(AppConstant.MI_TANK_TYPE_NAME, typeName);
             values.put(AppConstant.KEY_LATITUDE, offlatTextValue.toString());
             values.put(AppConstant.KEY_LONGITUDE, offlongTextValue.toString());
             values.put(AppConstant.KEY_IMAGE,image_str.trim());
            // values.put(AppConstant.KEY_CREATED_DATE,sdf.format(new Date()));
 
+            updateStructure(mi_tank_structure_detail_id,mi_tank_survey_id,mi_tank_structure_id,mi_tank_structure_serial_id,conditionId
+            ,conditionName,typeId,typeName,sill_level,structureName);
 
-                whereClause = "dcode = ? and bcode = ? and pvcode = ? and habcode = ? and mi_tank_structure_detail_id = ? and mi_tank_structure_serial_id = ?";
-                whereArgs = new String[]{dcode,bcode,pvcode,habcode,mi_tank_structure_detail_id,mi_tank_structure_serial_id};
+                whereClause = "dcode = ? and bcode = ? and pvcode = ? and habcode = ? and mi_tank_structure_detail_id = ? and mi_tank_structure_serial_id = ? and mi_tank_structure_id = ? and mi_tank_survey_id = ?";
+                whereArgs = new String[]{dcode,bcode,pvcode,habcode,mi_tank_structure_detail_id,mi_tank_structure_serial_id,mi_tank_structure_id,mi_tank_survey_id};
                 dbData.open();
-                ArrayList<MITank> imageOffline = dbData.selectImage(dcode,bcode,pvcode,habcode,mi_tank_structure_detail_id,mi_tank_structure_serial_id);
+                ArrayList<MITank> imageOffline = dbData.selectImage(dcode,bcode,pvcode,habcode,mi_tank_structure_detail_id,mi_tank_structure_serial_id,mi_tank_structure_id,mi_tank_survey_id);
 
                 if(imageOffline.size() < 1) {
                     id = db.insert(DBHelper.SAVE_MI_TANK_IMAGES, null, values);
@@ -609,6 +643,7 @@ public class CameraScreen extends AppCompatActivity implements View.OnClickListe
             //e.printStackTrace();
         }
     }
+
     public void saveImageFromAddPopUp() {
         dbData.open();
         long id = 0; String whereClause = "";String[] whereArgs = null;
@@ -617,7 +652,7 @@ public class CameraScreen extends AppCompatActivity implements View.OnClickListe
         String conditionName = getIntent().getStringExtra(AppConstant.MI_TANK_CONDITION_NAME);
         String typeId = getIntent().getStringExtra(AppConstant.MI_TANK_type_ID);
         String typeName = getIntent().getStringExtra(AppConstant.MI_TANK_TYPE_NAME);
-        String sill_level_value = getIntent().getStringExtra(AppConstant.MI_TANK_TYPE_NAME);
+        String sill_level_value = getIntent().getStringExtra(AppConstant.MI_TANK_SKILL_LEVEL);
         String mi_tank_structure_detail_id = getIntent().getStringExtra(AppConstant.MI_TANK_STRUCTURE_DETAIL_ID);
         String mi_tank_survey_id = getIntent().getStringExtra(AppConstant.MI_TANK_SURVEY_ID);
         String mi_tank_structure_id = getIntent().getStringExtra(AppConstant.MI_TANK_STRUCTURE_ID);
@@ -648,6 +683,9 @@ public class CameraScreen extends AppCompatActivity implements View.OnClickListe
             values.put(AppConstant.MI_TANK_SURVEY_ID, mi_tank_survey_id);
             values.put(AppConstant.MI_TANK_CONDITION_ID,conditionId);
             values.put(AppConstant.MI_TANK_CONDITION_NAME,conditionName );
+            values.put(AppConstant.MI_TANK_SKILL_LEVEL,sill_level_value);
+            values.put(AppConstant.MI_TANK_type_ID, typeId);
+            values.put(AppConstant.MI_TANK_TYPE_NAME, typeName);
             values.put(AppConstant.KEY_LATITUDE, offlatTextValue.toString());
             values.put(AppConstant.KEY_LONGITUDE, offlongTextValue.toString());
             values.put(AppConstant.KEY_IMAGE,image_str.trim());
@@ -655,10 +693,10 @@ public class CameraScreen extends AppCompatActivity implements View.OnClickListe
             insertStructure(structureName,conditionId,conditionName,mi_tank_structure_serial_id,mi_tank_structure_id,
                     typeId,typeName,sill_level_value);
 
-                whereClause = "dcode = ? and bcode = ? and pvcode = ? and habcode = ? and mi_tank_structure_detail_id = ? and mi_tank_structure_serial_id = ?";
-                whereArgs = new String[]{dcode,bcode,pvcode,habcode,mi_tank_structure_detail_id,mi_tank_structure_serial_id};
+                whereClause = "dcode = ? and bcode = ? and pvcode = ? and habcode = ? and mi_tank_structure_detail_id = ? and mi_tank_structure_serial_id = ? and mi_tank_structure_id= ? and mi_tank_survey_id = ?";
+                whereArgs = new String[]{dcode,bcode,pvcode,habcode,mi_tank_structure_detail_id,mi_tank_structure_serial_id,mi_tank_structure_id,mi_tank_survey_id};
                 dbData.open();
-                 ArrayList<MITank> imageOffline = dbData.selectImage(dcode,bcode,pvcode,habcode,mi_tank_structure_detail_id,mi_tank_structure_serial_id);
+                 ArrayList<MITank> imageOffline = dbData.selectImage(dcode,bcode,pvcode,habcode,mi_tank_structure_detail_id,mi_tank_structure_serial_id,mi_tank_structure_id,mi_tank_survey_id);
 
                 if(imageOffline.size() < 1) {
                     id = db.insert(DBHelper.SAVE_MI_TANK_IMAGES, null, values);
@@ -696,6 +734,35 @@ public class CameraScreen extends AppCompatActivity implements View.OnClickListe
 
         long id = db.insert(DBHelper.MI_TANK_DATA_STRUCTURES, null, values);
         Log.d("Insert_id_structures", String.valueOf(id));
+
+    }
+
+    public void updateStructure(String mi_tank_structure_detail_id,String mi_tank_survey_id,String mi_tank_structure_id,
+                                String mi_tank_structure_serial_id,String mi_tank_condition_id,String mi_tank_condition_name,
+                                String mi_tank_type_id
+            ,String  mi_tank_type_name,String mi_tank_sill_level,String mi_tank_structure_name) {
+        long id = 0; String whereClause = "";String[] whereArgs = null;
+
+        dbData.open();
+
+        ContentValues values = new ContentValues();
+        values.put(AppConstant.MI_TANK_STRUCTURE_DETAIL_ID, mi_tank_structure_detail_id);
+        values.put(AppConstant.MI_TANK_STRUCTURE_ID, mi_tank_structure_id);
+        values.put(AppConstant.MI_TANK_STRUCTURE_SERIAL_ID, mi_tank_structure_serial_id);
+        values.put(AppConstant.MI_TANK_STRUCTURE_NAME, mi_tank_structure_name);
+        values.put(AppConstant.MI_TANK_SURVEY_ID, mi_tank_survey_id);
+        values.put(AppConstant.MI_TANK_CONDITION_ID,mi_tank_condition_id);
+        values.put(AppConstant.MI_TANK_CONDITION_NAME,mi_tank_condition_name );
+        values.put(AppConstant.MI_TANK_SKILL_LEVEL,mi_tank_sill_level);
+        values.put(AppConstant.MI_TANK_type_ID, mi_tank_type_id);
+        values.put(AppConstant.MI_TANK_TYPE_NAME, mi_tank_type_name);
+
+        whereClause = "mi_tank_structure_detail_id = ? and mi_tank_structure_id = ? and mi_tank_structure_serial_id = ? and mi_tank_survey_id = ? ";
+        whereArgs = new String[]{mi_tank_structure_detail_id,mi_tank_structure_id,mi_tank_structure_serial_id,mi_tank_survey_id};
+
+        id = db.update(DBHelper.MI_TANK_DATA_STRUCTURES, values, whereClause, whereArgs);
+        Log.d("Update_MI_Structure", String.valueOf(id));
+
 
     }
 

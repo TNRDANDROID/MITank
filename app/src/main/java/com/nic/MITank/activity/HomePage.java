@@ -497,9 +497,10 @@ public class HomePage extends AppCompatActivity implements Api.ServerResponseLis
     public void syncButtonVisibility() {
         dbData.open();
         ArrayList<MITank> TankImageCount = dbData.getSavedData(prefManager.getDistrictCode(),prefManager.getBlockCode());
+        ArrayList<MITank> TankCenterImageCount = dbData.getAllCenterImageData(prefManager.getDistrictCode(),prefManager.getBlockCode());
         ArrayList<MITank> trackCount = dbData.getSavedTrack();
 
-        if (TankImageCount.size() > 0 || trackCount.size() > 0) {
+        if (TankImageCount.size() > 0 || trackCount.size() > 0 || TankCenterImageCount.size() >0) {
             homeScreenBinding.synData.setVisibility(View.VISIBLE);
         }else {
             homeScreenBinding.synData.setVisibility(View.GONE);
@@ -705,6 +706,9 @@ public class HomePage extends AppCompatActivity implements Api.ServerResponseLis
                     miTankValue.setNameOftheMITank(tankdataArray.getJSONObject(i).getString(AppConstant.NAME_OF_THE_MI_TANK));
                     miTankValue.setLocalName(tankdataArray.getJSONObject(i).getString(AppConstant.LOCAL_NAME));
                     miTankValue.setArea(tankdataArray.getJSONObject(i).getString(AppConstant.AREA));
+                    miTankValue.setCenter_point_captured(tankdataArray.getJSONObject(i).getString("center_point_captured"));
+                    miTankValue.setCenter_point_latitude(tankdataArray.getJSONObject(i).getString("center_point_latitude"));
+                    miTankValue.setCenter_point_longitude(tankdataArray.getJSONObject(i).getString("center_point_longitude"));
 
                     dbData.insertMITankData(miTankValue);
 
@@ -734,8 +738,8 @@ public class HomePage extends AppCompatActivity implements Api.ServerResponseLis
                         sturctureValue.setMiTankStructureSerialId(jsonArray.getJSONObject(i).getString(AppConstant.MI_TANK_STRUCTURE_SERIAL_ID));
                         sturctureValue.setMiTankConditionId(jsonArray.getJSONObject(i).getString(AppConstant.MI_TANK_CONDITION_ID));
                         sturctureValue.setMiTankConditionName(jsonArray.getJSONObject(i).getString(AppConstant.MI_TANK_CONDITION_NAME));
-                         sturctureValue.setMiTankTypeId(""/*jsonArray.getJSONObject(i).getString(AppConstant.MI_TANK_CONDITION_ID)*/);
-                        sturctureValue.setMiTankTypeName(""/*jsonArray.getJSONObject(i).getString(AppConstant.MI_TANK_CONDITION_NAME)*/);
+                         sturctureValue.setMiTankTypeId(jsonArray.getJSONObject(i).getString("mi_tank_type_of_structure_id"));
+                        sturctureValue.setMiTankTypeName(jsonArray.getJSONObject(i).getString("mi_tank_type_of_structure_name"));
                         sturctureValue.setMiTankSkillLevel(jsonArray.getJSONObject(i).getString(AppConstant.MI_TANK_SKILL_LEVEL));
                         sturctureValue.setMiTankStructureName(jsonArray.getJSONObject(i).getString(AppConstant.MI_TANK_STRUCTURE_NAME));
                         sturctureValue.setImageAvailable(jsonArray.getJSONObject(i).getString(AppConstant.IMAGE_AVAILABLE));

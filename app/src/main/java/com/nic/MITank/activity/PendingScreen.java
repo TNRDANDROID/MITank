@@ -191,14 +191,18 @@ public class PendingScreen extends AppCompatActivity implements Api.ServerRespon
                 if (jsonObject.getString("STATUS").equalsIgnoreCase("OK") && jsonObject.getString("RESPONSE").equalsIgnoreCase("OK")) {
                     Utils.showAlert(this, "Your track data is synchronized to the server!");
                    db.delete(DBHelper.SAVE_TRACK_TABLE, "mi_tank_survey_id = ?", new String[]{prefManager.getKeyDeleteId()});
-                    new fetchPendingtask().execute();
-                    pendingAdapter.notifyDataSetChanged();
+                    /*new fetchPendingtask().execute();
+                    pendingAdapter.notifyDataSetChanged();*/
+                    new fetchTrackDataTask().execute();
+                    newPendingAdapter.notifyDataSetChanged();
                 } else if (jsonObject.getString("STATUS").equalsIgnoreCase("OK") && jsonObject.getString("RESPONSE").equalsIgnoreCase("FAIL")) {
                     Toasty.error(this, jsonObject.getString("MESSAGE"), Toast.LENGTH_LONG, true).show();
 //                    db.delete(DBHelper.SAVE_PMAY_DETAILS, "id = ?", new String[]{prefManager.getKeyDeleteId()});
 //                    db.delete(DBHelper.SAVE_PMAY_IMAGES, "pmay_id = ? ", new String[]{prefManager.getKeyDeleteId()});
-                    new fetchPendingtask().execute();
-                    pendingAdapter.notifyDataSetChanged();
+                    /*new fetchPendingtask().execute();
+                    pendingAdapter.notifyDataSetChanged();*/
+                    new fetchTrackDataTask().execute();
+                    newPendingAdapter.notifyDataSetChanged();
                 }
                 Log.d("saved_response", "" + responseDecryptedBlockKey);
             }
@@ -208,8 +212,10 @@ public class PendingScreen extends AppCompatActivity implements Api.ServerRespon
                 JSONObject jsonObject = new JSONObject(responseDecryptedBlockKey);
                 if (jsonObject.getString("STATUS").equalsIgnoreCase("OK") && jsonObject.getString("RESPONSE").equalsIgnoreCase("OK")) {
                     db.delete(DBHelper.SAVE_MI_TANK_IMAGES, "mi_tank_survey_id = ?", new String[]{prefManager.getKeyDeleteId()});
-                    new fetchPendingtask().execute();
-                    pendingAdapter.notifyDataSetChanged();
+                    /*new fetchPendingtask().execute();
+                    pendingAdapter.notifyDataSetChanged();*/
+                    new fetchStructureDataTask().execute();
+                    newPendingAdapter.notifyDataSetChanged();
                     HomePage.getInstance().getTankPondList();
                     Utils.showAlert(this,"Your Stucture data is syncronized to the server!");
 
@@ -222,8 +228,10 @@ public class PendingScreen extends AppCompatActivity implements Api.ServerRespon
                 JSONObject jsonObject = new JSONObject(responseDecryptedBlockKey);
                 if (jsonObject.getString("STATUS").equalsIgnoreCase("OK") && jsonObject.getString("RESPONSE").equalsIgnoreCase("OK")) {
                     db.delete(DBHelper.SAVE_MI_TANK_CENTER_IMAGES, "mi_tank_survey_id = ?", new String[]{prefManager.getKeyDeleteId()});
-                    new fetchPendingtask().execute();
-                    pendingAdapter.notifyDataSetChanged();
+                    /*new fetchPendingtask().execute();
+                    pendingAdapter.notifyDataSetChanged();*/
+                    new fetchCenterImagesDataTask().execute();
+                    newPendingAdapter.notifyDataSetChanged();
                     HomePage.getInstance().getTankPondList();
                     Utils.showAlert(this,"Your CentreImage data is synchronized to the server!");
 
@@ -294,7 +302,7 @@ public class PendingScreen extends AppCompatActivity implements Api.ServerRespon
         protected ArrayList<MITank> doInBackground(Void... params) {
             dbData.open();
             pendingLists = new ArrayList<>();
-            pendingLists = dbData.getAllSavedDataStructure(prefManager.getDistrictCode(),prefManager.getBlockCode());
+            pendingLists = dbData.getPendingList();
             Log.d("structure_data_count", String.valueOf(pendingLists.size()));
             return pendingLists;
         }
@@ -302,11 +310,13 @@ public class PendingScreen extends AppCompatActivity implements Api.ServerRespon
         @Override
         protected void onPostExecute(ArrayList<MITank> pendingLists) {
             super.onPostExecute(pendingLists);
+            ArrayList<MITank> structureArrayList=new ArrayList<>();
             if(pendingLists.size()>0) {
-                recyclerView.setVisibility(View.VISIBLE);
-                pendingScreenBinding.noDataFoundLayout.setVisibility(View.GONE);
-                newPendingAdapter = new NewPendingScreenAdapter(PendingScreen.this, pendingLists, dbData, "StructureData");
-                recyclerView.setAdapter(newPendingAdapter);
+                    recyclerView.setVisibility(View.VISIBLE);
+                    pendingScreenBinding.noDataFoundLayout.setVisibility(View.GONE);
+                    newPendingAdapter = new NewPendingScreenAdapter(PendingScreen.this, pendingLists, dbData, "StructureData");
+                    recyclerView.setAdapter(newPendingAdapter);
+
             }
             else {
                 recyclerView.setVisibility(View.GONE);
@@ -329,6 +339,15 @@ public class PendingScreen extends AppCompatActivity implements Api.ServerRespon
         protected void onPostExecute(ArrayList<MITank> pendingLists) {
             if(pendingLists.size()>0) {
                 super.onPostExecute(pendingLists);
+                ArrayList<MITank> trackDataList = new ArrayList<>();
+                for (int i=0;i<pendingLists.size();i++){
+                    for (int j=i+1;j<pendingLists.size();j++){
+                        if(pendingLists.get(i).getMiTankSurveyId().equals(pendingLists.get(j).getMiTankSurveyId())){
+                                pendingLists.remove(j);
+                                j--;
+                        }
+                    }
+                }
                 recyclerView.setVisibility(View.VISIBLE);
                 pendingScreenBinding.noDataFoundLayout.setVisibility(View.GONE);
                 newPendingAdapter = new NewPendingScreenAdapter(PendingScreen.this, pendingLists, dbData, "TrackData");

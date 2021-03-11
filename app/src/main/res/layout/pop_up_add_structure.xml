@@ -400,7 +400,7 @@
                         <EditText
                             android:background="@null"
                             android:hint="Enter Sill Level"
-                            android:inputType="number"
+                            android:inputType="numberDecimal"
                             android:id="@+id/sill_level_text"
                             style="@style/font_normal"
                             android:layout_width="wrap_content"

@@ -238,6 +238,10 @@ public class TrackingScreen extends AppCompatActivity implements LocationListene
             trackData.setLongitude(offlongTextValue.toString());
 
             dbData.saveLatLong(trackData);
+
+            if(pointType.equals("3")){
+                onBackPress();
+            }
         }
     }
 

@@ -47,6 +47,31 @@ public class MITank {
     private String miTankTypeId;
     private String miTankTypeName;
     private String center_image;
+    private String center_point_longitude, center_point_latitude,center_point_captured;
+
+    public String getCenter_point_longitude() {
+        return center_point_longitude;
+    }
+
+    public void setCenter_point_longitude(String center_point_longitude) {
+        this.center_point_longitude = center_point_longitude;
+    }
+
+    public String getCenter_point_latitude() {
+        return center_point_latitude;
+    }
+
+    public void setCenter_point_latitude(String center_point_latitude) {
+        this.center_point_latitude = center_point_latitude;
+    }
+
+    public String getCenter_point_captured() {
+        return center_point_captured;
+    }
+
+    public void setCenter_point_captured(String center_point_captured) {
+        this.center_point_captured = center_point_captured;
+    }
 
     public String getCenter_image() {
         return center_image;

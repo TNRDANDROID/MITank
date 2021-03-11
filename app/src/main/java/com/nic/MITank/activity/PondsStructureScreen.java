@@ -83,7 +83,7 @@ public class PondsStructureScreen extends AppCompatActivity {
         context=this;
 
         tankStructureList = new ArrayList<>();
-        pondsStructureAdapter = new PondsStructureAdapter(this,tankStructureList,dbData);
+        pondsStructureAdapter = new PondsStructureAdapter(this,tankStructureList,dbData,Tittle);
         RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(this);
         pondsStructureScreenBinding.recyclerView.setLayoutManager(mLayoutManager);
         pondsStructureScreenBinding.recyclerView.setItemAnimator(new DefaultItemAnimator());
@@ -105,7 +105,7 @@ public class PondsStructureScreen extends AppCompatActivity {
         @Override
         protected void onPostExecute(ArrayList<MITank> structureList) {
             super.onPostExecute(structureList);
-            pondsStructureAdapter = new PondsStructureAdapter(PondsStructureScreen.this,tankStructureList,dbData);
+            pondsStructureAdapter = new PondsStructureAdapter(PondsStructureScreen.this,tankStructureList,dbData,Tittle);
             pondsStructureScreenBinding.recyclerView.setAdapter(pondsStructureAdapter);
             pondsStructureAdapter.notifyDataSetChanged();
         }
@@ -379,6 +379,18 @@ public class PondsStructureScreen extends AppCompatActivity {
 
     }
 
+    public void openCameraAdapter(int position){
+        Intent intent = new Intent(context, CameraScreen.class);
+        intent.putExtra("KEY","");
+        intent.putExtra("Title",tankStructureList.get(position).getMiTankStructureName());
+        intent.putExtra(AppConstant.MI_TANK_STRUCTURE_SERIAL_ID,tankStructureList.get(position).getMiTankStructureSerialId());
+        intent.putExtra(AppConstant.MI_TANK_STRUCTURE_DETAIL_ID,tankStructureList.get(position).getMiTankStructureDetailId());
+        intent.putExtra(AppConstant.MI_TANK_SURVEY_ID,tankStructureList.get(position).getMiTankSurveyId());
+        intent.putExtra(AppConstant.MI_TANK_STRUCTURE_ID,tankStructureList.get(position).getMiTankStructureId());
+        startActivityForResult(intent,2);
+        overridePendingTransition(R.anim.slide_in, R.anim.slide_out);
+    }
+
     public void insertStructure(String name,String condion,String condionid,String serialid) {
 
         ContentValues values = new ContentValues();
@@ -509,6 +521,8 @@ public class PondsStructureScreen extends AppCompatActivity {
             new fetchStructuretask().execute();
         }  else {
             // failed to record video
+            new fetchStructuretask().execute();
+
         }
     }
 

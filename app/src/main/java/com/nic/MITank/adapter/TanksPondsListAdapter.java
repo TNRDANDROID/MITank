@@ -14,6 +14,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.nic.MITank.R;
 
+import com.nic.MITank.activity.FullImageActivity;
 import com.nic.MITank.activity.TanksPondsListScreen;
 import com.nic.MITank.activity.TanksPondsTitleScreen;
 import com.nic.MITank.activity.TrackingScreen;
@@ -22,6 +23,7 @@ import com.nic.MITank.dataBase.DBHelper;
 import com.nic.MITank.databinding.TanksPondsListAdapterBinding;
 import com.nic.MITank.model.MITank;
 import com.nic.MITank.session.PrefManager;
+import com.nic.MITank.utils.Utils;
 
 import org.json.JSONObject;
 
@@ -82,10 +84,16 @@ public class TanksPondsListAdapter extends RecyclerView.Adapter<TanksPondsListAd
 
             }
         });
-        if (getSaveTradeImageTable(position) == 1) {
+        if(miTankData.get(position).getCenter_point_captured().equals("Y")) {
             holder.tanksPondsListAdapterBinding.endActivity.setVisibility(View.VISIBLE);
-        }else {
-            holder.tanksPondsListAdapterBinding.endActivity.setVisibility(View.GONE);
+
+        }
+        else {
+            if (getSaveTradeImageTable(position) == 1) {
+                holder.tanksPondsListAdapterBinding.endActivity.setVisibility(View.VISIBLE);
+            } else {
+                holder.tanksPondsListAdapterBinding.endActivity.setVisibility(View.GONE);
+            }
         }
 
         holder.tanksPondsListAdapterBinding.viewStructure.setOnClickListener(new View.OnClickListener() {
@@ -101,6 +109,23 @@ public class TanksPondsListAdapter extends RecyclerView.Adapter<TanksPondsListAd
                 trackDataScreen(position);
 
 
+            }
+        });
+        holder.tanksPondsListAdapterBinding.galleryIcon.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(Utils.isOnline()){
+                    /*((TanksPondsListScreen)context).getCenterImage(position);*/
+                    viewImages(position,"online");
+                }
+                else{
+                    if(getSaveTradeImageTable(position)>1) {
+                        viewImages(position, "offline");
+                    }
+                    else {
+                        Utils.showAlert(context,"No Image");
+                    }
+                }
             }
         });
 
@@ -164,5 +189,17 @@ public class TanksPondsListAdapter extends RecyclerView.Adapter<TanksPondsListAd
         return miTankData.size();
     }
 
+    public void viewImages(int position,String type){
+        Activity activity = (Activity) context;
+        Intent intent = new Intent(context, FullImageActivity.class);
+        intent.putExtra("ONOFFTYPE",type);
+        intent.putExtra("KEY","CenterImageList");
+        intent.putExtra(AppConstant.MI_TANK_STRUCTURE_SERIAL_ID,"");
+        intent.putExtra(AppConstant.MI_TANK_STRUCTURE_DETAIL_ID,"");
+        intent.putExtra(AppConstant.MI_TANK_SURVEY_ID,miTankData.get(position).getMiTankSurveyId());
+        intent.putExtra(AppConstant.MI_TANK_STRUCTURE_ID,"");
+        activity.startActivity(intent);
+        activity.overridePendingTransition(R.anim.slide_in, R.anim.slide_out);
+    }
 
 }

@@ -13,6 +13,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.nic.MITank.R;
 import com.nic.MITank.activity.CameraScreen;
 import com.nic.MITank.activity.FullImageActivity;
+import com.nic.MITank.activity.PondsStructureScreen;
 import com.nic.MITank.activity.TanksPondsListScreen;
 import com.nic.MITank.constant.AppConstant;
 import com.nic.MITank.dataBase.DBHelper;
@@ -35,15 +36,17 @@ public class PondsStructureAdapter extends RecyclerView.Adapter<PondsStructureAd
     private ArrayList<MITank> Structure;
     static JSONObject dataset = new JSONObject();
     private dbData dbData;
+    String type;
 
     private LayoutInflater layoutInflater;
 
-    public PondsStructureAdapter(Activity context, ArrayList<MITank> tankStructure,dbData dbData) {
+    public PondsStructureAdapter(Activity context, ArrayList<MITank> tankStructure,dbData dbData,String type) {
 
         this.context = context;
         this.dbData = dbData;
         prefManager = new PrefManager(context);
         this.Structure = tankStructure;
+        this.type=type;
     }
 
     @Override
@@ -70,8 +73,25 @@ public class PondsStructureAdapter extends RecyclerView.Adapter<PondsStructureAd
 
     @Override
     public void onBindViewHolder(@NonNull final MyViewHolder holder, final int position) {
-       holder.tanksPondsListAdapterBinding.structureName.setText(Structure.get(position).getMiTankStructureName()+" "+Structure.get(position).getMiTankStructureSerialId());
+        if(type.equals("Inlet channels")){
+            holder.tanksPondsListAdapterBinding.typeLayout.setVisibility(View.VISIBLE);
+        }
+        else if(type.equals("Surplus Weirs / Outlet structure")){
+            holder.tanksPondsListAdapterBinding.typeLayout.setVisibility(View.GONE);
+        }
+        else if(type.equals("Bathing Ghat")){
+            holder.tanksPondsListAdapterBinding.typeLayout.setVisibility(View.GONE);
+        }
+        else if(type.equals("Ramp structures")){
+            holder.tanksPondsListAdapterBinding.typeLayout.setVisibility(View.GONE);
+        }
+        else if(type.equals("Sluices")){
+            holder.tanksPondsListAdapterBinding.typeLayout.setVisibility(View.VISIBLE);
+        }
+
+        holder.tanksPondsListAdapterBinding.structureName.setText(Structure.get(position).getMiTankStructureName()+" "+Structure.get(position).getMiTankStructureSerialId());
        holder.tanksPondsListAdapterBinding.condition.setText(Structure.get(position).getMiTankConditionName());
+       holder.tanksPondsListAdapterBinding.typeText.setText(Structure.get(position).getMiTankTypeName());
 
         String dcode = prefManager.getDistrictCode();
         String bcode = prefManager.getBlockCode();
@@ -80,9 +100,11 @@ public class PondsStructureAdapter extends RecyclerView.Adapter<PondsStructureAd
         String mi_tank_structure_detail_id = Structure.get(position).getMiTankStructureDetailId();
         String mi_tank_structure_serial_id = Structure.get(position).getMiTankStructureSerialId();
         String image_available = Structure.get(position).getImageAvailable();
+        String mi_tank_structure_id=Structure.get(position).getMiTankStructureId();
+        String mi_tank_survey_id=Structure.get(position).getMiTankSurveyId();
 
 
-        ArrayList<MITank> imageOffline = dbData.selectImage(dcode,bcode,pvcode,habcode,mi_tank_structure_detail_id,mi_tank_structure_serial_id);
+        ArrayList<MITank> imageOffline = dbData.selectImage(dcode,bcode,pvcode,habcode,mi_tank_structure_detail_id,mi_tank_structure_serial_id,mi_tank_structure_id,mi_tank_survey_id);
 
         if(imageOffline.size() < 1) {
             holder.tanksPondsListAdapterBinding.viewOfflineImages.setVisibility(View.GONE);
@@ -105,7 +127,8 @@ public class PondsStructureAdapter extends RecyclerView.Adapter<PondsStructureAd
        holder.tanksPondsListAdapterBinding.cameraActivity.setOnClickListener(new View.OnClickListener() {
            @Override
            public void onClick(View v) {
-               openCamera(position);
+               //openCamera(position);
+               ((PondsStructureScreen)context).openCameraAdapter(position);
            }
        });
 
@@ -149,9 +172,11 @@ public class PondsStructureAdapter extends RecyclerView.Adapter<PondsStructureAd
         Activity activity = (Activity) context;
         Intent intent = new Intent(context, FullImageActivity.class);
         intent.putExtra("ONOFFTYPE",type);
+        intent.putExtra("KEY","PondStructureAdapter");
         intent.putExtra(AppConstant.MI_TANK_STRUCTURE_SERIAL_ID,Structure.get(position).getMiTankStructureSerialId());
         intent.putExtra(AppConstant.MI_TANK_STRUCTURE_DETAIL_ID,Structure.get(position).getMiTankStructureDetailId());
         intent.putExtra(AppConstant.MI_TANK_SURVEY_ID,Structure.get(position).getMiTankSurveyId());
+        intent.putExtra(AppConstant.MI_TANK_STRUCTURE_ID,Structure.get(position).getMiTankStructureId());
         activity.startActivity(intent);
         activity.overridePendingTransition(R.anim.slide_in, R.anim.slide_out);
     }

@@ -1,5 +1,6 @@
 package com.nic.MITank.adapter;
 
+import android.app.Activity;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.os.AsyncTask;
@@ -21,6 +22,7 @@ import com.nic.MITank.databinding.NewPendingAdapterBinding;
 import com.nic.MITank.databinding.PendingAdapterBinding;
 import com.nic.MITank.model.MITank;
 import com.nic.MITank.session.PrefManager;
+import com.nic.MITank.utils.Utils;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -48,6 +50,7 @@ public class NewPendingScreenAdapter extends RecyclerView.Adapter<NewPendingScre
         this.context=context;
         this.dbData=dbData;
         this.type=type;
+        prefManager=new PrefManager(context);
     }
 
     @NonNull
@@ -74,7 +77,7 @@ public class NewPendingScreenAdapter extends RecyclerView.Adapter<NewPendingScre
     }
 
     @Override
-    public void onBindViewHolder(@NonNull NewPendingScreenAdapter.MyViewHolder holder, int position) {
+    public void onBindViewHolder(@NonNull final NewPendingScreenAdapter.MyViewHolder holder, int position) {
         holder.pendingAdapterBinding.habitationName.setText(pendingListValues.get(position).getHabitationName());
         holder.pendingAdapterBinding.villageName.setText(pendingListValues.get(position).getPvName());
         holder.pendingAdapterBinding.localName.setText(pendingListValues.get(position).getLocalName());
@@ -84,6 +87,7 @@ public class NewPendingScreenAdapter extends RecyclerView.Adapter<NewPendingScre
         dbData.open();
         if(type.equals("StructureData")) {
             holder.pendingAdapterBinding.syncTrackInfo.setText("SyncStructureData");
+
         }
         else if (type.equals("TrackData")) {
             holder.pendingAdapterBinding.syncTrackInfo.setText("SyncTrackData");
@@ -91,6 +95,37 @@ public class NewPendingScreenAdapter extends RecyclerView.Adapter<NewPendingScre
         else {
             holder.pendingAdapterBinding.syncTrackInfo.setText("SyncCentreImageData");
         }
+
+        holder.pendingAdapterBinding.syncTrackInfo.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                if( holder.pendingAdapterBinding.syncTrackInfo.getText().toString().equals("SyncStructureData")){
+                    if(Utils.isOnline()) {
+                        new toUploadTankStructureTask().execute(mi_tank_survey_id);
+                        prefManager.setKeyDeleteId(mi_tank_survey_id);
+                    }
+                    else {
+                        Utils.showAlert((Activity) context, "Turn On Mobile Data To Synchronize!");
+                    }
+                }
+                else if( holder.pendingAdapterBinding.syncTrackInfo.getText().toString().equals("SyncTrackData")){
+                    new toUploadTankTrackDataTask().execute(mi_tank_survey_id);
+                    prefManager.setKeyDeleteId(mi_tank_survey_id);
+                }
+                else if( holder.pendingAdapterBinding.syncTrackInfo.getText().toString().equals("SyncCentreImageData")){
+                    if(Utils.isOnline()) {
+                        new toUploadTankCentreImageTask().execute(mi_tank_survey_id);
+                        prefManager.setKeyDeleteId(mi_tank_survey_id);
+                    }
+                    else {
+                        Utils.showAlert((Activity) context, "Turn On Mobile Data To Synchronize!");
+                    }
+
+                }
+            }
+        });
+
 
 
     }
@@ -161,10 +196,12 @@ public class NewPendingScreenAdapter extends RecyclerView.Adapter<NewPendingScre
                         jsonObject.put(AppConstant.MI_TANK_STRUCTURE_ID,tanks.get(i).getMiTankStructureId());
                         jsonObject.put(AppConstant.MI_TANK_SURVEY_ID,tanks.get(i).getMiTankSurveyId());
                         jsonObject.put(AppConstant.MI_TANK_CONDITION_ID,tanks.get(i).getMiTankConditionId());
+                        jsonObject.put(AppConstant.MI_TANK_STRUCTURE_SERIAL_ID,tanks.get(i).getMiTankStructureSerialId());
                         jsonObject.put(AppConstant.KEY_LATITUDE,tanks.get(i).getLatitude());
                         jsonObject.put(AppConstant.KEY_LONGITUDE,tanks.get(i).getLongitude());
-                        jsonObject.put("mi_tank_type_of_structure_id",tanks.get(i).getLongitude());
-                        jsonObject.put("mi_tank_sill_level",tanks.get(i).getLongitude());
+                        jsonObject.put("mi_tank_sill_level",tanks.get(i).getMiTankSkillLevel());
+
+                        jsonObject.put("mi_tank_type_of_structure_id",tanks.get(i).getMiTankTypeId());
 
                         Bitmap bitmap = tanks.get(i).getImage();
                         ByteArrayOutputStream baos = new ByteArrayOutputStream();
@@ -205,21 +242,21 @@ public class NewPendingScreenAdapter extends RecyclerView.Adapter<NewPendingScre
             JSONObject> {
         @Override
         protected JSONObject doInBackground(String... params) {
-            dbData.open();
+            //dbData.open();
             JSONArray track_data = new JSONArray();
-            ArrayList<MITank> tanks = dbData.getCenterImageData(String.valueOf(params[0]));
+            //ArrayList<MITank> tanks = dbData.getCenterImageData(String.valueOf(params[0]));
 
-            if (tanks.size() > 0) {
-                for (int i = 0; i < tanks.size(); i++) {
+            if (pendingListValues.size() > 0) {
+                for (int i = 0; i < pendingListValues.size(); i++) {
                     JSONObject jsonObject = new JSONObject();
                     try {
-                        jsonObject.put(AppConstant.PV_CODE,tanks.get(i).getPvCode());
-                        jsonObject.put(AppConstant.HAB_CODE,tanks.get(i).getHabCode());
-                        jsonObject.put(AppConstant.MI_TANK_SURVEY_ID,tanks.get(i).getMiTankSurveyId());
-                        jsonObject.put(AppConstant.KEY_LATITUDE,tanks.get(i).getLatitude());
-                        jsonObject.put(AppConstant.KEY_LONGITUDE,tanks.get(i).getLongitude());
+                        jsonObject.put(AppConstant.PV_CODE,pendingListValues.get(i).getPvCode());
+                        jsonObject.put(AppConstant.HAB_CODE,pendingListValues.get(i).getHabCode());
+                        jsonObject.put(AppConstant.MI_TANK_SURVEY_ID,pendingListValues.get(i).getMiTankSurveyId());
+                        jsonObject.put(AppConstant.KEY_LATITUDE,pendingListValues.get(i).getLatitude());
+                        jsonObject.put(AppConstant.KEY_LONGITUDE,pendingListValues.get(i).getLongitude());
 
-                        Bitmap bitmap = tanks.get(i).getImage();
+                        Bitmap bitmap = pendingListValues.get(i).getImage();
                         ByteArrayOutputStream baos = new ByteArrayOutputStream();
                         bitmap.compress(Bitmap.CompressFormat.JPEG, 90, baos);
                         byte[] imageInByte = baos.toByteArray();
@@ -237,7 +274,7 @@ public class NewPendingScreenAdapter extends RecyclerView.Adapter<NewPendingScre
                 dataSetCentreImage = new JSONObject();
 
                 try {
-                    dataSetCentreImage.put(AppConstant.KEY_SERVICE_ID,"center_point_update");
+                    dataSetCentreImage.put(AppConstant.KEY_SERVICE_ID,"mi_center_point_update");
                     dataSetCentreImage.put(AppConstant.KEY_TRACK_DATA,track_data);
                 } catch (JSONException e) {
                     e.printStackTrace();
