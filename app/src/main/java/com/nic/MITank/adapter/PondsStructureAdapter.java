@@ -75,23 +75,29 @@ public class PondsStructureAdapter extends RecyclerView.Adapter<PondsStructureAd
     public void onBindViewHolder(@NonNull final MyViewHolder holder, final int position) {
         if(type.equals("Inlet channels")){
             holder.tanksPondsListAdapterBinding.typeLayout.setVisibility(View.VISIBLE);
+            holder.tanksPondsListAdapterBinding.sillLevelLayout.setVisibility(View.GONE);
         }
         else if(type.equals("Surplus Weirs / Outlet structure")){
             holder.tanksPondsListAdapterBinding.typeLayout.setVisibility(View.GONE);
+            holder.tanksPondsListAdapterBinding.sillLevelLayout.setVisibility(View.GONE);
         }
         else if(type.equals("Bathing Ghat")){
             holder.tanksPondsListAdapterBinding.typeLayout.setVisibility(View.GONE);
+            holder.tanksPondsListAdapterBinding.sillLevelLayout.setVisibility(View.GONE);
         }
         else if(type.equals("Ramp structures")){
             holder.tanksPondsListAdapterBinding.typeLayout.setVisibility(View.GONE);
+            holder.tanksPondsListAdapterBinding.sillLevelLayout.setVisibility(View.GONE);
         }
         else if(type.equals("Sluices")){
             holder.tanksPondsListAdapterBinding.typeLayout.setVisibility(View.VISIBLE);
+            holder.tanksPondsListAdapterBinding.sillLevelLayout.setVisibility(View.VISIBLE);
         }
 
         holder.tanksPondsListAdapterBinding.structureName.setText(Structure.get(position).getMiTankStructureName()+" "+Structure.get(position).getMiTankStructureSerialId());
        holder.tanksPondsListAdapterBinding.condition.setText(Structure.get(position).getMiTankConditionName());
        holder.tanksPondsListAdapterBinding.typeText.setText(Structure.get(position).getMiTankTypeName());
+       holder.tanksPondsListAdapterBinding.sillLevelText.setText(Structure.get(position).getMiTankSkillLevel());
 
         String dcode = prefManager.getDistrictCode();
         String bcode = prefManager.getBlockCode();

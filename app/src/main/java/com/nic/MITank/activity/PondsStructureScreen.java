@@ -70,6 +70,7 @@ public class PondsStructureScreen extends AppCompatActivity {
     Spinner condition;
     Spinner type;
     LinearLayout condition_layout,type_layout,sill_level_layout;
+    EditText  sill_level_value_taxt;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -146,7 +147,6 @@ public class PondsStructureScreen extends AppCompatActivity {
             ImageView close;
             RelativeLayout camera_activity;
             Button submit;
-            final EditText sill_level_value_taxt;
 
             camera_activity = (RelativeLayout) view.findViewById(R.id.camera_activity);
             header = (TextView) view.findViewById(R.id.header);
@@ -326,7 +326,13 @@ public class PondsStructureScreen extends AppCompatActivity {
         if (type_layout.getVisibility() == View.VISIBLE) {
             if(Tittle.equals("Sluices")) {
                 if (!"Select Type".equalsIgnoreCase(SluiceTypeList.get(type.getSelectedItemPosition()).getMiTankTypeName())) {
-                    return true;
+                    if(! sill_level_value_taxt.getText().toString().equals("")) {
+                        return true;
+                    }
+                    else {
+                        Utils.showAlert(this, "Enter Sill Level!");
+                        return false;
+                    }
                 }
                 else {
                     Utils.showAlert(this, "Select Type!");
