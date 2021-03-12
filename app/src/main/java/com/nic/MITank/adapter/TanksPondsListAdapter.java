@@ -73,7 +73,12 @@ public class TanksPondsListAdapter extends RecyclerView.Adapter<TanksPondsListAd
 
     @Override
     public void onBindViewHolder(@NonNull final MyViewHolder holder, final int position) {
-       holder.tanksPondsListAdapterBinding.nameOfTank.setText(miTankData.get(position).getNameOftheMITank());
+        if(miTankData.get(position).getMinorIrrigationType().equals("1")) {
+            holder.tanksPondsListAdapterBinding.nameOfTank.setText(miTankData.get(position).getNameOftheMITank()+" (Tank)");
+        }
+        else {
+            holder.tanksPondsListAdapterBinding.nameOfTank.setText(miTankData.get(position).getNameOftheMITank()+" (Ponds)");
+        }
        holder.tanksPondsListAdapterBinding.localName.setText(miTankData.get(position).getLocalName());
        holder.tanksPondsListAdapterBinding.area.setText(miTankData.get(position).getArea()+" hectare");
 

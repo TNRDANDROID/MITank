@@ -760,7 +760,12 @@ public class HomePage extends AppCompatActivity implements Api.ServerResponseLis
         if (!"Select Village".equalsIgnoreCase(Village.get(homeScreenBinding.villageSpinner.getSelectedItemPosition()).getPvName())) {
             if (!"Select Habitation".equalsIgnoreCase(Habitation.get(homeScreenBinding.habitationSpinner.getSelectedItemPosition()).getHabitationName())) {
                 if((homeScreenBinding.all.isChecked()) || (homeScreenBinding.miTanks.isChecked()) || (homeScreenBinding.ponds.isChecked())){
-                    tanksPondsTitleScreen();
+                    if(homeScreenBinding.synData.getVisibility()==View.GONE) {
+                        tanksPondsTitleScreen();
+                    }
+                    else {
+                        Utils.showAlert(this,"First Sync All the Data!");
+                    }
                 }
                 else{
                     Utils.showAlert(this, "Select MI Tanks/Ponds");

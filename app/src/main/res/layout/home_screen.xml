@@ -65,6 +65,7 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_below="@+id/toolbar"
+            android:layout_above="@+id/save"
             app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
             <RelativeLayout
@@ -218,9 +219,7 @@
                                     android:id="@+id/all"
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
-                                    android:layout_alignParentStart="true"
                                     android:layout_centerInParent="true"
-                                    android:layout_marginRight="@dimen/_40sdp"
                                     android:checked="true"
                                     android:gravity="center"
                                     android:text="All "
@@ -255,7 +254,6 @@
                                     android:id="@+id/mi_tanks"
                                     android:layout_width="match_parent"
                                     android:layout_height="wrap_content"
-                                    android:layout_alignParentStart="true"
                                     android:layout_centerInParent="true"
                                     android:text="MI Tank"
                                     android:textColor="@android:color/black"
@@ -287,7 +285,6 @@
                                     android:layout_width="match_parent"
                                     android:layout_height="wrap_content"
                                     android:layout_centerInParent="true"
-                                    android:layout_centerHorizontal="true"
                                     android:text="Ponds"
                                     android:textColor="@android:color/black"
                                     android:textSize="13sp" />

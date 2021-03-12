@@ -108,11 +108,14 @@ public class CameraScreen extends AppCompatActivity implements View.OnClickListe
         }
         if(getIntent().getStringExtra("KEY").equals("TanksPondsListAdapter")){
             cameraScreenBinding.selectionLayout.setVisibility(View.GONE);
+            cameraScreenBinding.notesTextLayout.setVisibility(View.VISIBLE);
         }else if(getIntent().getStringExtra("KEY").equals("PondsStructureScreen")){
             cameraScreenBinding.selectionLayout.setVisibility(View.GONE);
+            cameraScreenBinding.notesTextLayout.setVisibility(View.GONE);
             Title=getIntent().getStringExtra("Title");
         }
         else {
+            cameraScreenBinding.notesTextLayout.setVisibility(View.GONE);
             Title=getIntent().getStringExtra("Title");
         }
 

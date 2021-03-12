@@ -25,7 +25,7 @@
             android:layout_height="wrap_content"
             android:layout_centerInParent="true"
             android:layout_marginTop="@dimen/margin"
-            android:text="Take Photo"
+            android:text="Capture Photo"
             android:textColor="@android:color/white"
             android:textSize="18sp" />
 
@@ -381,7 +381,32 @@
                 android:textAllCaps="false"
                 android:textColor="@android:color/white" />
         </RelativeLayout>
-        </LinearLayout>
+
+            <LinearLayout
+                android:layout_margin="15dp"
+                android:id="@+id/notes_text_layout"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <TextView
+                    android:textColor="#B0C51162"
+                    android:textSize="17sp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Capture photo from the middle/near middle of the pond/tanks."></TextView>
+                <TextView
+                    android:visibility="gone"
+                    android:layout_gravity="center_horizontal"
+                    android:textColor="#B0C51162"
+                    android:textSize="17sp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text=""></TextView>
+
+            </LinearLayout>
+
+                    </LinearLayout>
         </ScrollView>
 
     </LinearLayout>

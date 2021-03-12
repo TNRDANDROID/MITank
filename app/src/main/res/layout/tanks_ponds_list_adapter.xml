@@ -300,9 +300,9 @@
                                 android:drawablePadding="10dp"
                                 android:drawableRight="@drawable/ic_camera"
                                 android:gravity="center"
-                                android:text="Take Photo"
+                                android:text="Capture Photo"
                                 android:textAlignment="center"
-                                android:textColor="@android:color/black"
+                                android:textColor="@android:color/holo_red_light"
                                 android:textSize="18sp"
                                 />
                             <ImageButton
@@ -361,7 +361,7 @@
                                 android:paddingTop="@dimen/_12sdp"
                                 android:paddingLeft="@dimen/_12sdp"
                                 android:paddingRight="@dimen/_12sdp"
-                                android:text="Track Data"
+                                android:text="Tracks Tank/Ponds"
                                 android:textColor="#000080"
                                 android:textSize="16sp" />
 

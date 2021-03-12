@@ -108,12 +108,12 @@ public class PondsStructureAdapter extends RecyclerView.Adapter<PondsStructureAd
 
         if(imageOffline.size() < 1) {
             holder.tanksPondsListAdapterBinding.viewOfflineImages.setVisibility(View.GONE);
-            holder.tanksPondsListAdapterBinding.takePhoto.setText("Take Photo");
+            holder.tanksPondsListAdapterBinding.takePhoto.setText("Capture Photo");
         }
         else {
             holder.tanksPondsListAdapterBinding.viewOfflineImages.setVisibility(View.VISIBLE);
 //            holder.tanksPondsListAdapterBinding.takePhoto.setText("Change Photo");
-            holder.tanksPondsListAdapterBinding.takePhoto.setText("Take Photo");
+            holder.tanksPondsListAdapterBinding.takePhoto.setText("Capture Photo");
 
         }
 
