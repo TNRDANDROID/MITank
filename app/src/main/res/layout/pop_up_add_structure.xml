@@ -85,7 +85,8 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:text="Structure"
-                        android:gravity="center_horizontal"
+                        android:gravity="start"
+                        android:layout_marginLeft="5dp"
                         android:textColor="#000"
                         android:textSize="18sp" />
 
@@ -136,6 +137,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="1.5dp"
                 android:layout_gravity="bottom"
+                android:visibility="gone"
                 android:background="@drawable/background" />
             </LinearLayout>
             <LinearLayout
@@ -164,7 +166,8 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:text="Condition"
-                        android:gravity="center_horizontal"
+                        android:gravity="start"
+                        android:layout_marginLeft="5dp"
                         android:textColor="#000"
                         android:textSize="18sp" />
 
@@ -233,6 +236,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="1.5dp"
                 android:layout_gravity="bottom"
+                android:visibility="gone"
                 android:background="@drawable/background" />
             </LinearLayout>
             <LinearLayout
@@ -261,8 +265,8 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:text="Type"
-                        android:gravity="center"
-                        android:textColor="#000"
+                        android:gravity="start"
+                        android:layout_marginLeft="5dp"                        android:textColor="#000"
                         android:textSize="18sp" />
 
                 </LinearLayout>
@@ -329,7 +333,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="1.5dp"
                 android:layout_gravity="bottom"
-
+                android:visibility="gone"
                 android:background="@drawable/background" />
             </LinearLayout>
             <LinearLayout
@@ -353,11 +357,12 @@
                     android:orientation="vertical">
 
                     <TextView
-                        android:gravity="center_horizontal"
                         style="@string/font_circular_book"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:text="Sill Level"
+                        android:gravity="start"
+                        android:layout_marginLeft="5dp"
                         android:textColor="#000"
                         android:textSize="18sp" />
 
@@ -420,7 +425,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="1.5dp"
                 android:layout_gravity="bottom"
-
+                android:visibility="gone"
                 android:background="@drawable/background" />
             </LinearLayout>
 
