@@ -9,6 +9,7 @@ import android.os.Bundle;
 import android.util.Base64;
 import android.util.Log;
 import android.view.View;
+import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
@@ -102,7 +103,13 @@ public class FullImageActivity extends AppCompatActivity implements View.OnClick
         @Override
         protected void onPostExecute(final ArrayList<MITank> imageList) {
             super.onPostExecute(imageList);
-            setAdapter();
+            if(imageList.size()>0) {
+                setAdapter();
+            }
+            else {
+                Toast.makeText(FullImageActivity.this, "No Image in offline", Toast.LENGTH_SHORT).show();
+                onBackPressed();
+            }
         }
     }
     public void homePage() {
@@ -179,7 +186,9 @@ public class FullImageActivity extends AppCompatActivity implements View.OnClick
                     generateImageArrayList(jsonObject.getJSONArray(AppConstant.JSON_DATA));
                 }
                 else {
-
+                    Toast.makeText(this, "No Image in online", Toast.LENGTH_SHORT).show();
+                    new fetchImagetask().execute();
+                    //onBackPressed();
                 }
                 Log.d("resp_OnlineImage", "" + responseDecryptedBlockKey);
             }

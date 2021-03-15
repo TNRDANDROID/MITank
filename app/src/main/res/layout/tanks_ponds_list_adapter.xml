@@ -297,6 +297,7 @@
                             </RelativeLayout>
                         </RelativeLayout>
                         <RelativeLayout
+                            android:layout_marginTop="@dimen/_10sdp"
                             android:id="@+id/camera_activity"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
@@ -369,7 +370,7 @@
                                 android:layout_alignParentEnd="true"
                                 android:layout_centerVertical="true"
                                 android:layout_gravity="center"
-                                android:text="Tracks Tank/Ponds"
+                                android:text="Track Tanks/Ponds"
                                 android:textColor="#000080"
                                 android:textSize="16sp" />
 
