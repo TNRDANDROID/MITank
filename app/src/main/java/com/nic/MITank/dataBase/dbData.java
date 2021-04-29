@@ -983,7 +983,7 @@ public class dbData {
                 "(SELECT dcode,bcode,pvcode,habitation_code,habitation_name FROM habitaionTable)c\n" +
                 "ON a.dcode=c.dcode and a.bcode=c.bcode AND a.pvcode=c.pvcode AND a.habcode=c.habitation_code\n" +
                 "LEFT JOIN\n" +
-                "(SELECT dcode,bcode,pvcode,habcode,mi_tank_survey_id,name_of_the_mi_tank,local_name,area FROM mi_tank_data)d\n" +
+                "(SELECT * FROM mi_tank_data)d\n" +
                 "ON a.dcode=d.dcode and a.bcode=d.bcode AND a.pvcode=d.pvcode AND a.habcode=d.habcode AND a.mi_tank_survey_id=d.mi_tank_survey_id";
 
 
@@ -1026,6 +1026,7 @@ public class dbData {
                     card.setArea(cursor.getString(cursor.getColumnIndexOrThrow(AppConstant.AREA)));
                     card.setPvName(cursor.getString(cursor.getColumnIndexOrThrow(AppConstant.PV_NAME)));
                     card.setHabitationName(cursor.getString(cursor.getColumnIndexOrThrow(AppConstant.HABITATION_NAME)));
+                    card.setMinorIrrigationType(cursor.getString(cursor.getColumnIndexOrThrow(AppConstant.MINOR_IRRIGATION_TYPE)));
 
 
 
@@ -1060,7 +1061,7 @@ public class dbData {
                 "(SELECT dcode,bcode,pvcode,habitation_code,habitation_name FROM habitaionTable)c\n" +
                 "ON a.dcode=c.dcode and a.bcode=c.bcode AND a.pvcode=c.pvcode AND a.habcode=c.habitation_code\n" +
                 "LEFT JOIN\n" +
-                "(SELECT dcode,bcode,pvcode,habcode,mi_tank_survey_id,name_of_the_mi_tank,local_name,area FROM mi_tank_data)d\n" +
+                "(SELECT * FROM mi_tank_data)d\n" +
                 "ON a.dcode=d.dcode and a.bcode=d.bcode AND a.pvcode=d.pvcode AND a.habcode=d.habcode AND a.mi_tank_survey_id=d.mi_tank_survey_id";
 
 
@@ -1087,6 +1088,7 @@ public class dbData {
                     postLatLong.setArea(cursor.getString(cursor.getColumnIndexOrThrow(AppConstant.AREA)));
                     postLatLong.setPvName(cursor.getString(cursor.getColumnIndexOrThrow(AppConstant.PV_NAME)));
                     postLatLong.setHabitationName(cursor.getString(cursor.getColumnIndexOrThrow(AppConstant.HABITATION_NAME)));
+                    postLatLong.setMinorIrrigationType(cursor.getString(cursor.getColumnIndexOrThrow(AppConstant.MINOR_IRRIGATION_TYPE)));
 
 
                     cards.add(postLatLong);

@@ -78,11 +78,18 @@ public class NewPendingScreenAdapter extends RecyclerView.Adapter<NewPendingScre
 
     @Override
     public void onBindViewHolder(@NonNull final NewPendingScreenAdapter.MyViewHolder holder, int position) {
+
+        if(pendingListValues.get(position).getMinorIrrigationType().equals("1")){
+            holder.pendingAdapterBinding.nameOfTankPond.setText(pendingListValues.get(position).getNameOftheMITank()+" (Tank)");
+        }
+        else {
+            holder.pendingAdapterBinding.nameOfTankPond.setText(pendingListValues.get(position).getNameOftheMITank()+" (Ponds)");
+        }
         holder.pendingAdapterBinding.habitationName.setText(pendingListValues.get(position).getHabitationName());
         holder.pendingAdapterBinding.villageName.setText(pendingListValues.get(position).getPvName());
         holder.pendingAdapterBinding.localName.setText(pendingListValues.get(position).getLocalName());
         holder.pendingAdapterBinding.area.setText(pendingListValues.get(position).getArea()+" hectare");
-        holder.pendingAdapterBinding.nameOfTankPond.setText(pendingListValues.get(position).getNameOftheMITank());
+
         final String mi_tank_survey_id = pendingListValues.get(position).getMiTankSurveyId();
         dbData.open();
         if(type.equals("StructureData")) {

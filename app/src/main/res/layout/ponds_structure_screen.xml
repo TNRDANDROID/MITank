@@ -112,14 +112,14 @@
             </RelativeLayout>
         </androidx.core.widget.NestedScrollView>
         <com.google.android.material.floatingactionbutton.FloatingActionButton
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="55dp"
+            android:layout_height="55dp"
             android:id="@+id/add_structure"
             android:layout_gravity="bottom|end"
             app:srcCompat="@drawable/ic_plus"
             android:backgroundTint="@color/colorPrimary"
-            app:fabCustomSize="45dp"
-            app:maxImageSize="22dp"
+            app:fabCustomSize="55dp"
+            app:maxImageSize="25dp"
             app:borderWidth="0dp"
             app:elevation="6dp"
             app:tint="@android:color/white"
