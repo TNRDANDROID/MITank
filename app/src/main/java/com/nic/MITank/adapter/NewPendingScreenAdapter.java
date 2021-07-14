@@ -252,18 +252,19 @@ public class NewPendingScreenAdapter extends RecyclerView.Adapter<NewPendingScre
             //dbData.open();
             JSONArray track_data = new JSONArray();
             //ArrayList<MITank> tanks = dbData.getCenterImageData(String.valueOf(params[0]));
+            ArrayList<MITank> tanks = dbData.getAllCenterImageData(prefManager.getDistrictCode(),prefManager.getBlockCode());
 
-            if (pendingListValues.size() > 0) {
-                for (int i = 0; i < pendingListValues.size(); i++) {
+            if (tanks.size() > 0) {
+                for (int i = 0; i < tanks.size(); i++) {
                     JSONObject jsonObject = new JSONObject();
                     try {
-                        jsonObject.put(AppConstant.PV_CODE,pendingListValues.get(i).getPvCode());
-                        jsonObject.put(AppConstant.HAB_CODE,pendingListValues.get(i).getHabCode());
-                        jsonObject.put(AppConstant.MI_TANK_SURVEY_ID,pendingListValues.get(i).getMiTankSurveyId());
-                        jsonObject.put(AppConstant.KEY_LATITUDE,pendingListValues.get(i).getLatitude());
-                        jsonObject.put(AppConstant.KEY_LONGITUDE,pendingListValues.get(i).getLongitude());
+                        jsonObject.put(AppConstant.PV_CODE,tanks.get(i).getPvCode());
+                        jsonObject.put(AppConstant.HAB_CODE,tanks.get(i).getHabCode());
+                        jsonObject.put(AppConstant.MI_TANK_SURVEY_ID,tanks.get(i).getMiTankSurveyId());
+                        jsonObject.put(AppConstant.KEY_LATITUDE,tanks.get(i).getLatitude());
+                        jsonObject.put(AppConstant.KEY_LONGITUDE,tanks.get(i).getLongitude());
 
-                        Bitmap bitmap = pendingListValues.get(i).getImage();
+                        Bitmap bitmap = tanks.get(i).getImage();
                         ByteArrayOutputStream baos = new ByteArrayOutputStream();
                         bitmap.compress(Bitmap.CompressFormat.JPEG, 90, baos);
                         byte[] imageInByte = baos.toByteArray();

@@ -285,6 +285,15 @@ public class PendingScreen extends AppCompatActivity implements Api.ServerRespon
         protected void onPostExecute(ArrayList<MITank> pendingLists) {
             super.onPostExecute(pendingLists);
             if(pendingLists.size()>0) {
+                ArrayList<MITank> centerImageDataList = new ArrayList<>();
+                for (int i=0;i<pendingLists.size();i++){
+                    for (int j=i+1;j<pendingLists.size();j++){
+                        if(pendingLists.get(i).getMiTankSurveyId().equals(pendingLists.get(j).getMiTankSurveyId())){
+                            pendingLists.remove(j);
+                            j--;
+                        }
+                    }
+                }
                 recyclerView.setVisibility(View.VISIBLE);
                 pendingScreenBinding.noDataFoundLayout.setVisibility(View.GONE);
                 newPendingAdapter = new NewPendingScreenAdapter(PendingScreen.this, pendingLists, dbData, "CentreImage");

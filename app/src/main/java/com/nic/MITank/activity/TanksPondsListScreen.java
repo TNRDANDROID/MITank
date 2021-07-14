@@ -110,6 +110,7 @@ public class TanksPondsListScreen extends AppCompatActivity implements Api.Serve
     private static final int PERMISSION_REQUEST_CODE = 200;
     private static String imageStoragePath;
     private static final int CAMERA_CAPTURE_IMAGE_REQUEST_CODE = 2500;
+    boolean back_press_flag=true;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -194,8 +195,14 @@ public class TanksPondsListScreen extends AppCompatActivity implements Api.Serve
 
     @Override
     public void onBackPressed() {
-        super.onBackPressed();
-        overridePendingTransition(R.anim.slide_enter, R.anim.slide_exit);
+        if(!back_press_flag){
+            dialog.dismiss();
+            dialog.cancel();
+        }
+        else {
+            super.onBackPressed();
+            overridePendingTransition(R.anim.slide_enter, R.anim.slide_exit);
+        }
     }
 
     public void homePage() {
@@ -217,7 +224,7 @@ public class TanksPondsListScreen extends AppCompatActivity implements Api.Serve
         overridePendingTransition(R.anim.slide_in, R.anim.slide_out);*/
     }
     public void imageWithDescription(final int position) {
-
+        back_press_flag=false;
         dialog = new Dialog(this,R.style.AppTheme);
         dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
         dialog.setContentView(R.layout.add_photo);
@@ -241,6 +248,7 @@ public class TanksPondsListScreen extends AppCompatActivity implements Api.Serve
         close_id.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                back_press_flag=true;
                 dialog.dismiss();
             }
         });
@@ -302,6 +310,7 @@ public class TanksPondsListScreen extends AppCompatActivity implements Api.Serve
                                         if (id > 0) {
                                             Toasty.success(TanksPondsListScreen.this, "Inserted Success!", Toast.LENGTH_LONG, true).show();
 //                                onBackPressed();
+
                                         }
                            /* if (imageOffline.size() < 1) {
                                 id = db.insert(DBHelper.SAVE_MI_TANK_CENTER_IMAGES, null, values);
@@ -324,7 +333,9 @@ public class TanksPondsListScreen extends AppCompatActivity implements Api.Serve
                                     }
 
 
-                                }onBackPressed();
+                                }new fetchtankDatatask().execute();
+                            back_press_flag=true;
+                            dialog.dismiss();
                             }else {
                             Utils.showAlert(TanksPondsListScreen.this,"Please Capture Photo!");
                         }
@@ -345,7 +356,7 @@ public class TanksPondsListScreen extends AppCompatActivity implements Api.Serve
             @Override
             public void onClick(View v) {
                 int childCount = mobileNumberLayout.getChildCount();
-                if(childCount<3){
+                if(childCount<10){
                     View vv = mobileNumberLayout.getChildAt(childCount-1);
                     ImageView image_view_preview=vv.findViewById(R.id.image_view_preview);
                     ImageView image_view=vv.findViewById(R.id.image_view);
@@ -372,8 +383,9 @@ public class TanksPondsListScreen extends AppCompatActivity implements Api.Serve
         final View hiddenInfo = activity.getLayoutInflater().inflate(R.layout.add_photo_view, emailOrMobileLayout, false);
         final ImageView imageView_close = (ImageView) hiddenInfo.findViewById(R.id.imageView_close);
         final CardView camera = (CardView) hiddenInfo.findViewById(R.id.district_card);
+        final ImageView image_view_preview=hiddenInfo.findViewById(R.id.image_view_preview);
 
-        camera.setOnClickListener(new View.OnClickListener() {
+        image_view_preview.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                getLatLong();
@@ -495,7 +507,7 @@ public class TanksPondsListScreen extends AppCompatActivity implements Api.Serve
             public void onClick(View v) {
                 try {
 
-                    if (viewArrayList.size() != 0) {
+                    if (viewArrayList.size() != 1) {
                         ((LinearLayout) hiddenInfo.getParent()).removeView(hiddenInfo);
                         viewArrayList.remove(hiddenInfo);
                     }
