@@ -21,7 +21,7 @@
             android:layout_height="wrap_content"
             android:layout_centerInParent="true"
             android:textColor="@color/white"
-            android:text="Photos"></TextView>
+            android:text="Take Photo"></TextView>
         <TextView
             android:textStyle="bold"
             android:id="@+id/close_id"

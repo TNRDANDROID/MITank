@@ -506,8 +506,10 @@ public class TanksPondsListScreen extends AppCompatActivity implements Api.Serve
             @Override
             public void onClick(View v) {
                 try {
+                    final LinearLayout mobileNumberLayout = (LinearLayout) dialog.findViewById(R.id.camera_layout);
 
-                    if (viewArrayList.size() != 1) {
+                    int childCount = mobileNumberLayout.getChildCount();
+                    if (childCount > 1) {
                         ((LinearLayout) hiddenInfo.getParent()).removeView(hiddenInfo);
                         viewArrayList.remove(hiddenInfo);
                     }
